@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="anima.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
