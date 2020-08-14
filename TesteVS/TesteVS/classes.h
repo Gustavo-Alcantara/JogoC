@@ -19,32 +19,27 @@ ALLEGRO_FONT* fonte = NULL;
 ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_KEYBOARD_STATE* teclado = NULL;
 
-struct acao{
-	int inicio[2];
-	int final[2];
-	int num_frames;
-};
+
 struct Sprite{
 	char folha[20];
 	int largura;
 	int altura;
 	int largura_folha;
 	int altura_folha;
-	int numero_col;
-	int numero_lin;
 };
-struct Carinha{
+struct  Personagem{
 	struct Sprite imagem_personagem;
-	struct acao ac[20];
 	char nome[20];
 	int vida_total;
 	int vida_atual;
 	int posicao[2];
 	bool direita;
 	int veloc;
-	int pulo;
+	int dx;
+	int dy;
 };
 
+bool desenha = false;
 int tecla = 0;
 int k = 0, i;
 int frames_sprite = 10, cont_frames = 0;
@@ -58,5 +53,4 @@ void anima_respirando(ALLEGRO_EVENT* evento);
 void anima_correndo(ALLEGRO_EVENT* evento, bool invertido, int al);
 void anima_pulando(ALLEGRO_EVENT* evento);
 void anima_ataque(ALLEGRO_EVENT* evento, int conta_ataque);
-//void anima_abaixado(ALLEGRO_EVENT* evento);
-void anima(ALLEGRO_EVENT* evento, Carinha * boneco , int conta_ataque);
+void anima_abaixado(ALLEGRO_EVENT* evento);

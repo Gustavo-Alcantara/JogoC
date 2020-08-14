@@ -21,9 +21,6 @@
     <ClCompile Include="main.c">
       <Filter>Arquivos de Recurso\github_jogo</Filter>
     </ClCompile>
-    <ClCompile Include="anima.c">
-      <Filter>Arquivos de Recurso\github_jogo</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
