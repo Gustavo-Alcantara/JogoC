@@ -1,4 +1,13 @@
 #include "classes.h"
+#include "globais.h"
+
+ALLEGRO_DISPLAY* janela = NULL;
+ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
+ALLEGRO_BITMAP* layers[11];
+ALLEGRO_BITMAP* folha = NULL;
+ALLEGRO_FONT* fonte = NULL;
+ALLEGRO_TIMER* timer = NULL;
+ALLEGRO_KEYBOARD_STATE* teclado = NULL;
 
 bool inicializar();
 
@@ -6,6 +15,7 @@ bool inicializar();
 int main(void) {
 	bool inicio = inicializar();
 	bool sair = false;
+	bool invertido = false;
 	int conta_ataque = 0;
 	if (!inicio)
 		return -1;
@@ -30,32 +40,35 @@ int main(void) {
 			if (evento.type == 11) {
 				switch (evento.keyboard.keycode){
 				case ALLEGRO_KEY_D:
-					anima_correndo(&evento, false, ALLEGRO_KEY_D);
+					invertido = false;
+					anima_correndo(&evento, invertido, ALLEGRO_KEY_D);
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_A:
-					anima_correndo(&evento, true, ALLEGRO_KEY_A);
+					invertido = true;
+					anima_correndo(&evento, invertido, ALLEGRO_KEY_A);
 					conta_ataque = 0;
+
 					break;
 				case ALLEGRO_KEY_W:
-					anima_pulando(&evento);
+					anima_pulando(&evento,invertido);
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_S:
-					//anima_abaixado(&evento);
+					//anima_abaixado(&evento); 
 					break;
 				case ALLEGRO_KEY_J:
 					if (conta_ataque == 1) {
-						anima_ataque(&evento,conta_ataque);
+						anima_ataque(&evento,conta_ataque, invertido);
 						conta_ataque = 0;
 					}
 					else { 
-						anima_ataque(&evento, conta_ataque);
+						anima_ataque(&evento, conta_ataque, invertido);
 						conta_ataque++;
 					}
 					break;
 				default:
-					anima_respirando(&evento);
+					anima_respirando(&evento, invertido);
 					conta_ataque = 0;
 					break;
 				}
@@ -63,7 +76,7 @@ int main(void) {
 			else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 				sair = true;
 			else
-				anima_respirando(&evento);
+				anima_respirando(&evento, invertido);
 		}
 	}
 	al_destroy_bitmap(folha);
@@ -107,11 +120,10 @@ bool inicializar() {
 
 	return true;
 }
-void anima_respirando(ALLEGRO_EVENT* evento) {
+void anima_respirando(ALLEGRO_EVENT* evento, bool invertido) {
 	bool desenha = false;
 	coluna_atual = 0;
 	linha_atual = 0;
-	desloc += 3;
 	while (evento->type != ALLEGRO_EVENT_KEY_DOWN) {
 		al_wait_for_event(fila_eventos, evento);
 		if (evento->type == ALLEGRO_EVENT_TIMER) {
@@ -125,8 +137,10 @@ void anima_respirando(ALLEGRO_EVENT* evento) {
 				regiao_x_folha = coluna_atual * sprite_largura;
 			}
 			for (i = 10; i > 0; i--)
-				al_draw_scaled_bitmap(layers[i], 0, 200, LARGURA_TELA, 593, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
-			al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 400) + desloc, 30 * ALTURA_TELA / 40, 90, 70, 0);
+				al_draw_scaled_bitmap(layers[i], 0, 220, LARGURA_TELA, 573, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+			if (invertido)
+				al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, 30 * ALTURA_TELA / 40, 90, 70, ALLEGRO_FLIP_HORIZONTAL);
+			else { al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, 30 * ALTURA_TELA / 40, 90, 70, 0); }
 			al_flip_display();
 		}
 	}
@@ -164,8 +178,8 @@ void anima_correndo(ALLEGRO_EVENT* evento, bool invertido, int al) {
 			break;
 	}
 }
-void anima_pulando(ALLEGRO_EVENT* evento) {
-	int altura = 0;
+void anima_pulando(ALLEGRO_EVENT* evento, bool invertido) {
+	int altura = 0,i;
 	coluna_atual = 1;
 	linha_atual = 2;
 	while (linha_atual <= 3 && coluna_atual <= 5) {
@@ -187,12 +201,15 @@ void anima_pulando(ALLEGRO_EVENT* evento) {
 			}
 			for (i = 10; i > 0; i--)
 				al_draw_scaled_bitmap(layers[i], 0, 200, LARGURA_TELA, 593, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
-			al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, (30 * ALTURA_TELA / 40) - altura, 90, 70, 0);
+			if (invertido) 
+				al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, 30 * ALTURA_TELA / 40, 90, 70, ALLEGRO_FLIP_HORIZONTAL);
+			else {al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, 30 * ALTURA_TELA / 40, 90, 70, 0);}
 			al_flip_display();
 		}
 	}
 }
-void anima_ataque(ALLEGRO_EVENT* evento, int conta_ataque) {
+void anima_ataque(ALLEGRO_EVENT* evento, int conta_ataque, bool invertido) {
+	int i;
 	coluna_atual = 0;
 	linha_atual = 6+conta_ataque;
 	while (1) {
@@ -211,7 +228,9 @@ void anima_ataque(ALLEGRO_EVENT* evento, int conta_ataque) {
 			}
 			for (i = 10; i > 0; i--)
 				al_draw_scaled_bitmap(layers[i], 0, 200, LARGURA_TELA, 593, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
-			al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 400) + desloc, 30 * ALTURA_TELA / 40, 90, 70, 0);
+			if (invertido)
+				al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, 30 * ALTURA_TELA / 40, 90, 70, ALLEGRO_FLIP_HORIZONTAL);
+			else { al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, 30 * ALTURA_TELA / 40, 90, 70, 0); }
 			al_flip_display();
 		}
 	}
