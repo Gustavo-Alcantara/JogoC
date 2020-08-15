@@ -1,6 +1,6 @@
-#include "classes.h"
+/*#include "classes.h"
 
-void anima(ALLEGRO_EVENT* evento, Carinha* boneco, int indice) {
+void anima(ALLEGRO_EVENT* evento,struct Carinha* boneco, int indice) {
 	int coluna_atual = boneco->ac[indice].inicio[0];
 	int linha_atual = boneco->ac[indice].inicio[1];
 	int cont_frames = 0;
@@ -12,13 +12,14 @@ void anima(ALLEGRO_EVENT* evento, Carinha* boneco, int indice) {
 			if (cont_frames >= boneco->ac[indice].num_frames) {
 				cont_frames = 0;
 				coluna_atual++;
-				if (coluna_atual > boneco->imagem_boneco.num_col) {
+				if (coluna_atual > boneco->imagem_personagem.num_col) {
 					coluna_atual = 0;
 					linha_atual++;
 				}
+
+
+
 			}
 		}
-
 	}
-
-}
+}*/
