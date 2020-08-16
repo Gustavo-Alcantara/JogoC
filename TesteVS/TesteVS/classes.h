@@ -1,3 +1,4 @@
+#pragma once
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -12,14 +13,18 @@
 #define FPS 60.0
 
 
-struct acao{
-	int inicio[2];
-	int final[2];
+struct acao {
+	int inicioX;
+	int inicioY;
+	int finalX;
+	int finalY;
 	int num_frames;
+	int frame_atual;
+	int col_atual;
+	int lin_atual;
 };
 struct Sprite{
 	ALLEGRO_BITMAP* png;
-	const char folha[20];
 	int largura;
 	int altura;
 	int largura_folha;
@@ -41,8 +46,9 @@ struct Carinha{
 	int dy;
 };
 
-void anima_respirando(ALLEGRO_EVENT* evento, bool invertido);
+void anima_principal_respirando(ALLEGRO_EVENT* evento, bool invertido);
 void anima_correndo(ALLEGRO_EVENT* evento, bool invertido, int al);
 void anima_pulando(ALLEGRO_EVENT* evento, bool invertido);
 void anima_ataque(ALLEGRO_EVENT* evento, int conta_ataque, bool invertido);
-void anima(ALLEGRO_EVENT* evento, ALLEGRO_EVENT_QUEUE* fila, struct Carinha* boneco, int indice);
+void anima_personagem(ALLEGRO_EVENT* evento, ALLEGRO_EVENT_QUEUE* fila, struct Carinha* boneco, int indice);
+void reseta_acoes(struct Carinha*boneco, int indice);

@@ -1,4 +1,5 @@
 #pragma once
+#include "classes.h"
 
 int tecla = 0;
 int k = 0, i;
