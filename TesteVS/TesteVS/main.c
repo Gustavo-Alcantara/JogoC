@@ -36,12 +36,12 @@ int main(void) {
 	Principal.imagem_personagem.num_lin = 11;
 	Principal.ac[7].inicioX = 1;
 	Principal.ac[7].inicioY = 6;
-	Principal.ac[7].finalX = 0;
-	Principal.ac[7].finalY = 7;
+	Principal.ac[7].finalX = 6;
+	Principal.ac[7].finalY = 6;
 	Principal.ac[7].num_frames = 3;
 	Principal.ac[2].inicioX = 1;
 	Principal.ac[2].inicioY = 1;
-	Principal.ac[2].finalX = 7;
+	Principal.ac[2].finalX = 6;
 	Principal.ac[2].finalY = 1;
 	Principal.ac[2].num_frames = 8;
 
@@ -70,6 +70,7 @@ int main(void) {
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
+			
 			if (evento.type == 11) {
 				switch (evento.keyboard.keycode) {
 				case ALLEGRO_KEY_D:
@@ -97,7 +98,8 @@ int main(void) {
 						conta_ataque = 0;
 					}
 					else {
-						//anima_personagem(&evento, fila_eventos, &Principal,layers ,ATAQUE1_PRINCIPAL);
+						reseta_acoes(&Principal, 20,	ATAQUE1_PRINCIPAL);
+						acao_atual = ATAQUE1_PRINCIPAL;
 						conta_ataque++;
 					}
 					break;
@@ -107,6 +109,7 @@ int main(void) {
 				for (i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 200, LARGURA_TELA, 593, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
 				anima_personagem(&Principal,acao_atual);
+				//acao_atual = 0;
 			}
 			else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 				sair = true;
