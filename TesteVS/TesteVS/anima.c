@@ -5,15 +5,15 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 	int y_folha;
 
 	if (boneco->ac[indice].frame_atual >= boneco->ac[indice].num_frames) {
-		boneco->ac[indice].frame_atual == 0;
+		boneco->ac[indice].frame_atual = 0;
 		boneco->ac[indice].col_atual++;
 		if (boneco->ac[indice].col_atual > boneco->imagem_personagem.num_col) {
 			boneco->ac[indice].col_atual = 0;
 			boneco->ac[indice].lin_atual++;
-			if (boneco->ac[indice].lin_atual == boneco->ac[indice].finalY && boneco->ac[indice].col_atual > boneco->ac[indice].finalX) {
-				boneco->ac[indice].col_atual == boneco->ac[indice].inicioX;
-				boneco->ac[indice].lin_atual == boneco->ac[indice].inicioY;
-			}
+		}
+		if (boneco->ac[indice].lin_atual == boneco->ac[indice].finalY && boneco->ac[indice].col_atual > boneco->ac[indice].finalX) {
+			boneco->ac[indice].col_atual = boneco->ac[indice].inicioX;
+			boneco->ac[indice].lin_atual = boneco->ac[indice].inicioY;
 		}
 	}
 	
@@ -37,7 +37,7 @@ void reseta_acoes(struct Carinha* boneco,int num_acoes ,int indice) {
 	for (int i = 0; i <= num_acoes;i++) {
 		if (i != indice)
 			boneco->ac[i].frame_atual = 0;
-			boneco->ac[i].col_atual == boneco->ac[i].inicioX;
-			boneco->ac[i].lin_atual == boneco->ac[i].inicioY;
+			boneco->ac[i].col_atual = boneco->ac[i].inicioX;
+			boneco->ac[i].lin_atual = boneco->ac[i].inicioY;
 	}
 }

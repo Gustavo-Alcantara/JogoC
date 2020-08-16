@@ -1,5 +1,6 @@
 #include "classes.h"
 #include "globais.h"
+#include "macros.h"
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
@@ -14,6 +15,36 @@ bool inicializar();
 
 int main(void) {
 	bool inicio = inicializar();
+
+	//Vai virar função de inicialização depois
+	struct Carinha Principal;
+	Principal.dx = (LARGURA_TELA / 40);
+	Principal.dy = (30 * ALTURA_TELA / 40);
+	Principal.direita = true;
+	Principal.veloc = 3;
+	Principal.ac[0].inicioX = 0;
+	Principal.ac[0].inicioY = 0;
+	Principal.ac[0].finalX = 3;
+	Principal.ac[0].finalY = 0;
+	Principal.ac[0].num_frames = 10;
+	Principal.imagem_personagem.png = al_load_bitmap("cara2.png");
+	Principal.imagem_personagem.altura_folha = 37;
+	Principal.imagem_personagem.largura_folha = 50;
+	Principal.imagem_personagem.altura = 70;
+	Principal.imagem_personagem.largura = 90;
+	Principal.imagem_personagem.num_col = 7;
+	Principal.imagem_personagem.num_lin = 11;
+	Principal.ac[7].inicioX = 1;
+	Principal.ac[7].inicioY = 6;
+	Principal.ac[7].finalX = 0;
+	Principal.ac[7].finalY = 7;
+	Principal.ac[7].num_frames = 3;
+	Principal.ac[2].inicioX = 1;
+	Principal.ac[2].inicioY = 1;
+	Principal.ac[2].finalX = 7;
+	Principal.ac[2].finalY = 1;
+	Principal.ac[2].num_frames = 8;
+
 	bool sair = false;
 	bool invertido = false;
 	int conta_ataque = 0;
@@ -32,26 +63,29 @@ int main(void) {
 	layers[9] = al_load_bitmap("Layer_0009_2.png");
 	layers[10] = al_load_bitmap("Layer_0010_1.png");
 
+	reseta_acoes(&Principal, 20, 30);
 
+	int acao_atual = 0;
 	while (!sair) {
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
 			if (evento.type == 11) {
-				switch (evento.keyboard.keycode){
+				switch (evento.keyboard.keycode) {
 				case ALLEGRO_KEY_D:
-					invertido = false;
-					anima_correndo(&evento, invertido, ALLEGRO_KEY_D);
+					Principal.direita = true;
+					reseta_acoes(&Principal,20,CORRENDO_PRINCIPAL);
+					acao_atual = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_A:
-					invertido = true;
-					anima_correndo(&evento, invertido, ALLEGRO_KEY_A);
+					Principal.direita = false;
+					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL);
+					acao_atual = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
-
 					break;
 				case ALLEGRO_KEY_W:
-					anima_pulando(&evento,invertido);
+					anima_pulando(&evento, invertido);
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_S:
@@ -59,24 +93,23 @@ int main(void) {
 					break;
 				case ALLEGRO_KEY_J:
 					if (conta_ataque == 1) {
-						anima_ataque(&evento,conta_ataque, invertido);
+						//anima_ataque(&evento, conta_ataque, invertido);
 						conta_ataque = 0;
 					}
-					else { 
-						anima_ataque(&evento, conta_ataque, invertido);
+					else {
+						//anima_personagem(&evento, fila_eventos, &Principal,layers ,ATAQUE1_PRINCIPAL);
 						conta_ataque++;
 					}
 					break;
-				default:
-					anima_respirando(&evento, invertido);
-					conta_ataque = 0;
-					break;
 				}
+			}
+			else if (evento.type == ALLEGRO_EVENT_TIMER){
+				for (i = 10; i > 0; i--)
+					al_draw_scaled_bitmap(layers[i], 0, 200, LARGURA_TELA, 593, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+				anima_personagem(&Principal,acao_atual);
 			}
 			else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 				sair = true;
-			else
-				anima_respirando(&evento, invertido);
 		}
 	}
 	al_destroy_bitmap(folha);
@@ -120,32 +153,7 @@ bool inicializar() {
 
 	return true;
 }
-void anima_respirando(ALLEGRO_EVENT* evento, bool invertido) {
-	bool desenha = false;
-	coluna_atual = 0;
-	linha_atual = 0;
-	while (evento->type != ALLEGRO_EVENT_KEY_DOWN) {
-		al_wait_for_event(fila_eventos, evento);
-		if (evento->type == ALLEGRO_EVENT_TIMER) {
-			cont_frames++;
-			if (cont_frames >= frames_sprite) {
-				cont_frames = 0;
-				coluna_atual++;
-				if (coluna_atual >= 4)
-					coluna_atual = 0;
-				regiao_y_folha = linha_atual * sprite_altura;
-				regiao_x_folha = coluna_atual * sprite_largura;
-			}
-			for (i = 10; i > 0; i--)
-				al_draw_scaled_bitmap(layers[i], 0, 220, LARGURA_TELA, 573, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
-			if (invertido)
-				al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, 30 * ALTURA_TELA / 40, 90, 70, ALLEGRO_FLIP_HORIZONTAL);
-			else { al_draw_scaled_bitmap(folha, regiao_x_folha, regiao_y_folha, sprite_largura, sprite_altura, (LARGURA_TELA / 40) + desloc, 30 * ALTURA_TELA / 40, 90, 70, 0); }
-			al_flip_display();
-		}
-	}
-}
-void anima_correndo(ALLEGRO_EVENT* evento, bool invertido, int al) {
+void anima_principal_correndo(ALLEGRO_EVENT* evento, bool invertido, int al) {
 	int var = 0;
 	coluna_atual = 2;
 	linha_atual = 1;
