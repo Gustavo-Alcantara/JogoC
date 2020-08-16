@@ -11,7 +11,7 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 			boneco->ac[indice].col_atual = 0;
 			boneco->ac[indice].lin_atual++;
 		}
-		if (boneco->ac[indice].lin_atual == boneco->ac[indice].finalY && boneco->ac[indice].col_atual > boneco->ac[indice].finalX) {
+		if (boneco->ac[indice].lin_atual >= boneco->ac[indice].finalY && boneco->ac[indice].col_atual > boneco->ac[indice].finalX) {
 			boneco->ac[indice].col_atual = boneco->ac[indice].inicioX;
 			boneco->ac[indice].lin_atual = boneco->ac[indice].inicioY;
 		}
@@ -24,7 +24,7 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 		al_draw_scaled_bitmap(boneco->imagem_personagem.png, x_folha, y_folha, boneco->imagem_personagem.largura_folha,
 			boneco->imagem_personagem.altura_folha, boneco->dx, boneco->dy,
 			boneco->imagem_personagem.largura, boneco->imagem_personagem.altura, 0);
-	else {
+	else{
 		al_draw_scaled_bitmap(boneco->imagem_personagem.png, x_folha, y_folha, boneco->imagem_personagem.largura_folha,
 			boneco->imagem_personagem.altura_folha, boneco->dx, boneco->dy,
 			boneco->imagem_personagem.largura, boneco->imagem_personagem.altura, ALLEGRO_FLIP_HORIZONTAL);

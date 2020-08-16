@@ -46,9 +46,5 @@ struct Carinha{
 	int dy;
 };
 
-void anima_principal_respirando(ALLEGRO_EVENT* evento, bool invertido);
-void anima_correndo(ALLEGRO_EVENT* evento, bool invertido, int al);
-void anima_pulando(ALLEGRO_EVENT* evento, bool invertido);
-void anima_ataque(ALLEGRO_EVENT* evento, int conta_ataque, bool invertido);
 void anima_personagem(struct Carinha* boneco, int indice);
 void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice);
