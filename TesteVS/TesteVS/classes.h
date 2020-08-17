@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
+
 
 #define LARGURA_TELA 640
 #define ALTURA_TELA 480
@@ -48,3 +50,5 @@ struct Carinha{
 
 void anima_personagem(struct Carinha* boneco, int indice);
 void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice);
+
+void inicializa_cara(struct Carinha* Principal);
