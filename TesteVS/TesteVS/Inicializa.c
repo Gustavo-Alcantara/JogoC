@@ -23,9 +23,9 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->ac[2].finalX = 6;
 	Principal->ac[2].finalY = 1;
 	Principal->ac[2].num_frames = 8;
-	Principal->ac[7].inicioX = 1;
-	Principal->ac[7].inicioY = 6;
-	Principal->ac[7].finalX = 6;
-	Principal->ac[7].finalY = 6;
-	Principal->ac[7].num_frames = 3;
+	Principal->ac[8].inicioX = 1;
+	Principal->ac[8].inicioY = 6;
+	Principal->ac[8].finalX = 6;
+	Principal->ac[8].finalY = 6;
+	Principal->ac[8].num_frames = 3;
 }

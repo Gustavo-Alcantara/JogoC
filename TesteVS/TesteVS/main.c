@@ -15,7 +15,7 @@ bool inicializar();
 int main(void) {
 	bool inicio = inicializar();
 
-	//Vai virar função de inicialização depois
+	//Virou função de inicialização 
 	struct Carinha Principal;
 	inicializa_cara(&Principal);
 	

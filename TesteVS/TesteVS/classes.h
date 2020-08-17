@@ -52,3 +52,4 @@ void anima_personagem(struct Carinha* boneco, int indice);
 void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice);
 
 void inicializa_cara(struct Carinha* Principal);
+void inicia_esqueleto(struct Carinha* esqueleto);
