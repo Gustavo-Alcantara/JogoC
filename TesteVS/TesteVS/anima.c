@@ -20,16 +20,10 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 	y_folha = boneco->ac[indice].lin_atual * boneco->imagem_personagem.altura_folha;
 	x_folha = boneco->ac[indice].col_atual * boneco->imagem_personagem.largura_folha;
 
-	if (boneco->direita)
-		al_draw_scaled_bitmap(boneco->imagem_personagem.png, x_folha, y_folha, boneco->imagem_personagem.largura_folha,
+	al_draw_scaled_bitmap(boneco->imagem_personagem.png, x_folha, y_folha, boneco->imagem_personagem.largura_folha,
 			boneco->imagem_personagem.altura_folha, boneco->dx, boneco->dy,
-			boneco->imagem_personagem.largura, boneco->imagem_personagem.altura, 0);
-	else{
-		al_draw_scaled_bitmap(boneco->imagem_personagem.png, x_folha, y_folha, boneco->imagem_personagem.largura_folha,
-			boneco->imagem_personagem.altura_folha, boneco->dx, boneco->dy,
-			boneco->imagem_personagem.largura, boneco->imagem_personagem.altura, ALLEGRO_FLIP_HORIZONTAL);
-	}
-		al_flip_display();
+			boneco->imagem_personagem.largura, boneco->imagem_personagem.altura, boneco->direita);
+
 		boneco->ac[indice].frame_atual++;
 }
 

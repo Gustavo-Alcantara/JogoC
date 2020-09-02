@@ -17,6 +17,8 @@ int main(void) {
 
 	//Virou função de inicialização 
 	struct Carinha Principal;
+	struct Carinha Goblin;
+	inicia_goblin(&Goblin,7*LARGURA_TELA/10 ,(26 * ALTURA_TELA / 40));
 	inicializa_cara(&Principal);
 	
 	bool sair = false;
@@ -37,6 +39,7 @@ int main(void) {
 	layers[10] = al_load_bitmap("Layer_0010_1.png");
 
 	reseta_acoes(&Principal, 20, 30);
+	reseta_acoes(&Goblin, 20, 30);
 
 	int acao_atual = 0;
 	while (!sair) {
@@ -47,13 +50,13 @@ int main(void) {
 				switch (evento.keyboard.keycode) {
 				case ALLEGRO_KEY_D:
 					reseta_acoes(&Principal,20,CORRENDO_PRINCIPAL);
-					Principal.direita = true;
+					Principal.direita = 0;
 					acao_atual = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_A:
 					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL);
-					Principal.direita = false;
+					Principal.direita = ALLEGRO_FLIP_HORIZONTAL;
 					acao_atual = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
 					break;
@@ -83,9 +86,18 @@ int main(void) {
 				acao_atual = 0;
 			}
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
+				if (acao_atual == CORRENDO_PRINCIPAL) {
+					if(Principal.direita == 0)
+						Principal.dx += Principal.veloc;
+					else
+						Principal.dx -= Principal.veloc;
+				}
+				
 				for (int i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 230, LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+				anima_personagem(&Goblin, 0);
 				anima_personagem(&Principal,acao_atual);
+				al_flip_display();
 				//acao_atual = 0;
 			}
 			else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)

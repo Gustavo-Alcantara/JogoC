@@ -41,7 +41,7 @@ struct Carinha{
 	char nome[20];
 	int vida_total;
 	int vida_atual;
-	bool direita;
+	int direita;
 	int veloc;
 	int altura_pulo;
 	int dx;
@@ -52,4 +52,4 @@ void anima_personagem(struct Carinha* boneco, int indice);
 void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice);
 
 void inicializa_cara(struct Carinha* Principal);
-void inicia_esqueleto(struct Carinha* esqueleto);
+void inicia_goblin(struct Carinha* Goblin, int dx, int dy);
