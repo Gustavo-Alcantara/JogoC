@@ -26,12 +26,13 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 
 		boneco->ac[indice].frame_atual++;
 }
-
-void reseta_acoes(struct Carinha* boneco,int num_acoes ,int indice) {
-	for (int i = 0; i <= num_acoes;i++) {
-		if (i != indice)
+void reseta_acoes(struct Carinha*boneco, int num_acoes, int indice,int direita) {
+	for (int i = 0; i <= num_acoes; i++) {
+		if (i != indice) {
 			boneco->ac[i].frame_atual = 0;
 			boneco->ac[i].col_atual = boneco->ac[i].inicioX;
 			boneco->ac[i].lin_atual = boneco->ac[i].inicioY;
+		}
 	}
+	boneco->direita = direita;
 }

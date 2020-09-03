@@ -39,6 +39,7 @@ struct Carinha{
 	struct Sprite imagem_personagem;
 	struct acao ac[20];
 	char nome[20];
+	int ac_atual;
 	int vida_total;
 	int vida_atual;
 	int direita;
@@ -49,7 +50,7 @@ struct Carinha{
 };
 
 void anima_personagem(struct Carinha* boneco, int indice);
-void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice);
+void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice,int direita);
 
 void inicializa_cara(struct Carinha* Principal);
 void inicia_goblin(struct Carinha* Goblin, int dx, int dy);

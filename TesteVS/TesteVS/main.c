@@ -23,6 +23,7 @@ int main(void) {
 	
 	bool sair = false;
 	int conta_ataque = 0;
+	int acao_goblin=0;
 	if (!inicio)
 		return -1;
 
@@ -38,8 +39,8 @@ int main(void) {
 	layers[9] = al_load_bitmap("Layer_0009_2.png");
 	layers[10] = al_load_bitmap("Layer_0010_1.png");
 
-	reseta_acoes(&Principal, 20, 30);
-	reseta_acoes(&Goblin, 20, 30);
+	reseta_acoes(&Principal, 20, 30,Principal.direita);
+	reseta_acoes(&Goblin, 20, 30,Goblin.direita);
 
 	int acao_atual = 0;
 	while (!sair) {
@@ -49,31 +50,29 @@ int main(void) {
 			if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
 				switch (evento.keyboard.keycode) {
 				case ALLEGRO_KEY_D:
-					reseta_acoes(&Principal,20,CORRENDO_PRINCIPAL);
+					reseta_acoes(&Principal,20,CORRENDO_PRINCIPAL, Principal.direita);
 					Principal.direita = 0;
 					acao_atual = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_A:
-					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL);
+					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL, Principal.direita);
 					Principal.direita = ALLEGRO_FLIP_HORIZONTAL;
 					acao_atual = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_W:
-					//anima_pulando(&evento, invertido);
+
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_S:
-					//anima_abaixado(&evento); 
 					break;
 				case ALLEGRO_KEY_J:
 					if (conta_ataque == 1) {
-						//anima_ataque(&evento, conta_ataque, invertido);
 						conta_ataque = 0;
 					}
 					else {
-						reseta_acoes(&Principal, 20,	ATAQUE1_PRINCIPAL);
+						reseta_acoes(&Principal, 20,	ATAQUE1_PRINCIPAL, Principal.direita);
 						acao_atual = ATAQUE1_PRINCIPAL;
 						conta_ataque++;
 					}
@@ -82,7 +81,7 @@ int main(void) {
 			}
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
 				if(acao_atual!=ATAQUE1_PRINCIPAL)
-					reseta_acoes(&Principal, 20, 30);
+					reseta_acoes(&Principal, 20, 30, Principal.direita);
 				acao_atual = 0;
 			}
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
@@ -93,9 +92,27 @@ int main(void) {
 						Principal.dx -= Principal.veloc;
 				}
 				
+				if (Goblin.dx < Principal.dx-50)
+					Goblin.direita = 0;
+				else Goblin.direita = ALLEGRO_FLIP_HORIZONTAL;
+
+
+				if(Goblin.dx - Principal.dx < 10 && Goblin.dx - Principal.dx > 0 || Principal.dx - Goblin.dx < 10 && Principal.dx - Goblin.dx > 0)
+					acao_goblin = GOBLIN_BATENDO;
+				else if(Goblin.dx - Principal.dx < 100 && Goblin.dx - Principal.dx > 0 || Principal.dx - Goblin.dx < 100 && Principal.dx-Goblin.dx > 0)
+					acao_goblin = CORRENDO_GOBLIN;
+				else if (Goblin.dx -Principal.dx < 200)
+					acao_goblin = TACA_BOMBAGOBLIN;
+				else
+					acao_goblin = PARADO_GOBLIN;
+				if (acao_goblin == CORRENDO_GOBLIN) {
+					if (Goblin.direita == 0)
+						Goblin.dx += Goblin.veloc;
+					else Goblin.dx -= Goblin.veloc;
+				}
 				for (int i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 230, LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
-				anima_personagem(&Goblin, 0);
+				anima_personagem(&Goblin, acao_goblin);
 				anima_personagem(&Principal,acao_atual);
 				al_flip_display();
 				//acao_atual = 0;
