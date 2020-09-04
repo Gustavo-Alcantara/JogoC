@@ -4,6 +4,7 @@
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro5.h>
+#include <allegro5/allegro_primitives.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -34,7 +35,16 @@ struct Sprite{
 	int num_col;
 	int num_lin;
 };
-	
+struct Projetil {
+	struct Sprite img;
+	int dx;
+	int dy;
+	int veloc;
+	int num_frames;
+	int frame_atual;
+	int col_atual;
+	int lin_atual;
+};
 struct Carinha{
 	struct Sprite imagem_personagem;
 	struct acao ac[20];
@@ -47,6 +57,8 @@ struct Carinha{
 	int altura_pulo;
 	int dx;
 	int dy;
+	int cx;
+	int cy;
 };
 
 void anima_personagem(struct Carinha* boneco, int indice);
@@ -54,3 +66,4 @@ void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice,int direita);
 
 void inicializa_cara(struct Carinha* Principal);
 void inicia_goblin(struct Carinha* Goblin, int dx, int dy);
+void carrega_projetil_goblin(struct Projetil* Bomba, struct Carinha* Goblin);

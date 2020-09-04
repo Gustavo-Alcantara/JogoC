@@ -10,16 +10,20 @@ ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_KEYBOARD_STATE* teclado = NULL;
 
 bool inicializar();
+int modulo(int a);
 
 
 int main(void) {
 	bool inicio = inicializar();
-
 	//Virou função de inicialização 
 	struct Carinha Principal;
 	struct Carinha Goblin;
+	struct Projetil Bomba;
+
+
 	inicia_goblin(&Goblin,7*LARGURA_TELA/10 ,(26 * ALTURA_TELA / 40));
 	inicializa_cara(&Principal);
+	carrega_projetil_goblin(&Bomba, &Goblin);
 	
 	bool sair = false;
 	int conta_ataque = 0;
@@ -47,7 +51,7 @@ int main(void) {
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
-			if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+			if (evento.type == ALLEGRO_EVENT_KEY_DOWN){
 				switch (evento.keyboard.keycode) {
 				case ALLEGRO_KEY_D:
 					reseta_acoes(&Principal,20,CORRENDO_PRINCIPAL, Principal.direita);
@@ -80,8 +84,7 @@ int main(void) {
 				}
 			}
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
-				if(acao_atual!=ATAQUE1_PRINCIPAL)
-					reseta_acoes(&Principal, 20, 30, Principal.direita);
+				reseta_acoes(&Principal, 20, ATAQUE1_PRINCIPAL, Principal.direita);
 				acao_atual = 0;
 			}
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
@@ -96,12 +99,11 @@ int main(void) {
 					Goblin.direita = 0;
 				else Goblin.direita = ALLEGRO_FLIP_HORIZONTAL;
 
-
-				if(Goblin.dx - Principal.dx < 10 && Goblin.dx - Principal.dx > 0 || Principal.dx - Goblin.dx < 10 && Principal.dx - Goblin.dx > 0)
+				if (Goblin.cx + 75 > Principal.cx && Principal.cx > Goblin.cx-75)
 					acao_goblin = GOBLIN_BATENDO;
-				else if(Goblin.dx - Principal.dx < 100 && Goblin.dx - Principal.dx > 0 || Principal.dx - Goblin.dx < 100 && Principal.dx-Goblin.dx > 0)
+				else if(Goblin.cx + 125 > Principal.cx && Principal.cx > Goblin.cx - 125)
 					acao_goblin = CORRENDO_GOBLIN;
-				else if (Goblin.dx -Principal.dx < 200)
+				else if (Goblin.cx + 250 > Principal.cx && Principal.cx > Goblin.cx - 250)
 					acao_goblin = TACA_BOMBAGOBLIN;
 				else
 					acao_goblin = PARADO_GOBLIN;
@@ -110,10 +112,19 @@ int main(void) {
 						Goblin.dx += Goblin.veloc;
 					else Goblin.dx -= Goblin.veloc;
 				}
+
+				
 				for (int i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 230, LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
 				anima_personagem(&Goblin, acao_goblin);
 				anima_personagem(&Principal,acao_atual);
+				//al_draw_rectangle(Goblin.dx+Goblin.imagem_personagem.largura/2 -range , Goblin.dy + Goblin.imagem_personagem.altura / 2-range, Goblin.dx + Goblin.imagem_personagem.largura / 2 + range,Goblin.dy + Goblin.imagem_personagem.altura / 2 + range, al_map_rgb(255, 255, 255),1);
+				//al_draw_rectangle(Principal.dx+Principal.imagem_personagem.largura/2 -range , Principal.dy + Principal.imagem_personagem.altura / 2-range, Principal.dx + Principal.imagem_personagem.largura / 2 + range,Principal.dy + Principal.imagem_personagem.altura / 2 + range, al_map_rgb(255, 255, 255),1);
+				if (acao_goblin == TACA_BOMBAGOBLIN) {
+					Bomba.dx = Goblin.dx-50;
+					Bomba.dy = Goblin.dy;
+					//anima_projetil(&Bomba);
+				}
 				al_flip_display();
 				//acao_atual = 0;
 			}
@@ -135,7 +146,8 @@ bool inicializar() {
 	if (!al_init_image_addon()) {
 		return false;
 	}
-	
+	if(!al_init_primitives_addon())
+		return false;
 	if (!al_install_keyboard()) {
 		return false;
 	}
@@ -161,4 +173,9 @@ bool inicializar() {
 	al_start_timer(timer);
 
 	return true;
+}
+int modulo(int a) {
+	if (a < 0)
+		return -a;
+	return a;
 }
