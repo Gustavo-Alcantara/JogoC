@@ -15,8 +15,11 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 			boneco->ac[indice].lin_atual++;
 		}
 		if (boneco->ac[indice].lin_atual >= boneco->ac[indice].finalY && boneco->ac[indice].col_atual > boneco->ac[indice].finalX) {
-			boneco->ac[indice].col_atual = boneco->ac[indice].inicioX;
-			boneco->ac[indice].lin_atual = boneco->ac[indice].inicioY;
+			boneco->block = false;
+			reseta_acao(&boneco->ac[indice]);
+			if (indice > 2) 
+				boneco->acao_atual = boneco->acao_espera; 
+			
 		}
 	}
 	
@@ -39,20 +42,25 @@ void reseta_acoes(struct Carinha*boneco, int num_acoes, int indice,int direita) 
 	}
 	boneco->direita = direita;
 }
+void reseta_acao(struct acao*ac) {
+	ac->frame_atual = 0;
+	ac->col_atual = ac->inicioX;
+	ac->lin_atual = ac->inicioY;
+}
 void anima_projetil(struct Projetil* Bomba) {
 	int x_folha;
-
+	
 	if (Bomba->frame_atual >= Bomba->num_frames) {
 		Bomba->frame_atual = 0;
 		Bomba->col_atual++;
-		if (Bomba->col_atual == Bomba->img.num_col)
-			al_destroy_bitmap(Bomba->img.png);
-		else {
-			x_folha = Bomba->col_atual * Bomba->img.largura_folha;
-			al_draw_scaled_bitmap(Bomba->img.png, x_folha, 0,Bomba->img.largura_folha,
-				Bomba->img.altura_folha, Bomba->dx, Bomba->dy,
-				Bomba->img.largura, Bomba->img.altura,0);
-			Bomba->frame_atual++;
-		}
+	}
+	x_folha = Bomba->col_atual * Bomba->img.largura_folha;
+	al_draw_scaled_bitmap(Bomba->img.png, x_folha, 0,Bomba->img.largura_folha,
+		Bomba->img.altura_folha, Bomba->dx, Bomba->dy,
+		Bomba->img.largura, Bomba->img.altura,0);
+	Bomba->frame_atual++;
+	if (Bomba->col_atual == Bomba->img.num_col) {
+		Bomba->col_atual = 0;
+		Bomba->existe = false;
 	}
 }

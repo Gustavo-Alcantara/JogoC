@@ -10,7 +10,6 @@ ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_KEYBOARD_STATE* teclado = NULL;
 
 bool inicializar();
-int modulo(int a);
 
 
 int main(void) {
@@ -46,27 +45,27 @@ int main(void) {
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
 	reseta_acoes(&Goblin, 20, 30,Goblin.direita);
 
-	int acao_atual = 0;
 	while (!sair) {
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
-			if (evento.type == ALLEGRO_EVENT_KEY_DOWN){
+			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && !Principal.block){
 				switch (evento.keyboard.keycode) {
 				case ALLEGRO_KEY_D:
 					reseta_acoes(&Principal,20,CORRENDO_PRINCIPAL, Principal.direita);
 					Principal.direita = 0;
-					acao_atual = CORRENDO_PRINCIPAL;
+					Principal.acao_atual = CORRENDO_PRINCIPAL;
+					Principal.acao_espera = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_A:
 					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL, Principal.direita);
 					Principal.direita = ALLEGRO_FLIP_HORIZONTAL;
-					acao_atual = CORRENDO_PRINCIPAL;
+					Principal.acao_atual = CORRENDO_PRINCIPAL;
+					Principal.acao_espera = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_W:
-
 					conta_ataque = 0;
 					break;
 				case ALLEGRO_KEY_S:
@@ -77,56 +76,84 @@ int main(void) {
 					}
 					else {
 						reseta_acoes(&Principal, 20,	ATAQUE1_PRINCIPAL, Principal.direita);
-						acao_atual = ATAQUE1_PRINCIPAL;
+						Principal.acao_atual = ATAQUE1_PRINCIPAL;
+						Principal.block = true;
 						conta_ataque++;
 					}
 					break;
 				}
 			}
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
-				reseta_acoes(&Principal, 20, ATAQUE1_PRINCIPAL, Principal.direita);
-				acao_atual = 0;
+				switch (evento.keyboard.keycode) {
+				case ALLEGRO_KEY_D:
+					Principal.acao_espera = 0;
+					if (Principal.acao_atual == CORRENDO_PRINCIPAL && Principal.direita == 0)
+						Principal.acao_atual = RESPIRA_PRINCIPAL;
+					reseta_acao(&Principal.ac[CORRENDO_PRINCIPAL]);
+					break;
+				case ALLEGRO_KEY_A:
+					Principal.acao_espera = 0;
+					if (Principal.acao_atual == CORRENDO_PRINCIPAL && Principal.direita == ALLEGRO_FLIP_HORIZONTAL)
+						Principal.acao_atual = RESPIRA_PRINCIPAL;
+					reseta_acao(&Principal.ac[CORRENDO_PRINCIPAL]);
+					break;
+				case ALLEGRO_KEY_W:
+					//reseta_acao(Principal.ac[CORRENDO_PRINCIPAL]);
+					break;
+				case ALLEGRO_KEY_S:
+					//reseta_acao(Principal.ac[CORRENDO_PRINCIPAL]);
+					break;
+				}
 			}
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
-				if (acao_atual == CORRENDO_PRINCIPAL) {
+				if (Principal.acao_atual == CORRENDO_PRINCIPAL) {
 					if(Principal.direita == 0)
 						Principal.dx += Principal.veloc;
 					else
 						Principal.dx -= Principal.veloc;
 				}
-				
-				if (Goblin.dx < Principal.dx-50)
-					Goblin.direita = 0;
-				else Goblin.direita = ALLEGRO_FLIP_HORIZONTAL;
 
-				if (Goblin.cx + 75 > Principal.cx && Principal.cx > Goblin.cx-75)
-					acao_goblin = GOBLIN_BATENDO;
-				else if(Goblin.cx + 125 > Principal.cx && Principal.cx > Goblin.cx - 125)
-					acao_goblin = CORRENDO_GOBLIN;
-				else if (Goblin.cx + 250 > Principal.cx && Principal.cx > Goblin.cx - 250)
-					acao_goblin = TACA_BOMBAGOBLIN;
-				else
-					acao_goblin = PARADO_GOBLIN;
-				if (acao_goblin == CORRENDO_GOBLIN) {
-					if (Goblin.direita == 0)
-						Goblin.dx += Goblin.veloc;
-					else Goblin.dx -= Goblin.veloc;
+				if (!Goblin.block) {
+					if (Goblin.dx < Principal.dx - 50)
+						Goblin.direita = 0;
+					else Goblin.direita = ALLEGRO_FLIP_HORIZONTAL;
+
+					if (Goblin.cx + 74 > Principal.cx && Principal.cx > Goblin.cx - 74) {
+						Goblin.acao_atual = GOBLIN_BATENDO;
+						Goblin.block = true;
+					}
+					else if (Goblin.cx + 200 > Principal.cx && Principal.cx > Goblin.cx - 200)
+						Goblin.acao_atual = CORRENDO_GOBLIN;
+					else if (Goblin.cx + 400 > Principal.cx && Principal.cx > Goblin.cx - 400 && !Bomba.existe) {
+						Goblin.acao_atual = TACA_BOMBAGOBLIN;
+						Goblin.block = true;
+					}
+
+					else
+						Goblin.acao_atual = PARADO_GOBLIN;
+					if (Goblin.acao_atual == CORRENDO_GOBLIN) {
+						if (Goblin.direita == 0)
+							Goblin.dx += Goblin.veloc;
+						else Goblin.dx -= Goblin.veloc;
+					}
 				}
 
-				
 				for (int i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 230, LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
-				anima_personagem(&Goblin, acao_goblin);
-				anima_personagem(&Principal,acao_atual);
-				//al_draw_rectangle(Goblin.dx+Goblin.imagem_personagem.largura/2 -range , Goblin.dy + Goblin.imagem_personagem.altura / 2-range, Goblin.dx + Goblin.imagem_personagem.largura / 2 + range,Goblin.dy + Goblin.imagem_personagem.altura / 2 + range, al_map_rgb(255, 255, 255),1);
-				//al_draw_rectangle(Principal.dx+Principal.imagem_personagem.largura/2 -range , Principal.dy + Principal.imagem_personagem.altura / 2-range, Principal.dx + Principal.imagem_personagem.largura / 2 + range,Principal.dy + Principal.imagem_personagem.altura / 2 + range, al_map_rgb(255, 255, 255),1);
-				if (acao_goblin == TACA_BOMBAGOBLIN) {
-					Bomba.dx = Goblin.dx-50;
-					Bomba.dy = Goblin.dy;
-					//anima_projetil(&Bomba);
+
+				anima_personagem(&Goblin, Goblin.acao_atual);
+				anima_personagem(&Principal, Principal.acao_atual);
+				if (Goblin.acao_atual == TACA_BOMBAGOBLIN && Goblin.ac[TACA_BOMBAGOBLIN].col_atual == Goblin.ac[TACA_BOMBAGOBLIN].finalX)
+					Bomba.existe = true;
+				if (Bomba.existe) {
+					int a = 1;
+					if (Goblin.direita == 0)
+						a = -1;
+					Bomba.dx = Goblin.cx-Bomba.img.largura/2 -a*40;
+					Bomba.dy = Goblin.cy-Bomba.img.largura / 2-10;
+					anima_projetil(&Bomba);
 				}
 				al_flip_display();
-				//acao_atual = 0;
 			}
 			else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
 				sair = true;
@@ -154,6 +181,7 @@ bool inicializar() {
 	janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
 	if (!janela)
 		return false;
+	al_set_window_title(janela, "Ainda não sei o nome amém");
 	fila_eventos = al_create_event_queue();
 	if (!fila_eventos) {
 		al_destroy_display(janela);
@@ -173,9 +201,4 @@ bool inicializar() {
 	al_start_timer(timer);
 
 	return true;
-}
-int modulo(int a) {
-	if (a < 0)
-		return -a;
-	return a;
 }

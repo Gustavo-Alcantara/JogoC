@@ -6,6 +6,7 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->dy = (32 * ALTURA_TELA / 40);
 	Principal->direita = 0;
 	Principal->veloc = 4;
+	Principal->block = false;
 	Principal->imagem_personagem.png = al_load_bitmap("cara2.png");
 	Principal->imagem_personagem.altura_folha = 37;
 	Principal->imagem_personagem.largura_folha = 50;
@@ -37,6 +38,7 @@ void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	Goblin->dy = dy;
 	Goblin->direita = ALLEGRO_FLIP_HORIZONTAL;
 	Goblin->veloc = 3;
+	Goblin->block = false;
 	Goblin->imagem_personagem.png = al_load_bitmap("Goblin.png");
 	Goblin->imagem_personagem.altura_folha = 150;
 	Goblin->imagem_personagem.largura_folha = 150;
@@ -55,7 +57,7 @@ void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	Goblin->ac[1].inicioY = 0;
 	Goblin->ac[1].finalX = 15;
 	Goblin->ac[1].finalY = 0;
-	Goblin->ac[1].num_frames = 9;
+	Goblin->ac[1].num_frames = 6;
 	Goblin->ac[2].inicioX = 16;
 	Goblin->ac[2].inicioY = 0;
 	Goblin->ac[2].finalX = 23;
@@ -68,18 +70,19 @@ void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	Goblin->ac[3].num_frames = 5;
 }
 void carrega_projetil_goblin(struct Projetil*Bomba,struct Carinha*Goblin) {
-	Bomba->dx = Goblin->dx;
-	Bomba->dy = Goblin->dy;
+	Bomba->dx = Goblin->cx;
+	Bomba->dy = Goblin->cy;
 	Bomba->img.png = al_load_bitmap("Bomb_sprite.png");
 	Bomba->img.altura_folha = 100;
 	Bomba->img.largura_folha = 100;
-	Bomba->img.altura = 300;
-	Bomba->img.largura = 300;
+	Bomba->img.altura = 130;
+	Bomba->img.largura = 130;
 	Bomba->img.num_col=19;
 	Bomba->img.num_lin=1;
 	Bomba->col_atual=0;
 	Bomba->lin_atual=0;
 	Bomba->frame_atual=0;
 	Bomba->num_frames=8;
+	Bomba->existe = false;
 
 }

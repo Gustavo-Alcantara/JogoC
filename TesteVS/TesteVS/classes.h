@@ -15,7 +15,12 @@
 #define ALTURA_TELA 480
 #define FPS 60.0
 
-
+struct Hitbox{
+	int dx;
+	int dy;
+	int altura;
+	int largura;
+};
 struct acao {
 	int inicioX;
 	int inicioY;
@@ -44,12 +49,13 @@ struct Projetil {
 	int frame_atual;
 	int col_atual;
 	int lin_atual;
+	bool existe;
 };
 struct Carinha{
 	struct Sprite imagem_personagem;
 	struct acao ac[20];
 	char nome[20];
-	int ac_atual;
+	int acao_atual;
 	int vida_total;
 	int vida_atual;
 	int direita;
@@ -59,6 +65,8 @@ struct Carinha{
 	int dy;
 	int cx;
 	int cy;
+	int acao_espera;
+	bool block;
 };
 
 void anima_personagem(struct Carinha* boneco, int indice);
@@ -67,3 +75,5 @@ void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice,int direita);
 void inicializa_cara(struct Carinha* Principal);
 void inicia_goblin(struct Carinha* Goblin, int dx, int dy);
 void carrega_projetil_goblin(struct Projetil* Bomba, struct Carinha* Goblin);
+void reseta_acao(struct acao*ac);
+void anima_projetil(struct Projetil* Bomba);
