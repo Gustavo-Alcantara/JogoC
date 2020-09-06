@@ -28,9 +28,29 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->ac[2].num_frames = 7;
 	Principal->ac[8].inicioX = 1;
 	Principal->ac[8].inicioY = 6;
-	Principal->ac[8].finalX = 6;
+	Principal->ac[8].finalX = 5;
 	Principal->ac[8].finalY = 6;
 	Principal->ac[8].num_frames = 3;
+	Principal->ac[8].frame_atual = 0;
+	Principal->ac[9].inicioX = 3;
+	Principal->ac[9].inicioY = 3;
+	Principal->ac[9].finalX = 0;
+	Principal->ac[9].finalY = 4;
+	Principal->ac[9].num_frames = 5;
+	Principal->ac[9].frame_atual = 0;
+	Principal->ac[10].inicioX = 0;
+	Principal->ac[10].inicioY = 7;
+	Principal->ac[10].finalX = 2;
+	Principal->ac[10].finalY = 7;
+	Principal->ac[10].num_frames = 4;
+	Principal->ac[10].frame_atual = 0;
+	Principal->ac[11].inicioX = 3;
+	Principal->ac[11].inicioY = 7;
+	Principal->ac[11].finalX = 2;
+	Principal->ac[11].finalY = 8;
+	Principal->ac[11].num_frames = 4;
+	Principal->ac[11].frame_atual = 0;
+
 }
 void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	strcpy(Goblin->nome ,"Piolho");
@@ -42,8 +62,8 @@ void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	Goblin->imagem_personagem.png = al_load_bitmap("Goblin.png");
 	Goblin->imagem_personagem.altura_folha = 150;
 	Goblin->imagem_personagem.largura_folha = 150;
-	Goblin->imagem_personagem.altura = 210;
-	Goblin->imagem_personagem.largura = 210;
+	Goblin->imagem_personagem.altura = 175;
+	Goblin->imagem_personagem.largura = 175;
 	Goblin->imagem_personagem.num_col = 32;
 	Goblin->imagem_personagem.num_lin = 1;
 	Goblin->cx = Goblin->dx + Goblin->imagem_personagem.largura / 2;

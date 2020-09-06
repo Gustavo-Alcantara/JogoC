@@ -10,16 +10,16 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 	if (boneco->ac[indice].frame_atual >= boneco->ac[indice].num_frames) {
 		boneco->ac[indice].frame_atual = 0;
 		boneco->ac[indice].col_atual++;
-		if (boneco->ac[indice].col_atual > boneco->imagem_personagem.num_col) {
-			boneco->ac[indice].col_atual = 0;
-			boneco->ac[indice].lin_atual++;
-		}
 		if (boneco->ac[indice].lin_atual >= boneco->ac[indice].finalY && boneco->ac[indice].col_atual > boneco->ac[indice].finalX) {
 			boneco->block = false;
 			reseta_acao(&boneco->ac[indice]);
 			if (indice > 2) 
 				boneco->acao_atual = boneco->acao_espera; 
 			
+		}
+		if (boneco->ac[indice].col_atual == boneco->imagem_personagem.num_col) {
+			boneco->ac[indice].col_atual = 0;
+			boneco->ac[indice].lin_atual++;
 		}
 	}
 	

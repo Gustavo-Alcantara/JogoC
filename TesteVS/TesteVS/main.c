@@ -20,7 +20,7 @@ int main(void) {
 	struct Projetil Bomba;
 
 
-	inicia_goblin(&Goblin,7*LARGURA_TELA/10 ,(26 * ALTURA_TELA / 40));
+	inicia_goblin(&Goblin,7*LARGURA_TELA/10 ,(28 * ALTURA_TELA / 40));
 	inicializa_cara(&Principal);
 	carrega_projetil_goblin(&Bomba, &Goblin);
 	
@@ -65,21 +65,28 @@ int main(void) {
 					Principal.acao_espera = CORRENDO_PRINCIPAL;
 					conta_ataque = 0;
 					break;
-				case ALLEGRO_KEY_W:
-					conta_ataque = 0;
+				case ALLEGRO_KEY_LSHIFT:
+					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL, Principal.direita);
+					Principal.acao_atual = DESLIZA_PRINCIPAL;
+					Principal.block = true;
 					break;
 				case ALLEGRO_KEY_S:
 					break;
 				case ALLEGRO_KEY_J:
-					if (conta_ataque == 1) {
-						conta_ataque = 0;
+					reseta_acoes(&Principal, 20,	ATAQUE1_PRINCIPAL, Principal.direita);
+					if (conta_ataque == 2) {
+						Principal.acao_atual = ATAQUE3_PRINCIPAL;
+						conta_ataque=0;
+					}
+					else if (conta_ataque == 1) {
+						Principal.acao_atual = ATAQUE2_PRINCIPAL;
+						conta_ataque ++;
 					}
 					else {
-						reseta_acoes(&Principal, 20,	ATAQUE1_PRINCIPAL, Principal.direita);
 						Principal.acao_atual = ATAQUE1_PRINCIPAL;
-						Principal.block = true;
-						conta_ataque++;
+						conta_ataque ++;
 					}
+					Principal.block = true;
 					break;
 				}
 			}
@@ -106,7 +113,7 @@ int main(void) {
 				}
 			}
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
-				if (Principal.acao_atual == CORRENDO_PRINCIPAL) {
+				if (Principal.acao_atual == CORRENDO_PRINCIPAL || Principal.acao_atual == DESLIZA_PRINCIPAL) {
 					if(Principal.direita == 0)
 						Principal.dx += Principal.veloc;
 					else
