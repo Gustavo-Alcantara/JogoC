@@ -42,9 +42,11 @@ struct Sprite{
 };
 struct Projetil {
 	struct Sprite img;
+	int xi;
+	int yi;
 	int dx;
 	int dy;
-	int veloc;
+	float veloc;
 	int num_frames;
 	int frame_atual;
 	int col_atual;

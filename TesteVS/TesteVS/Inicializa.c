@@ -30,7 +30,7 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->ac[8].inicioY = 6;
 	Principal->ac[8].finalX = 5;
 	Principal->ac[8].finalY = 6;
-	Principal->ac[8].num_frames = 3;
+	Principal->ac[8].num_frames = 5;
 	Principal->ac[8].frame_atual = 0;
 	Principal->ac[9].inicioX = 3;
 	Principal->ac[9].inicioY = 3;
@@ -42,13 +42,13 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->ac[10].inicioY = 7;
 	Principal->ac[10].finalX = 2;
 	Principal->ac[10].finalY = 7;
-	Principal->ac[10].num_frames = 4;
+	Principal->ac[10].num_frames = 5;
 	Principal->ac[10].frame_atual = 0;
 	Principal->ac[11].inicioX = 3;
 	Principal->ac[11].inicioY = 7;
 	Principal->ac[11].finalX = 2;
 	Principal->ac[11].finalY = 8;
-	Principal->ac[11].num_frames = 4;
+	Principal->ac[11].num_frames = 5;
 	Principal->ac[11].frame_atual = 0;
 
 }
@@ -102,7 +102,8 @@ void carrega_projetil_goblin(struct Projetil*Bomba,struct Carinha*Goblin) {
 	Bomba->col_atual=0;
 	Bomba->lin_atual=0;
 	Bomba->frame_atual=0;
-	Bomba->num_frames=8;
+	Bomba->num_frames=5;
 	Bomba->existe = false;
+	Bomba->veloc = 6;
 
 }

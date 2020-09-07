@@ -154,10 +154,17 @@ int main(void) {
 					Bomba.existe = true;
 				if (Bomba.existe) {
 					int a = 1;
+					int x1;
 					if (Goblin.direita == 0)
 						a = -1;
-					Bomba.dx = Goblin.cx-Bomba.img.largura/2 -a*40;
-					Bomba.dy = Goblin.cy-Bomba.img.largura / 2-10;
+					if (Bomba.frame_atual == 0 && Bomba.col_atual == 0) {
+						Bomba.xi = Goblin.cx-Bomba.img.largura/2 -a*40;
+						Bomba.yi = Goblin.cy-Bomba.img.largura / 2-10;
+						x1 = Principal.cx - 50;
+					}
+					Bomba.dx = Bomba.xi -a*Bomba.veloc * (Bomba.frame_atual + Bomba.col_atual*Bomba.num_frames);
+					//Bomba.dy = Bomba.yi;
+					Bomba.dy =Bomba.yi + 0.0025*(Bomba.dx - Bomba.xi)*(Bomba.dx - x1);
 					anima_projetil(&Bomba);
 				}
 				al_flip_display();

@@ -61,6 +61,7 @@ void anima_projetil(struct Projetil* Bomba) {
 	Bomba->frame_atual++;
 	if (Bomba->col_atual == Bomba->img.num_col) {
 		Bomba->col_atual = 0;
+		Bomba->frame_atual = 0;
 		Bomba->existe = false;
 	}
 }
