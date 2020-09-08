@@ -16,10 +16,10 @@
 #define FPS 60.0
 
 struct Hitbox{
-	int dx;
-	int dy;
-	int altura;
-	int largura;
+	int x0;
+	int y0;
+	int x1;
+	int y1;
 };
 struct acao {
 	int inicioX;
@@ -42,15 +42,14 @@ struct Sprite{
 };
 struct Projetil {
 	struct Sprite img;
+	struct acao ac[2];
+	struct Hitbox caixa;
+	int estado;
 	int xi;
 	int yi;
 	int dx;
 	int dy;
 	float veloc;
-	int num_frames;
-	int frame_atual;
-	int col_atual;
-	int lin_atual;
 	bool existe;
 };
 struct Carinha{
@@ -79,3 +78,6 @@ void inicia_goblin(struct Carinha* Goblin, int dx, int dy);
 void carrega_projetil_goblin(struct Projetil* Bomba, struct Carinha* Goblin);
 void reseta_acao(struct acao*ac);
 void anima_projetil(struct Projetil* Bomba);
+void desenha_hitbox(struct Hitbox* caixa);
+bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2);
+void comportamento_goblin(struct Carinha* Goblin, struct Carinha* Principal, struct Projetil* Bomba);

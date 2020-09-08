@@ -49,19 +49,28 @@ void reseta_acao(struct acao*ac) {
 }
 void anima_projetil(struct Projetil* Bomba) {
 	int x_folha;
+	Bomba->ac[Bomba->estado].frame_atual++;
 	
-	if (Bomba->frame_atual >= Bomba->num_frames) {
-		Bomba->frame_atual = 0;
-		Bomba->col_atual++;
+	if (Bomba->ac[Bomba->estado].frame_atual >= Bomba->ac[Bomba->estado].num_frames) {
+			Bomba->ac[Bomba->estado].frame_atual = 0;
+			Bomba->ac[Bomba->estado].col_atual++;
 	}
-	x_folha = Bomba->col_atual * Bomba->img.largura_folha;
+	if (Bomba->ac[Bomba->estado].col_atual > Bomba->ac[Bomba->estado].finalX) {
+		Bomba->ac[Bomba->estado].col_atual = Bomba->ac[Bomba->estado].inicioX;
+		Bomba->ac[Bomba->estado].frame_atual = 0;
+		if (Bomba->estado == 1) {
+			Bomba->existe = false;
+			Bomba->estado = 0;
+		}
+		else
+			Bomba->ac[Bomba->estado].frame_atual++;
+	}
+	x_folha = Bomba->ac[Bomba->estado].col_atual * Bomba->img.largura_folha;
 	al_draw_scaled_bitmap(Bomba->img.png, x_folha, 0,Bomba->img.largura_folha,
 		Bomba->img.altura_folha, Bomba->dx, Bomba->dy,
 		Bomba->img.largura, Bomba->img.altura,0);
-	Bomba->frame_atual++;
-	if (Bomba->col_atual == Bomba->img.num_col) {
-		Bomba->col_atual = 0;
-		Bomba->frame_atual = 0;
-		Bomba->existe = false;
-	}
+	
+}
+void desenha_hitbox(struct Hitbox* caixa){
+	al_draw_rectangle(caixa->x0, caixa->y0, caixa->x1, caixa->y1, al_map_rgb(255, 255, 255), 1);
 }

@@ -1,5 +1,6 @@
 #include "classes.h"
 #include "macros.h"
+#define DESENHA //hitbox
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
@@ -13,20 +14,24 @@ bool inicializar();
 
 
 int main(void) {
-	bool inicio = inicializar();
-	//Virou função de inicialização 
+	bool inicio = inicializar(); 
 	struct Carinha Principal;
 	struct Carinha Goblin;
 	struct Projetil Bomba;
+	struct Hitbox Chao;
 
 
 	inicia_goblin(&Goblin,7*LARGURA_TELA/10 ,(28 * ALTURA_TELA / 40));
 	inicializa_cara(&Principal);
 	carrega_projetil_goblin(&Bomba, &Goblin);
-	
+
+	Chao.x0 = 0;
+	Chao.y0 = Principal.dy + Principal.imagem_personagem.altura;
+	Chao.x1 = LARGURA_TELA;
+	Chao.y1 = ALTURA_TELA;
+
 	bool sair = false;
 	int conta_ataque = 0;
-	int acao_goblin=0;
 	if (!inicio)
 		return -1;
 
@@ -120,53 +125,39 @@ int main(void) {
 						Principal.dx -= Principal.veloc;
 				}
 
-				if (!Goblin.block) {
-					if (Goblin.dx < Principal.dx - 50)
-						Goblin.direita = 0;
-					else Goblin.direita = ALLEGRO_FLIP_HORIZONTAL;
-
-					if (Goblin.cx + 74 > Principal.cx && Principal.cx > Goblin.cx - 74) {
-						Goblin.acao_atual = GOBLIN_BATENDO;
-						Goblin.block = true;
-					}
-					else if (Goblin.cx + 200 > Principal.cx && Principal.cx > Goblin.cx - 200)
-						Goblin.acao_atual = CORRENDO_GOBLIN;
-					else if (Goblin.cx + 400 > Principal.cx && Principal.cx > Goblin.cx - 400 && !Bomba.existe) {
-						Goblin.acao_atual = TACA_BOMBAGOBLIN;
-						Goblin.block = true;
-					}
-
-					else
-						Goblin.acao_atual = PARADO_GOBLIN;
-					if (Goblin.acao_atual == CORRENDO_GOBLIN) {
-						if (Goblin.direita == 0)
-							Goblin.dx += Goblin.veloc;
-						else Goblin.dx -= Goblin.veloc;
-					}
-				}
+				comportamento_goblin(&Goblin, &Principal, &Bomba);
 
 				for (int i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 230, LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
 
 				anima_personagem(&Goblin, Goblin.acao_atual);
 				anima_personagem(&Principal, Principal.acao_atual);
-				if (Goblin.acao_atual == TACA_BOMBAGOBLIN && Goblin.ac[TACA_BOMBAGOBLIN].col_atual == Goblin.ac[TACA_BOMBAGOBLIN].finalX)
-					Bomba.existe = true;
+				
 				if (Bomba.existe) {
 					int a = 1;
-					int x1;
+					const int x1 = Principal.cx - 50;
 					if (Goblin.direita == 0)
 						a = -1;
-					if (Bomba.frame_atual == 0 && Bomba.col_atual == 0) {
-						Bomba.xi = Goblin.cx-Bomba.img.largura/2 -a*40;
-						Bomba.yi = Goblin.cy-Bomba.img.largura / 2-10;
-						x1 = Principal.cx - 50;
+					if (Bomba.estado == 0) {
+						Bomba.dx -= Bomba.veloc;
+						Bomba.dy =Bomba.yi + 0.0025*(Bomba.dx - Bomba.xi)*(Bomba.dx - x1);
+
 					}
-					Bomba.dx = Bomba.xi -a*Bomba.veloc * (Bomba.frame_atual + Bomba.col_atual*Bomba.num_frames);
-					//Bomba.dy = Bomba.yi;
-					Bomba.dy =Bomba.yi + 0.0025*(Bomba.dx - Bomba.xi)*(Bomba.dx - x1);
+					Bomba.caixa.x0 = Bomba.dx + Bomba.img.largura/2-10;
+					Bomba.caixa.x1 = Bomba.dx + Bomba.img.largura/2+10;
+					Bomba.caixa.y0 = Bomba.dy + Bomba.img.altura/2-10;
+					Bomba.caixa.y1 = Bomba.dy + Bomba.img.altura/2+10;
+
+					if (colisao(&Bomba.caixa, &Chao))
+						Bomba.estado = 1;
+
 					anima_projetil(&Bomba);
 				}
+				#ifdef DESENHA //Hitboxes
+				desenha_hitbox(&Chao);
+				desenha_hitbox(&Bomba.caixa);
+				#endif // Desenha Hitboxes
+
 				al_flip_display();
 			}
 			else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)

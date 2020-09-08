@@ -99,11 +99,21 @@ void carrega_projetil_goblin(struct Projetil*Bomba,struct Carinha*Goblin) {
 	Bomba->img.largura = 130;
 	Bomba->img.num_col=19;
 	Bomba->img.num_lin=1;
-	Bomba->col_atual=0;
-	Bomba->lin_atual=0;
-	Bomba->frame_atual=0;
-	Bomba->num_frames=5;
 	Bomba->existe = false;
-	Bomba->veloc = 6;
-
+	Bomba->veloc = 5;
+	Bomba->ac[0].inicioX = 0;
+	Bomba->ac[0].inicioY = 0;
+	Bomba->ac[0].finalX = 8;
+	Bomba->ac[0].finalY = 0;
+	Bomba->ac[0].num_frames = 5;
+	Bomba->ac[0].col_atual = 0;
+	Bomba->ac[0].frame_atual = 0;
+	Bomba->ac[1].inicioX = 9;
+	Bomba->ac[1].inicioY = 0;
+	Bomba->ac[1].finalX = 18;
+	Bomba->ac[1].finalY = 0;
+	Bomba->ac[1].num_frames = 5;
+	Bomba->ac[1].col_atual = 8;
+	Bomba->ac[1].frame_atual = 0;
+	Bomba->estado = 0;
 }
