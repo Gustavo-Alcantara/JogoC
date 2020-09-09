@@ -21,17 +21,21 @@ int main(void) {
 	struct Hitbox Chao;
 
 
-	inicia_goblin(&Goblin,7*LARGURA_TELA/10 ,(28 * ALTURA_TELA / 40));
+	inicia_goblin(&Goblin,7 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
 	inicializa_cara(&Principal);
 	carrega_projetil_goblin(&Bomba, &Goblin);
 
+	int tamanho = sizeof(&Principal);
+
 	Chao.x0 = 0;
-	Chao.y0 = Principal.dy + Principal.imagem_personagem.altura;
+	Chao.y0 = (32 * ALTURA_TELA / 40) + Principal.imagem_personagem.altura;
 	Chao.x1 = LARGURA_TELA;
 	Chao.y1 = ALTURA_TELA;
 
 	bool sair = false;
 	int conta_ataque = 0;
+	float x1;
+
 	if (!inicio)
 		return -1;
 
@@ -49,13 +53,15 @@ int main(void) {
 
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
 	reseta_acoes(&Goblin, 20, 30,Goblin.direita);
-
+	Principal.acao_atual = RESPIRA_PRINCIPAL;
 	while (!sair) {
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
 			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && !Principal.block){
+				
 				switch (evento.keyboard.keycode) {
+
 				case ALLEGRO_KEY_D:
 					reseta_acoes(&Principal,20,CORRENDO_PRINCIPAL, Principal.direita);
 					Principal.direita = 0;
@@ -123,8 +129,15 @@ int main(void) {
 						Principal.dx += Principal.veloc;
 					else
 						Principal.dx -= Principal.veloc;
+					
 				}
-
+				Principal.caixa.x0 = Principal.cx - 25;
+				Principal.caixa.x1 = Principal.cx + 20;
+				Principal.caixa.y0 = Principal.cy - 30;
+				Principal.caixa.y1 = Principal.cy + 35;
+				if (!colisao(&Principal.caixa, &Chao))
+					Principal.dy+=2;
+				
 				comportamento_goblin(&Goblin, &Principal, &Bomba);
 
 				for (int i = 10; i > 0; i--)
@@ -135,13 +148,13 @@ int main(void) {
 				
 				if (Bomba.existe) {
 					int a = 1;
-					const int x1 = Principal.cx - 50;
+					
 					if (Goblin.direita == 0)
 						a = -1;
-					if (Bomba.estado == 0) {
-						Bomba.dx -= Bomba.veloc;
-						Bomba.dy =Bomba.yi + 0.0025*(Bomba.dx - Bomba.xi)*(Bomba.dx - x1);
 
+					if (Bomba.estado == 0) {
+						Bomba.dx -= a*Bomba.veloc;
+						Bomba.dy =Bomba.yi +0.0025*(Bomba.dx - Bomba.xi)*(Bomba.dx - x1);
 					}
 					Bomba.caixa.x0 = Bomba.dx + Bomba.img.largura/2-10;
 					Bomba.caixa.x1 = Bomba.dx + Bomba.img.largura/2+10;
@@ -150,12 +163,22 @@ int main(void) {
 
 					if (colisao(&Bomba.caixa, &Chao))
 						Bomba.estado = 1;
-
+					else if (colisao(&Bomba.caixa, &Principal.caixa)) {
+						Bomba.estado = 1;
+						Principal.acao_atual = APANHA_PRINCIPAL;
+						Principal.block = true;
+					}
 					anima_projetil(&Bomba);
+				}
+				else {
+					
+					 x1 = Principal.cx -50 ;
 				}
 				#ifdef DESENHA //Hitboxes
 				desenha_hitbox(&Chao);
 				desenha_hitbox(&Bomba.caixa);
+				desenha_hitbox(&Principal.caixa);
+				desenha_hitbox(&Goblin.caixa);
 				#endif // Desenha Hitboxes
 
 				al_flip_display();

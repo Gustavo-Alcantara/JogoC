@@ -55,6 +55,7 @@ struct Projetil {
 struct Carinha{
 	struct Sprite imagem_personagem;
 	struct acao ac[20];
+	struct Hitbox caixa;
 	char nome[20];
 	int acao_atual;
 	int vida_total;
@@ -62,8 +63,8 @@ struct Carinha{
 	int direita;
 	int veloc;
 	int altura_pulo;
-	int dx;
-	int dy;
+	float dx;
+	float dy;
 	int cx;
 	int cy;
 	int acao_espera;

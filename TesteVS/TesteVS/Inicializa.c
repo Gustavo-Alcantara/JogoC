@@ -3,7 +3,7 @@
 void inicializa_cara(struct Carinha* Principal) {
 	strcpy(Principal->nome, "Marcos");
 	Principal->dx = (LARGURA_TELA / 40);
-	Principal->dy = (32 * ALTURA_TELA / 40);
+	Principal->dy = (10 * ALTURA_TELA / 40);
 	Principal->direita = 0;
 	Principal->veloc = 4;
 	Principal->block = false;
@@ -50,6 +50,16 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->ac[11].finalY = 8;
 	Principal->ac[11].num_frames = 5;
 	Principal->ac[11].frame_atual = 0;
+	Principal->ac[12].inicioX = 3;
+	Principal->ac[12].inicioY = 8;
+	Principal->ac[12].finalX = 5;
+	Principal->ac[12].finalY = 8;
+	Principal->ac[12].num_frames = 9;
+	Principal->ac[12].frame_atual = 0;
+	Principal->caixa.x0 = Principal->cx + 25;
+	Principal->caixa.x1 = Principal->cx - 25;
+	Principal->caixa.y0 = Principal->cy- 30;
+	Principal->caixa.y1 = Principal->cy + 40;
 
 }
 void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
@@ -68,6 +78,10 @@ void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	Goblin->imagem_personagem.num_lin = 1;
 	Goblin->cx = Goblin->dx + Goblin->imagem_personagem.largura / 2;
 	Goblin->cy = Goblin->dy + Goblin->imagem_personagem.altura / 2;
+	Goblin->caixa.x0 = Goblin->cx + 25;
+	Goblin->caixa.x1 = Goblin->cx - 25;
+	Goblin->caixa.y0 = Goblin->cy - 30;
+	Goblin->caixa.y1 = Goblin->cy + 40;
 	Goblin->ac[0].inicioX = 0;
 	Goblin->ac[0].inicioY = 0;
 	Goblin->ac[0].finalX = 3;
