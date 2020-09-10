@@ -1,6 +1,6 @@
 #include "classes.h"
 #include "macros.h"
-#define DESENHA //hitbox
+//#define DESENHA //hitbox
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
@@ -80,6 +80,7 @@ int main(void) {
 					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL, Principal.direita);
 					Principal.acao_atual = DESLIZA_PRINCIPAL;
 					Principal.block = true;
+					Principal.apanha = false;
 					break;
 				case ALLEGRO_KEY_S:
 					break;
@@ -124,17 +125,23 @@ int main(void) {
 				}
 			}
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
-				if (Principal.acao_atual == CORRENDO_PRINCIPAL || Principal.acao_atual == DESLIZA_PRINCIPAL) {
-					if(Principal.direita == 0)
-						Principal.dx += Principal.veloc;
-					else
-						Principal.dx -= Principal.veloc;
-					
-				}
 				Principal.caixa.x0 = Principal.cx - 25;
 				Principal.caixa.x1 = Principal.cx + 20;
 				Principal.caixa.y0 = Principal.cy - 30;
 				Principal.caixa.y1 = Principal.cy + 35;
+
+				if (Principal.acao_atual == CORRENDO_PRINCIPAL || Principal.acao_atual == DESLIZA_PRINCIPAL) {
+					if (Principal.direita == 0)
+						Principal.dx += Principal.veloc;
+					else
+						Principal.dx -= Principal.veloc;
+				}
+				else if ((Principal.acao_atual == ATAQUE1_PRINCIPAL || Principal.acao_atual == ATAQUE2_PRINCIPAL || Principal.acao_atual == ATAQUE3_PRINCIPAL) && dist(Principal.cx, Principal.cy,Goblin.cx,Goblin.cy) < 50) {
+					Goblin.acao_atual = APANHA_GOBLIN;
+					Goblin.block = true;
+				}
+				
+
 				if (!colisao(&Principal.caixa, &Chao))
 					Principal.dy+=2;
 				

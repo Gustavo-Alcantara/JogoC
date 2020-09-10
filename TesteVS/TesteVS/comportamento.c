@@ -1,6 +1,8 @@
 #include "classes.h"
 #include "macros.h"
-
+double dist(float cx0, float cy0, float cx1, float cy1) {
+	return sqrt((cx1 - cx0) * (cx1 - cx0) + (cy1 - cy0) * (cy1 - cy0));
+}
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2) {
 	if (caixa1->x1 > caixa2->x0 && caixa1->x1 < caixa2->x1 && caixa1->y1 > caixa2->y0 && caixa1->y1 < caixa2->y1) 
 		return true;
@@ -45,10 +47,15 @@ void comportamento_goblin(struct Carinha* Goblin, struct Carinha* Principal, str
 				Goblin->dx += Goblin->veloc;
 			else Goblin->dx -= Goblin->veloc;
 		}
-		Goblin->caixa.x0 = Goblin->cx - 25;
-		Goblin->caixa.x1 = Goblin->cx + 20;
+		Goblin->caixa.x0 = Goblin->cx - 30;
+		Goblin->caixa.x1 = Goblin->cx + 30;
 		Goblin->caixa.y0 = Goblin->cy - 30;
 		Goblin->caixa.y1 = Goblin->cy + 35;
+		if (Goblin->acao_atual == GOBLIN_BATENDO &&  dist(Principal->cx, Principal->cy, Goblin->cx, Goblin->cy)<50 && Principal->apanha) {
+			Principal->acao_atual = APANHA_PRINCIPAL;
+			Principal->block = true;
+		}
+
 	}
 	if (Goblin->acao_atual == TACA_BOMBAGOBLIN && Goblin->ac[TACA_BOMBAGOBLIN].col_atual == Goblin->ac[TACA_BOMBAGOBLIN].finalX)
 		Bomba->existe = true;

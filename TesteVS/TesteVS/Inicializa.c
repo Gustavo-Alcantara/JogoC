@@ -7,6 +7,7 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->direita = 0;
 	Principal->veloc = 4;
 	Principal->block = false;
+	Principal->apanha = true;
 	Principal->imagem_personagem.png = al_load_bitmap("cara2.png");
 	Principal->imagem_personagem.altura_folha = 37;
 	Principal->imagem_personagem.largura_folha = 50;
@@ -48,7 +49,7 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->ac[11].inicioY = 7;
 	Principal->ac[11].finalX = 2;
 	Principal->ac[11].finalY = 8;
-	Principal->ac[11].num_frames = 5;
+	Principal->ac[11].num_frames = 4;
 	Principal->ac[11].frame_atual = 0;
 	Principal->ac[12].inicioX = 3;
 	Principal->ac[12].inicioY = 8;
@@ -74,12 +75,12 @@ void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	Goblin->imagem_personagem.largura_folha = 150;
 	Goblin->imagem_personagem.altura = 175;
 	Goblin->imagem_personagem.largura = 175;
-	Goblin->imagem_personagem.num_col = 32;
+	Goblin->imagem_personagem.num_col = 36;
 	Goblin->imagem_personagem.num_lin = 1;
 	Goblin->cx = Goblin->dx + Goblin->imagem_personagem.largura / 2;
 	Goblin->cy = Goblin->dy + Goblin->imagem_personagem.altura / 2;
-	Goblin->caixa.x0 = Goblin->cx + 25;
-	Goblin->caixa.x1 = Goblin->cx - 25;
+	Goblin->caixa.x0 = Goblin->cx + 30;
+	Goblin->caixa.x1 = Goblin->cx - 30;
 	Goblin->caixa.y0 = Goblin->cy - 30;
 	Goblin->caixa.y1 = Goblin->cy + 40;
 	Goblin->ac[0].inicioX = 0;
@@ -102,6 +103,11 @@ void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	Goblin->ac[3].finalX = 31;
 	Goblin->ac[3].finalY = 0;
 	Goblin->ac[3].num_frames = 5;
+	Goblin->ac[4].inicioX = 32;
+	Goblin->ac[4].inicioY = 0;
+	Goblin->ac[4].finalX = 35;
+	Goblin->ac[4].finalY = 0;
+	Goblin->ac[4].num_frames = 5;
 }
 void carrega_projetil_goblin(struct Projetil*Bomba,struct Carinha*Goblin) {
 	Bomba->dx = Goblin->cx;
