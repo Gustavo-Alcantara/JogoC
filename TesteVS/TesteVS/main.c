@@ -34,6 +34,7 @@ int main(void) {
 
 	bool sair = false;
 	int conta_ataque = 0;
+	int conta_pulo = 0;
 	float x1;
 
 	if (!inicio)
@@ -58,72 +59,12 @@ int main(void) {
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
-			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && !Principal.block){
-				
-				switch (evento.keyboard.keycode) {
 
-				case ALLEGRO_KEY_D:
-					reseta_acoes(&Principal,20,CORRENDO_PRINCIPAL, Principal.direita);
-					Principal.direita = 0;
-					Principal.acao_atual = CORRENDO_PRINCIPAL;
-					Principal.acao_espera = CORRENDO_PRINCIPAL;
-					conta_ataque = 0;
-					break;
-				case ALLEGRO_KEY_A:
-					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL, Principal.direita);
-					Principal.direita = ALLEGRO_FLIP_HORIZONTAL;
-					Principal.acao_atual = CORRENDO_PRINCIPAL;
-					Principal.acao_espera = CORRENDO_PRINCIPAL;
-					conta_ataque = 0;
-					break;
-				case ALLEGRO_KEY_LSHIFT:
-					reseta_acoes(&Principal, 20, CORRENDO_PRINCIPAL, Principal.direita);
-					Principal.acao_atual = DESLIZA_PRINCIPAL;
-					Principal.block = true;
-					Principal.apanha = false;
-					break;
-				case ALLEGRO_KEY_S:
-					break;
-				case ALLEGRO_KEY_J:
-					reseta_acoes(&Principal, 20,	ATAQUE1_PRINCIPAL, Principal.direita);
-					if (conta_ataque == 2) {
-						Principal.acao_atual = ATAQUE3_PRINCIPAL;
-						conta_ataque=0;
-					}
-					else if (conta_ataque == 1) {
-						Principal.acao_atual = ATAQUE2_PRINCIPAL;
-						conta_ataque ++;
-					}
-					else {
-						Principal.acao_atual = ATAQUE1_PRINCIPAL;
-						conta_ataque ++;
-					}
-					Principal.block = true;
-					break;
-				}
-			}
-			else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
-				switch (evento.keyboard.keycode) {
-				case ALLEGRO_KEY_D:
-					Principal.acao_espera = 0;
-					if (Principal.acao_atual == CORRENDO_PRINCIPAL && Principal.direita == 0)
-						Principal.acao_atual = RESPIRA_PRINCIPAL;
-					reseta_acao(&Principal.ac[CORRENDO_PRINCIPAL]);
-					break;
-				case ALLEGRO_KEY_A:
-					Principal.acao_espera = 0;
-					if (Principal.acao_atual == CORRENDO_PRINCIPAL && Principal.direita == ALLEGRO_FLIP_HORIZONTAL)
-						Principal.acao_atual = RESPIRA_PRINCIPAL;
-					reseta_acao(&Principal.ac[CORRENDO_PRINCIPAL]);
-					break;
-				case ALLEGRO_KEY_W:
-					//reseta_acao(Principal.ac[CORRENDO_PRINCIPAL]);
-					break;
-				case ALLEGRO_KEY_S:
-					//reseta_acao(Principal.ac[CORRENDO_PRINCIPAL]);
-					break;
-				}
-			}
+			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && Principal.acao_atual != APANHA_PRINCIPAL)
+				le_teclado_baixo(&Principal, &Chao,evento.keyboard.keycode);
+			else if (evento.type == ALLEGRO_EVENT_KEY_UP)
+				le_teclado_alto(&Principal, evento.keyboard.keycode);
+
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
 				Principal.caixa.x0 = Principal.cx - 25;
 				Principal.caixa.x1 = Principal.cx + 20;
@@ -140,18 +81,37 @@ int main(void) {
 					Goblin.acao_atual = APANHA_GOBLIN;
 					Goblin.block = true;
 				}
-				
+				else if (Principal.acao_atual == PULO1_PRINCIPAL || Principal.acao_atual == PULO2_PRINCIPAL) {
+					if (Principal.acao_atual == PULO1_PRINCIPAL && Principal.ac[PULO1_PRINCIPAL].col_atual == 3) 
+						Principal.dy -= 2*Principal.altura_pulo;
+					else if(Principal.acao_atual == PULO2_PRINCIPAL)
+						Principal.dy -= Principal.altura_pulo;
+					if (Principal.acao_espera == CORRENDO_PRINCIPAL) {
+						if (Principal.direita == 0)
+							Principal.dx += Principal.veloc;
+						else
+							Principal.dx -= Principal.veloc;
+					}
+				}
 
-				if (!colisao(&Principal.caixa, &Chao))
+
+				if (!colisao(&Principal.caixa, &Chao) && (Principal.acao_atual != PULO1_PRINCIPAL && Principal.acao_atual != PULO2_PRINCIPAL)) {
 					Principal.dy+=2;
+					Principal.acao_atual = CAIR_PRINCIPAL;
+					if (Principal.acao_espera == CORRENDO_PRINCIPAL) {
+						if (Principal.direita == 0)
+							Principal.dx += Principal.veloc;
+						else
+							Principal.dx -= Principal.veloc;
+					}
+					Principal.block = true;
+				}
 				
 				comportamento_goblin(&Goblin, &Principal, &Bomba);
 
 				for (int i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 230, LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
 
-				anima_personagem(&Goblin, Goblin.acao_atual);
-				anima_personagem(&Principal, Principal.acao_atual);
 				
 				if (Bomba.existe) {
 					int a = 1;
@@ -170,7 +130,7 @@ int main(void) {
 
 					if (colisao(&Bomba.caixa, &Chao))
 						Bomba.estado = 1;
-					else if (colisao(&Bomba.caixa, &Principal.caixa)) {
+					else if (colisao(&Bomba.caixa, &Principal.caixa)&& Principal.apanha) {
 						Bomba.estado = 1;
 						Principal.acao_atual = APANHA_PRINCIPAL;
 						Principal.block = true;
@@ -186,8 +146,12 @@ int main(void) {
 				desenha_hitbox(&Bomba.caixa);
 				desenha_hitbox(&Principal.caixa);
 				desenha_hitbox(&Goblin.caixa);
+				al_draw_circle(Principal.cx, Principal.cy, 50,al_map_rgb(255,255,255),1);
+				al_draw_circle(Goblin.cx, Goblin.cy, 50,al_map_rgb(255,255,255),1);
 				#endif // Desenha Hitboxes
 
+				anima_personagem(&Goblin, Goblin.acao_atual);
+				anima_personagem(&Principal, Principal.acao_atual);
 				al_flip_display();
 			}
 			else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)

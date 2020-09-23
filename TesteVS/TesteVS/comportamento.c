@@ -51,7 +51,7 @@ void comportamento_goblin(struct Carinha* Goblin, struct Carinha* Principal, str
 		Goblin->caixa.x1 = Goblin->cx + 30;
 		Goblin->caixa.y0 = Goblin->cy - 30;
 		Goblin->caixa.y1 = Goblin->cy + 35;
-		if (Goblin->acao_atual == GOBLIN_BATENDO &&  dist(Principal->cx, Principal->cy, Goblin->cx, Goblin->cy)<50 && Principal->apanha) {
+		if (Goblin->acao_atual == GOBLIN_BATENDO &&  dist(Principal->cx, Principal->cy, Goblin->cx, Goblin->cy)<50 && Principal->apanha && Goblin->ac[GOBLIN_BATENDO].col_atual>=24) {
 			Principal->acao_atual = APANHA_PRINCIPAL;
 			Principal->block = true;
 		}

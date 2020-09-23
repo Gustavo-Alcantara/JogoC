@@ -13,8 +13,10 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 		if (boneco->ac[indice].lin_atual >= boneco->ac[indice].finalY && boneco->ac[indice].col_atual > boneco->ac[indice].finalX) {
 			boneco->block = false;
 			reseta_acao(&boneco->ac[indice]);
-			if (indice > 2) 
+			if (indice > 2) {
 				boneco->acao_atual = boneco->acao_espera;
+				boneco->acao_espera = 0;
+			}
 			if (!boneco->apanha)
 				boneco->apanha = true;
 			

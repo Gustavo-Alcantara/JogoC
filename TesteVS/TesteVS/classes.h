@@ -84,3 +84,5 @@ void desenha_hitbox(struct Hitbox* caixa);
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2);
 void comportamento_goblin(struct Carinha* Goblin, struct Carinha* Principal, struct Projetil* Bomba);
 double dist(float cx0, float cy0, float cx1, float cy1);
+void le_teclado_baixo(struct Carinha* Principal, struct Hitbox* Chao, int codigo);
+void le_teclado_alto(struct Carinha* Principal, int codigo);
