@@ -5,6 +5,8 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -50,39 +52,66 @@ struct Projetil {
 	float dx;
 	float dy;
 	float veloc;
+	float dano;
 	bool existe;
 };
 struct Carinha{
 	struct Sprite imagem_personagem;
 	struct acao ac[20];
 	struct Hitbox caixa;
-	char nome[20];
+	const char nome[20];
+	int conta_pulo;
+	int conta_ataque;
 	int acao_atual;
 	int vida_total;
 	int vida_atual;
 	int direita;
 	int veloc;
 	int altura_pulo;
+	int acao_espera;
+	int dano;
 	float dx;
 	float dy;
 	float cx;
 	float cy;
-	int acao_espera;
+	bool morto;
+	bool apanha;
+	bool block;
+};
+struct Inimigo {
+	struct Sprite imagem_personagem;
+	struct acao ac[10];
+	struct Hitbox caixa;
+	int acao_atual;
+	int vida_total;
+	int vida_atual;
+	int direita;
+	int veloc;
+	int altura_pulo;
+	int dano;
+	float dx;
+	float dy;
+	float cx;
+	float cy;
+	bool morto;
 	bool apanha;
 	bool block;
 };
 
+
 void anima_personagem(struct Carinha* boneco, int indice);
+void anima_Inimigo(struct Inimigo* boneco, int indice);
 void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice,int direita);
+void reseta_acoes_inimigo(struct Inimigo*boneco,int num_acoes ,int indice,int direita);
 
 void inicializa_cara(struct Carinha* Principal);
-void inicia_goblin(struct Carinha* Goblin, int dx, int dy);
-void carrega_projetil_goblin(struct Projetil* Bomba, struct Carinha* Goblin);
+void inicia_goblin(struct Inimigo* Goblin, int dx, int dy);
+void carrega_projetil_goblin(struct Projetil* Bomba, struct Inimigo* Goblin);
 void reseta_acao(struct acao*ac);
 void anima_projetil(struct Projetil* Bomba);
 void desenha_hitbox(struct Hitbox* caixa);
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2);
-void comportamento_goblin(struct Carinha* Goblin, struct Carinha* Principal, struct Projetil* Bomba);
+void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, struct Projetil* Bomba);
 double dist(float cx0, float cy0, float cx1, float cy1);
 void le_teclado_baixo(struct Carinha* Principal, struct Hitbox* Chao, int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);

@@ -17,3 +17,4 @@
 #define CORRENDO_GOBLIN 2
 #define GOBLIN_BATENDO 3
 #define APANHA_GOBLIN 4
+#define MORRE_GOBLIN 5

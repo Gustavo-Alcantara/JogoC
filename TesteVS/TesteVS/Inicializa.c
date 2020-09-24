@@ -1,7 +1,8 @@
 #include "classes.h"
 
 void inicializa_cara(struct Carinha* Principal) {
-	strcpy(Principal->nome, "Marcos");
+	strcpy(Principal->nome, "Marcos  ");
+	Principal->morto = false;
 	Principal->dx = (LARGURA_TELA / 40);
 	Principal->dy = (10 * ALTURA_TELA / 40);
 	Principal->direita = 0;
@@ -9,6 +10,9 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->altura_pulo = 5;
 	Principal->block = false;
 	Principal->apanha = true;
+	Principal->vida_total = 5;
+	Principal->vida_atual = Principal->vida_total;
+	Principal->conta_pulo = 0;
 	Principal->imagem_personagem.png = al_load_bitmap("cara2.png");
 	Principal->imagem_personagem.altura_folha = 37;
 	Principal->imagem_personagem.largura_folha = 50;
@@ -23,6 +27,11 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->ac[0].finalX = 3;
 	Principal->ac[0].finalY = 0;
 	Principal->ac[0].num_frames = 10;
+	Principal->ac[1].inicioX = 4;
+	Principal->ac[1].inicioY = 0;
+	Principal->ac[1].finalX = 0;
+	Principal->ac[1].finalY = 1;
+	Principal->ac[1].num_frames = 10;
 	Principal->ac[2].inicioX = 1;
 	Principal->ac[2].inicioY = 1;
 	Principal->ac[2].finalX = 6;
@@ -79,19 +88,22 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->caixa.y1 = Principal->cy + 40;
 
 }
-void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
-	strcpy(Goblin->nome ,"Piolho");
+void inicia_goblin(struct Inimigo* Goblin, int dx,int dy) {
+	Goblin->dano = 1;
+	Goblin->vida_total = 3;
+	Goblin->vida_atual = Goblin->vida_total;
 	Goblin->dx = dx;
 	Goblin->dy = dy;
 	Goblin->direita = ALLEGRO_FLIP_HORIZONTAL;
 	Goblin->veloc = 3;
 	Goblin->block = false;
+	Goblin->morto = false;
 	Goblin->imagem_personagem.png = al_load_bitmap("Goblin.png");
 	Goblin->imagem_personagem.altura_folha = 150;
 	Goblin->imagem_personagem.largura_folha = 150;
 	Goblin->imagem_personagem.altura = 175;
 	Goblin->imagem_personagem.largura = 175;
-	Goblin->imagem_personagem.num_col = 36;
+	Goblin->imagem_personagem.num_col = 41;
 	Goblin->imagem_personagem.num_lin = 1;
 	Goblin->cx = Goblin->dx + Goblin->imagem_personagem.largura / 2;
 	Goblin->cy = Goblin->dy + Goblin->imagem_personagem.altura / 2;
@@ -124,8 +136,13 @@ void inicia_goblin(struct Carinha* Goblin, int dx,int dy) {
 	Goblin->ac[4].finalX = 35;
 	Goblin->ac[4].finalY = 0;
 	Goblin->ac[4].num_frames = 5;
+	Goblin->ac[5].inicioX = 36;
+	Goblin->ac[5].inicioY = 0;
+	Goblin->ac[5].finalX = 40;
+	Goblin->ac[5].finalY = 0;
+	Goblin->ac[5].num_frames = 10;
 }
-void carrega_projetil_goblin(struct Projetil*Bomba,struct Carinha*Goblin) {
+void carrega_projetil_goblin(struct Projetil*Bomba,struct Inimigo*Goblin) {
 	Bomba->dx = Goblin->cx;
 	Bomba->dy = Goblin->cy;
 	Bomba->img.png = al_load_bitmap("Bomb_sprite.png");
@@ -137,6 +154,7 @@ void carrega_projetil_goblin(struct Projetil*Bomba,struct Carinha*Goblin) {
 	Bomba->img.num_lin=1;
 	Bomba->existe = false;
 	Bomba->veloc = 5;
+	Bomba->dano = 1;
 	Bomba->ac[0].inicioX = 0;
 	Bomba->ac[0].inicioY = 0;
 	Bomba->ac[0].finalX = 8;

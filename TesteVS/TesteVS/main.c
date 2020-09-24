@@ -1,6 +1,6 @@
 #include "classes.h"
 #include "macros.h"
-//#define DESENHA //hitbox
+#define DESENHA //hitbox
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
@@ -9,14 +9,17 @@ ALLEGRO_BITMAP* folha = NULL;
 ALLEGRO_FONT* fonte = NULL;
 ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_KEYBOARD_STATE* teclado = NULL;
+ALLEGRO_AUDIO_STREAM* musica = NULL;
+ALLEGRO_BITMAP* coracoes = NULL;
+
 
 bool inicializar();
 
 
 int main(void) {
-	bool inicio = inicializar(); 
+	bool inicio = inicializar();
 	struct Carinha Principal;
-	struct Carinha Goblin;
+	struct Inimigo Goblin;
 	struct Projetil Bomba;
 	struct Hitbox Chao;
 
@@ -24,8 +27,6 @@ int main(void) {
 	inicia_goblin(&Goblin,7 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
 	inicializa_cara(&Principal);
 	carrega_projetil_goblin(&Bomba, &Goblin);
-
-	int tamanho = sizeof(&Principal);
 
 	Chao.x0 = 0;
 	Chao.y0 = (32 * ALTURA_TELA / 40) + Principal.imagem_personagem.altura;
@@ -39,7 +40,8 @@ int main(void) {
 
 	if (!inicio)
 		return -1;
-
+	fonte = al_load_font("Toothy.ttf", 24, 0);
+	coracoes = al_load_bitmap("vida.png");
 	layers[0] = al_load_bitmap("Layer_0000_9.png");
 	layers[1] = al_load_bitmap("Layer_0001_8.png");
 	layers[2] = al_load_bitmap("Layer_0002_7.png");
@@ -53,13 +55,14 @@ int main(void) {
 	layers[10] = al_load_bitmap("Layer_0010_1.png");
 
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
-	reseta_acoes(&Goblin, 20, 30,Goblin.direita);
+	reseta_acoes_inimigo(&Goblin, 10, 30,Goblin.direita);
 	Principal.acao_atual = RESPIRA_PRINCIPAL;
+	
 	while (!sair) {
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
-
+			strcpy(Principal.nome, "Marcos");
 			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && Principal.acao_atual != APANHA_PRINCIPAL)
 				le_teclado_baixo(&Principal, &Chao,evento.keyboard.keycode);
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP)
@@ -77,14 +80,16 @@ int main(void) {
 					else
 						Principal.dx -= Principal.veloc;
 				}
-				else if ((Principal.acao_atual == ATAQUE1_PRINCIPAL || Principal.acao_atual == ATAQUE2_PRINCIPAL || Principal.acao_atual == ATAQUE3_PRINCIPAL) && dist(Principal.cx, Principal.cy,Goblin.cx,Goblin.cy) < 50) {
+				else if ((Principal.acao_atual == ATAQUE1_PRINCIPAL || Principal.acao_atual == ATAQUE2_PRINCIPAL || Principal.acao_atual == ATAQUE3_PRINCIPAL) && dist(Principal.cx, Principal.cy, Goblin.cx, Goblin.cy) < 50 && Goblin.apanha) {
+					if (Goblin.acao_atual != APANHA_GOBLIN)
+						Goblin.vida_atual -= Principal.dano;
 					Goblin.acao_atual = APANHA_GOBLIN;
 					Goblin.block = true;
 				}
 				else if (Principal.acao_atual == PULO1_PRINCIPAL || Principal.acao_atual == PULO2_PRINCIPAL) {
-					if (Principal.acao_atual == PULO1_PRINCIPAL && Principal.ac[PULO1_PRINCIPAL].col_atual == 3) 
-						Principal.dy -= 2*Principal.altura_pulo;
-					else if(Principal.acao_atual == PULO2_PRINCIPAL)
+					if (Principal.acao_atual == PULO1_PRINCIPAL && Principal.ac[PULO1_PRINCIPAL].col_atual == 3)
+						Principal.dy -= 2 * Principal.altura_pulo;
+					else if (Principal.acao_atual == PULO2_PRINCIPAL)
 						Principal.dy -= Principal.altura_pulo;
 					if (Principal.acao_espera == CORRENDO_PRINCIPAL) {
 						if (Principal.direita == 0)
@@ -93,7 +98,10 @@ int main(void) {
 							Principal.dx -= Principal.veloc;
 					}
 				}
-
+				else if (Principal.acao_atual == RESPIRA_PRINCIPAL && Principal.ac[RESPIRA_PRINCIPAL].col_atual > 2) {
+					Principal.conta_ataque = 0;
+					Principal.conta_pulo = 0;
+				}
 
 				if (!colisao(&Principal.caixa, &Chao) && (Principal.acao_atual != PULO1_PRINCIPAL && Principal.acao_atual != PULO2_PRINCIPAL)) {
 					Principal.dy+=2;
@@ -109,10 +117,7 @@ int main(void) {
 				
 				comportamento_goblin(&Goblin, &Principal, &Bomba);
 
-				for (int i = 10; i > 0; i--)
-					al_draw_scaled_bitmap(layers[i], 0, 230, LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
 
-				
 				if (Bomba.existe) {
 					int a = 1;
 					
@@ -131,11 +136,13 @@ int main(void) {
 					if (colisao(&Bomba.caixa, &Chao))
 						Bomba.estado = 1;
 					else if (colisao(&Bomba.caixa, &Principal.caixa)&& Principal.apanha) {
+						if(Bomba.estado == 0)
+							Principal.vida_atual -= Bomba.dano;
 						Bomba.estado = 1;
 						Principal.acao_atual = APANHA_PRINCIPAL;
 						Principal.block = true;
 					}
-					anima_projetil(&Bomba);
+					
 				}
 				else {
 					
@@ -150,8 +157,18 @@ int main(void) {
 				al_draw_circle(Goblin.cx, Goblin.cy, 50,al_map_rgb(255,255,255),1);
 				#endif // Desenha Hitboxes
 
-				anima_personagem(&Goblin, Goblin.acao_atual);
+				for (int i = 10; i > 0; i--)
+					al_draw_scaled_bitmap(layers[i], 0, 230, LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+
+				for (int j = 0; j < Principal.vida_atual; j++)
+					al_draw_scaled_bitmap(coracoes, 0, 0, 256, 256, j * 25 + 10, 10, 25, 25, 0);
+				al_draw_text(fonte, al_map_rgb(255,255, 255), 10, 40, ALLEGRO_ALIGN_LEFT, &Principal.nome);
+				//al_draw_line(Goblin.dx,Goblin.dy,Goblin.dx+Goblin.vida_atual/ Goblin.vida_total*Goblin.imagem_personagem.largura, Goblin.dy,al_map_rgb(255,0,0),2);
+				if(!Goblin.morto)
+					anima_Inimigo(&Goblin, Goblin.acao_atual);
 				anima_personagem(&Principal, Principal.acao_atual);
+				if(Bomba.existe)
+					anima_projetil(&Bomba);
 				al_flip_display();
 			}
 			else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -174,9 +191,25 @@ bool inicializar() {
 	}
 	if(!al_init_primitives_addon())
 		return false;
+	if(!al_init_font_addon())
+		return false;
 	if (!al_install_keyboard()) {
 		return false;
 	}
+	if (!al_install_audio()) {
+		return false;
+	}
+	//addon que da suporte as extensoes de audio
+	if (!al_init_acodec_addon()) {
+		return false;
+	}
+
+	//cria o mixer (e torna ele o mixer padrao), e adciona 5 samples de audio nele
+	if (!al_reserve_samples(5)) {
+		return false;
+	}
+	if (!al_init_ttf_addon())
+		return false;
 	janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
 	if (!janela)
 		return false;
@@ -192,6 +225,12 @@ bool inicializar() {
 		al_destroy_display(janela);
 		return false;
 	}
+
+	musica = al_load_audio_stream("soundtrack.ogg", 4, 1024);
+	//liga o stream no mixer
+	al_attach_audio_stream_to_mixer(musica, al_get_default_mixer());
+	//define que o stream vai tocar no modo repeat
+	al_set_audio_stream_playmode(musica, ALLEGRO_PLAYMODE_LOOP);
 	fonte = al_create_builtin_font();
 	timer = al_create_timer(1.0 / FPS);
 	al_register_event_source(fila_eventos, al_get_keyboard_event_source());
