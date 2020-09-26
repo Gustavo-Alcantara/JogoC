@@ -57,17 +57,18 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 			Goblin->caixa.x1 = Goblin->cx + 30;
 			Goblin->caixa.y0 = Goblin->cy - 30;
 			Goblin->caixa.y1 = Goblin->cy + 35;
-			if (Goblin->acao_atual == GOBLIN_BATENDO && dist(Principal->cx, Principal->cy, Goblin->cx, Goblin->cy) < 50 && Principal->apanha && Goblin->ac[GOBLIN_BATENDO].col_atual >= 24) {
-				if (Principal->acao_atual != APANHA_PRINCIPAL)
-					Principal->vida_atual -= Goblin->dano;
-				Principal->acao_atual = APANHA_PRINCIPAL;
-				Principal->block = true;
-			}
+			
 
 		}
 		else {
 			if (Goblin->ac[MORRE_GOBLIN].col_atual == 39)
 				Goblin->morto = true;
+		}
+		if (dist(Principal->cx, Principal->cy, Goblin->cx, Goblin->cy) < 50 && Principal->apanha && Goblin->ac[GOBLIN_BATENDO].col_atual == Goblin->ac[GOBLIN_BATENDO].finalX - 2) {
+			if (Principal->acao_atual != APANHA_PRINCIPAL)
+				Principal->vida_atual -= Goblin->dano;
+			Principal->acao_atual = APANHA_PRINCIPAL;
+			Principal->block = true;
 		}
 	if (Goblin->acao_atual == TACA_BOMBAGOBLIN && Goblin->ac[TACA_BOMBAGOBLIN].col_atual == Goblin->ac[TACA_BOMBAGOBLIN].finalX)
 		Bomba->existe = true;

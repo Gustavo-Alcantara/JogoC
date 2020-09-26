@@ -59,9 +59,9 @@ struct Carinha{
 	struct Sprite imagem_personagem;
 	struct acao ac[20];
 	struct Hitbox caixa;
-	const char nome[20];
-	int conta_pulo;
+	char nome[20];
 	int conta_ataque;
+	int conta_pulo;
 	int acao_atual;
 	int vida_total;
 	int vida_atual;
@@ -69,11 +69,16 @@ struct Carinha{
 	int veloc;
 	int altura_pulo;
 	int acao_espera;
+	int espera;
 	int dano;
 	float dx;
 	float dy;
 	float cx;
 	float cy;
+	float queda;
+	bool ataca;
+	bool movendo;
+	bool pula;
 	bool morto;
 	bool apanha;
 	bool block;
@@ -115,3 +120,4 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 double dist(float cx0, float cy0, float cx1, float cy1);
 void le_teclado_baixo(struct Carinha* Principal, struct Hitbox* Chao, int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);
+void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo* Goblin);

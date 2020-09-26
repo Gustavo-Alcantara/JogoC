@@ -1,18 +1,24 @@
 #include "classes.h"
 
 void inicializa_cara(struct Carinha* Principal) {
-	strcpy(Principal->nome, "Marcos  ");
+	strcpy(Principal->nome, "Marcos");
 	Principal->morto = false;
 	Principal->dx = (LARGURA_TELA / 40);
+	Principal->dano = 1;
 	Principal->dy = (10 * ALTURA_TELA / 40);
 	Principal->direita = 0;
 	Principal->veloc = 4;
-	Principal->altura_pulo = 5;
+	Principal->altura_pulo = 6;
 	Principal->block = false;
 	Principal->apanha = true;
 	Principal->vida_total = 5;
 	Principal->vida_atual = Principal->vida_total;
+	Principal->pula = false;
+	Principal->conta_ataque = 0;
 	Principal->conta_pulo = 0;
+	Principal->espera = 0;
+	Principal->movendo = false;
+	Principal->queda = 0;
 	Principal->imagem_personagem.png = al_load_bitmap("cara2.png");
 	Principal->imagem_personagem.altura_folha = 37;
 	Principal->imagem_personagem.largura_folha = 50;
@@ -56,7 +62,7 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->ac[8].inicioY = 6;
 	Principal->ac[8].finalX = 5;
 	Principal->ac[8].finalY = 6;
-	Principal->ac[8].num_frames = 4;
+	Principal->ac[8].num_frames = 3;
 	Principal->ac[8].frame_atual = 0;
 	Principal->ac[9].inicioX = 3;
 	Principal->ac[9].inicioY = 3;
@@ -89,7 +95,7 @@ void inicializa_cara(struct Carinha* Principal) {
 
 }
 void inicia_goblin(struct Inimigo* Goblin, int dx,int dy) {
-	Goblin->dano = 1;
+	Goblin->dano = 3;
 	Goblin->vida_total = 3;
 	Goblin->vida_atual = Goblin->vida_total;
 	Goblin->dx = dx;
