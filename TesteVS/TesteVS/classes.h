@@ -53,6 +53,7 @@ struct Projetil {
 	float dy;
 	float veloc;
 	float dano;
+	float raiz;
 	bool existe;
 };
 struct Carinha{
@@ -118,6 +119,8 @@ void desenha_hitbox(struct Hitbox* caixa);
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2);
 void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, struct Projetil* Bomba);
 double dist(float cx0, float cy0, float cx1, float cy1);
-void le_teclado_baixo(struct Carinha* Principal, struct Hitbox* Chao, int codigo);
+void le_teclado_baixo(struct Carinha* Principal, struct Hitbox* Chao[10], int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);
 void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo* Goblin);
+void fisica_bomba(struct Projetil* Bomba, struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox* Vetor_Chao[10]);
+void atualiza_inimigos(struct Inimigo* Ativos[5], int tam);

@@ -74,3 +74,33 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 		Bomba->existe = true;
 	}
 }
+void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox* Vetor_Chao[10]) {
+	if (Bomba->existe) {
+		int a = 1;
+
+		if (Goblin->direita == 0)
+			a = -1;
+
+		if (Bomba->estado == 0) {
+			Bomba->dx -= a * Bomba->veloc;
+			Bomba->dy = Bomba->yi + 0.0025 * (Bomba->dx - Bomba->xi) * (Bomba->dx - Bomba->raiz);
+		}
+		Bomba->caixa.x0 = Bomba->dx + Bomba->img.largura / 2 - 10;
+		Bomba->caixa.x1 = Bomba->dx + Bomba->img.largura / 2 + 10;
+		Bomba->caixa.y0 = Bomba->dy + Bomba->img.altura / 2 - 10;
+		Bomba->caixa.y1 = Bomba->dy + Bomba->img.altura / 2 + 10;
+
+		if (colisao(&Bomba->caixa, &Vetor_Chao[0]))
+			Bomba->estado = 1;
+		else if (colisao(&Bomba->caixa, &Principal->caixa) && Principal->apanha) {
+			if (Bomba->estado == 0)
+				Principal->vida_atual -= Bomba->dano;
+			Bomba->estado = 1;
+			Principal->acao_atual = APANHA_PRINCIPAL;
+			Principal->block = true;
+		}
+
+	}
+	else
+		Bomba->raiz = Principal->cx - 50;
+}

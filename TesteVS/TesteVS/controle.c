@@ -2,7 +2,7 @@
 #include "macros.h"
 
 
-void le_teclado_baixo(struct Carinha* Principal,struct Hitbox* Chao,int codigo) {
+void le_teclado_baixo(struct Carinha* Principal,struct Hitbox* Chao[10],int codigo) {
 		switch (codigo) {
 		case ALLEGRO_KEY_D:
 			reseta_acoes(Principal, 20, CORRENDO_PRINCIPAL, Principal->direita);
@@ -92,7 +92,7 @@ void le_teclado_alto(struct Carinha* Principal, int codigo){
 		break;
 	}
 }
-void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[2], struct Inimigo* Goblin) {
+void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo Ativos) {
 	Principal->caixa.x0 = Principal->cx - 25;
 	Principal->caixa.x1 = Principal->cx + 20;
 	Principal->caixa.y0 = Principal->cy - 30;

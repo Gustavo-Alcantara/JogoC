@@ -1,7 +1,7 @@
 #include "classes.h"
 #include "macros.h"
 //#define DESENHA
-#define GRID
+//#define GRID
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
@@ -20,20 +20,23 @@ void desenha_grid(int lin, int col);
 int main(void) {
 	bool inicio = inicializar();
 	struct Carinha Principal;
-	struct Inimigo Goblin;
-	struct Projetil Bomba;
-	struct Hitbox Vetor_Chao[2];
+	struct Inimigo Ativos[5];
+	struct Projetil Bomba[2];
+	struct Hitbox Vetor_Chao[10];
 
+	for (int k = 0; k < 5; k++)
+		Ativos[k].morto = true;
 
-	inicia_goblin(&Goblin,7 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
+	inicia_goblin(&Ativos[0],7 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
+	inicia_goblin(&Ativos[1],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
 	inicializa_cara(&Principal);
-	carrega_projetil_goblin(&Bomba, &Goblin);
+	carrega_projetil_goblin(&Bomba[0], &Ativos[0]);
+	carrega_projetil_goblin(&Bomba[1], &Ativos[1]);
 
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
-	reseta_acoes_inimigo(&Goblin, 10, 30,Goblin.direita);
+	reseta_acoes_inimigo(&Ativos[0], 10, 30,Ativos[0].direita);
+	reseta_acoes_inimigo(&Ativos[1], 10, 30,Ativos[1].direita);
 
-	inicia_goblin(&Goblin, 7 * LARGURA_TELA / 10, (28 * ALTURA_TELA / 40));
-	inicializa_cara(&Principal);
 	Vetor_Chao[0].x0 = 0;
 	Vetor_Chao[0].y0 = (32 * ALTURA_TELA / 40) + Principal.imagem_personagem.altura;
 	Vetor_Chao[0].x1 = LARGURA_TELA;
@@ -69,46 +72,19 @@ int main(void) {
 			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && Principal.acao_atual != APANHA_PRINCIPAL) {
 				if (Principal.conta_ataque > 2)
 					Principal.conta_ataque = 0;
-				le_teclado_baixo(&Principal, &Vetor_Chao[0], evento.keyboard.keycode);
+				le_teclado_baixo(&Principal, &Vetor_Chao, evento.keyboard.keycode);
 			}
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP)
 				le_teclado_alto(&Principal, evento.keyboard.keycode);
 
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
 				
-				personagem_principal(&Principal, &Vetor_Chao, &Goblin);
-				comportamento_goblin(&Goblin, &Principal, &Bomba);
-
-				if (Bomba.existe) {
-					int a = 1;
-					
-					if (Goblin.direita == 0)
-						a = -1;
-
-					if (Bomba.estado == 0) {
-						Bomba.dx -= a*Bomba.veloc;
-						Bomba.dy =Bomba.yi +0.0025*(Bomba.dx - Bomba.xi)*(Bomba.dx - x1);
-					}
-					Bomba.caixa.x0 = Bomba.dx + Bomba.img.largura/2-10;
-					Bomba.caixa.x1 = Bomba.dx + Bomba.img.largura/2+10;
-					Bomba.caixa.y0 = Bomba.dy + Bomba.img.altura/2-10;
-					Bomba.caixa.y1 = Bomba.dy + Bomba.img.altura/2+10;
-
-					if (colisao(&Bomba.caixa, &Vetor_Chao[0]))
-						Bomba.estado = 1;
-					else if (colisao(&Bomba.caixa, &Principal.caixa)&& Principal.apanha) {
-						if(Bomba.estado == 0)
-							Principal.vida_atual -= Bomba.dano;
-						Bomba.estado = 1;
-						Principal.acao_atual = APANHA_PRINCIPAL;
-						Principal.block = true;
-					}
-					
-				}
-				else {
-					
-					 x1 = Principal.cx -50 ;
-				}
+				personagem_principal(&Principal, &Vetor_Chao, &Ativos[0]);
+				comportamento_goblin(&Ativos[0], &Principal, &Bomba);
+				comportamento_goblin(&Ativos[1], &Principal, &Bomba);
+				fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
+				fisica_bomba(&Bomba[1], &Ativos[1], &Principal, &Vetor_Chao);
+				
 
 				for (int i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 230 , LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
@@ -117,21 +93,24 @@ int main(void) {
 					al_draw_scaled_bitmap(coracoes, 0, 0, 256, 256, j * 25 + 10, 10, 25, 25, 0);
 
 				al_draw_text(fonte, al_map_rgb(255,255, 255), 10, 40, ALLEGRO_ALIGN_LEFT, "Marcos");
-				if(Goblin.vida_atual>0 && !Goblin.morto)
-					al_draw_line(Goblin.caixa.x0, Goblin.caixa.y0, Goblin.caixa.x0 + (Goblin.caixa.x1 - Goblin.caixa.x0) * Goblin.vida_atual/ Goblin.vida_total, Goblin.caixa.y0,al_map_rgb(255,0,0),2);
-				if(!Goblin.morto)
-					anima_Inimigo(&Goblin, Goblin.acao_atual);
+
+				for (int i = 0; i < 5; i++)
+					atualiza_inimigos(&Ativos[i], 5);
+
 				anima_personagem(&Principal, Principal.acao_atual);
-				if(Bomba.existe)
-					anima_projetil(&Bomba);
+				
+				if(Bomba[0].existe)
+					anima_projetil(&Bomba[0]);
+				if (Bomba[1].existe)
+					anima_projetil(&Bomba[1]);
 
 				#ifdef DESENHA //Hitboxes
 				desenha_hitbox(&Vetor_Chao[0]);
 				desenha_hitbox(&Bomba.caixa);
 				desenha_hitbox(&Principal.caixa);
-				desenha_hitbox(&Goblin.caixa);
+				desenha_hitbox(&Ativos[0].caixa);
 				al_draw_circle(Principal.cx, Principal.cy, 50,al_map_rgb(255,255,255),1);
-				al_draw_circle(Goblin.cx, Goblin.cy, 50,al_map_rgb(255,255,255),1);
+				al_draw_circle(Ativos[0].cx, Ativos[0].cy, 50,al_map_rgb(255,255,255),1);
 				#endif // Desenha Hitboxes
 				#ifdef GRID
 				desenha_grid(20,10);
@@ -167,12 +146,9 @@ bool inicializar() {
 	if (!al_install_audio()) {
 		return false;
 	}
-	//addon que da suporte as extensoes de audio
 	if (!al_init_acodec_addon()) {
 		return false;
 	}
-
-	//cria o mixer (e torna ele o mixer padrao), e adciona 5 samples de audio nele
 	if (!al_reserve_samples(5)) {
 		return false;
 	}
