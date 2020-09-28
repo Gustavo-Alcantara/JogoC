@@ -28,7 +28,7 @@ int main(void) {
 		Ativos[k].morto = true;
 
 	inicia_goblin(&Ativos[0],7 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
-	inicia_goblin(&Ativos[1],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
+	inicia_armadura(&Ativos[1],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
 	inicializa_cara(&Principal);
 	carrega_projetil_goblin(&Bomba[0], &Ativos[0]);
 	carrega_projetil_goblin(&Bomba[1], &Ativos[1]);
@@ -72,7 +72,7 @@ int main(void) {
 			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && Principal.acao_atual != APANHA_PRINCIPAL) {
 				if (Principal.conta_ataque > 2)
 					Principal.conta_ataque = 0;
-				le_teclado_baixo(&Principal, &Vetor_Chao, evento.keyboard.keycode);
+				le_teclado_baixo(&Principal, Vetor_Chao, evento.keyboard.keycode);
 			}
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP)
 				le_teclado_alto(&Principal, evento.keyboard.keycode);
@@ -81,10 +81,17 @@ int main(void) {
 				
 				personagem_principal(&Principal, &Vetor_Chao, &Ativos[0]);
 				comportamento_goblin(&Ativos[0], &Principal, &Bomba);
-				comportamento_goblin(&Ativos[1], &Principal, &Bomba);
+				comportamento_armadura(&Ativos[1], &Principal);
 				fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
-				fisica_bomba(&Bomba[1], &Ativos[1], &Principal, &Vetor_Chao);
 				
+				for (int i = 0; i < 5; i++) {
+					if (!colisao(&Ativos[i].caixa, &Vetor_Chao[0]) && !Ativos[i].morto) {
+						Ativos[i].dy += Ativos[i].queda;
+						Ativos[i].queda += 0.2;
+					}
+					else
+						Ativos[i].queda = 0;
+				}
 
 				for (int i = 10; i > 0; i--)
 					al_draw_scaled_bitmap(layers[i], 0, 230 , LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
@@ -106,9 +113,12 @@ int main(void) {
 
 				#ifdef DESENHA //Hitboxes
 				desenha_hitbox(&Vetor_Chao[0]);
-				desenha_hitbox(&Bomba.caixa);
+				desenha_hitbox(&Bomba->caixa);
 				desenha_hitbox(&Principal.caixa);
-				desenha_hitbox(&Ativos[0].caixa);
+				for (int i = 0; i < 5; i++) {
+					if(!Ativos[i].morto)
+						desenha_hitbox(&Ativos[i].caixa);
+				}
 				al_draw_circle(Principal.cx, Principal.cy, 50,al_map_rgb(255,255,255),1);
 				al_draw_circle(Ativos[0].cx, Ativos[0].cy, 50,al_map_rgb(255,255,255),1);
 				#endif // Desenha Hitboxes
@@ -157,7 +167,7 @@ bool inicializar() {
 	janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
 	if (!janela)
 		return false;
-	al_set_window_title(janela, "Caminhando e cantando");
+	al_set_window_title(janela, "Aventura Lo-Fi");
 	fila_eventos = al_create_event_queue();
 	if (!fila_eventos) {
 		al_destroy_display(janela);

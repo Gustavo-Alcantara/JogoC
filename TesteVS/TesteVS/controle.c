@@ -92,7 +92,7 @@ void le_teclado_alto(struct Carinha* Principal, int codigo){
 		break;
 	}
 }
-void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo Ativos) {
+void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo Goblin[5]) {
 	Principal->caixa.x0 = Principal->cx - 25;
 	Principal->caixa.x1 = Principal->cx + 20;
 	Principal->caixa.y0 = Principal->cy - 30;
@@ -108,11 +108,17 @@ void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], st
 		else
 			Principal->dx -= Principal->veloc;
 	}
-	else if ((Principal->acao_atual == ATAQUE1_PRINCIPAL || Principal->acao_atual == ATAQUE2_PRINCIPAL || Principal->acao_atual == ATAQUE3_PRINCIPAL) && dist(Principal->cx, Principal->cy, Goblin->cx, Goblin->cy) < 50 && Goblin->apanha) {
-		if (Goblin->acao_atual != APANHA_GOBLIN)
-			Goblin->vida_atual -= Principal->dano;
-		Goblin->acao_atual = APANHA_GOBLIN;
-		Goblin->block = true;
+	else if (Principal->acao_atual == ATAQUE1_PRINCIPAL || Principal->acao_atual == ATAQUE2_PRINCIPAL || Principal->acao_atual == ATAQUE3_PRINCIPAL) {
+		for (int i = 0; i < 5; i++) {
+			if (!Goblin[i].morto) {
+				if (dist(Principal->cx, Principal->cy, Goblin[i].cx, Goblin[i].cy) < 50 && Goblin[i].apanha) {
+					if (Principal->ac[Principal->acao_atual].col_atual == Principal->ac[Principal->acao_atual].inicioX + 1)
+						Goblin[i].vida_atual -= Principal->dano;
+					Goblin[i].acao_atual = APANHA_GOBLIN;
+					Goblin[i].block = true;
+				}
+			}
+		}
 	}
 	else if (Principal->acao_atual == PULO1_PRINCIPAL || Principal->acao_atual == PULO2_PRINCIPAL) {
 		if (!Principal->pula && Principal->ac[PULO2_PRINCIPAL].col_atual == Principal->ac[PULO2_PRINCIPAL].finalX && Principal->ac[PULO2_PRINCIPAL].lin_atual == Principal->ac[PULO2_PRINCIPAL].finalY)

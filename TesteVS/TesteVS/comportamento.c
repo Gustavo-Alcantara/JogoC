@@ -104,3 +104,58 @@ void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha*
 	else
 		Bomba->raiz = Principal->cx - 50;
 }
+void comportamento_armadura(struct Inimigo* Armadura, struct Carinha* Principal) {
+	Armadura->cx = Armadura->dx + Armadura->imagem_personagem.largura / 2;
+	Armadura->cy = Armadura->dy + Armadura->imagem_personagem.altura / 2;
+	Armadura->caixa.x0 = Armadura->cx + 30;
+	Armadura->caixa.x1 = Armadura->cx - 30;
+	Armadura->caixa.y0 = Armadura->cy - 30;
+	Armadura->caixa.y1 = Armadura->cy + 37;
+	Armadura->espera++;
+
+	int a = 1;
+
+	if (Armadura->direita == 0)
+		a = -1;
+
+	if (!Armadura->morto) {
+		if (Principal->acao_atual == ATAQUE1_PRINCIPAL && Armadura->apanha && dist(Armadura->cx,Armadura->cy,Principal->cx,Principal->cy) < 75 && Armadura->espera >= 180) {
+			Armadura->acao_atual = 6;
+			Armadura->block = true;
+			Armadura->apanha = false;
+			Armadura->espera = 0;
+		}
+		if (!Armadura->block) {
+			
+
+			if (Armadura->cx < Principal->cx)
+				Armadura->direita = 0;
+			else Armadura->direita = ALLEGRO_FLIP_HORIZONTAL;
+
+			Armadura->acao_atual = 0;
+
+			if (Armadura->cx + 50 > Principal->cx && Principal->cx > Armadura->cx - 50) {
+				Armadura->acao_atual = 3;
+				Armadura->block = true;
+			}
+			else if (Armadura->cx + 75 > Principal->cx && Principal->cx > Armadura->cx - 75) {
+				Armadura->acao_atual = 5;
+				Armadura->block = true;
+			}
+			else if (Armadura->cx + 200 > Principal->cx && Principal->cx > Armadura->cx - 200)
+				Armadura->acao_atual = 2;
+			
+
+		}
+		if ((Armadura->acao_atual == 3 || Armadura->acao_atual == 5) && Principal->apanha && dist(Armadura->cx, Armadura->cy, Principal->cx, Principal->cy) < 75 && Armadura->ac[Armadura->acao_atual].col_atual == Armadura->ac[Armadura->acao_atual].inicioX + 1) {
+			if (Principal->acao_atual != APANHA_PRINCIPAL)
+				Principal->vida_atual -= Armadura->dano;
+			Principal->acao_atual = APANHA_PRINCIPAL;
+		}
+
+		if (Armadura->vida_atual <= 0)
+			Armadura->morto = true;
+		if(Armadura->acao_atual == 6)
+			Armadura->dx += a * Armadura->veloc;
+	}
+}

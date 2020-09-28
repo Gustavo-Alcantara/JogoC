@@ -95,6 +95,8 @@ struct Inimigo {
 	int veloc;
 	int altura_pulo;
 	int dano;
+	int espera;
+	float queda;
 	float dx;
 	float dy;
 	float cx;
@@ -121,6 +123,8 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 double dist(float cx0, float cy0, float cx1, float cy1);
 void le_teclado_baixo(struct Carinha* Principal, struct Hitbox* Chao[10], int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);
-void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo* Goblin);
+void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo* Goblin[5]);
 void fisica_bomba(struct Projetil* Bomba, struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox* Vetor_Chao[10]);
-void atualiza_inimigos(struct Inimigo* Ativos[5], int tam);
+void atualiza_inimigos(struct Inimigo* Ativos, int tam);
+void inicia_armadura(struct Inimigo* Armadura, int dx, int dy);
+void comportamento_armadura(struct Inimigo* Armadura, struct Carinha* Principal);
