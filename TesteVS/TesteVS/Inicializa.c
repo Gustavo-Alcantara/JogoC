@@ -1,14 +1,14 @@
 #include "classes.h"
 
-void inicializa_cara(struct Carinha* Principal) {
+void inicializa_cara(struct Carinha* Principal, int dx, int dy,int ALTURA_TELA,int LARGURA_TELA) {
 	strcpy(Principal->nome, "Marcos");
 	Principal->morto = false;
-	Principal->dx = (LARGURA_TELA / 40);
+	Principal->dx = dx;
+	Principal->dy = dy;
 	Principal->dano = 1;
-	Principal->dy = (10 * ALTURA_TELA / 40);
 	Principal->direita = 0;
-	Principal->veloc = 4;
-	Principal->altura_pulo = 6;
+	Principal->veloc = 8;
+	Principal->altura_pulo = 12;
 	Principal->block = false;
 	Principal->apanha = true;
 	Principal->vida_total = 5;
@@ -22,8 +22,8 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->imagem_personagem.png = al_load_bitmap("cara2.png");
 	Principal->imagem_personagem.altura_folha = 37;
 	Principal->imagem_personagem.largura_folha = 50;
-	Principal->imagem_personagem.altura = 70;
-	Principal->imagem_personagem.largura = 90;
+	Principal->imagem_personagem.altura = 140;
+	Principal->imagem_personagem.largura = 180;
 	Principal->imagem_personagem.num_col = 7;
 	Principal->imagem_personagem.num_lin = 11;
 	Principal->cx = Principal->dx + Principal->imagem_personagem.largura / 2;
@@ -94,23 +94,25 @@ void inicializa_cara(struct Carinha* Principal) {
 	Principal->caixa.y1 = Principal->cy + 40;
 
 }
-void inicia_goblin(struct Inimigo* Goblin, int dx,int dy) {
-	Goblin->dano = 3;
+void inicia_goblin(struct Inimigo* Goblin, int dx,int dy, int ALTURA_TELA, int LARGURA_TELA) {
+	Goblin->tipo = GOBLIN;
+	Goblin->dano = 1;
 	Goblin->vida_total = 3;
 	Goblin->vida_atual = Goblin->vida_total;
 	Goblin->dx = dx;
 	Goblin->dy = dy;
 	Goblin->direita = ALLEGRO_FLIP_HORIZONTAL;
-	Goblin->veloc = 3;
+	Goblin->veloc = 6;
 	Goblin->block = false;
-	Goblin->morto = false;
+	Goblin->morto = true;
 	Goblin->queda = 0;
+	Goblin->espera = 180;
 	Goblin->imagem_personagem.png = al_load_bitmap("Goblin.png");
 	Goblin->imagem_personagem.altura_folha = 150;
 	Goblin->imagem_personagem.largura_folha = 150;
-	Goblin->imagem_personagem.altura = 175;
-	Goblin->imagem_personagem.largura = 175;
-	Goblin->imagem_personagem.num_col = 41;
+	Goblin->imagem_personagem.altura = 350;
+	Goblin->imagem_personagem.largura = 350;
+	Goblin->imagem_personagem.num_col = 50;
 	Goblin->imagem_personagem.num_lin = 1;
 	Goblin->cx = Goblin->dx + Goblin->imagem_personagem.largura / 2;
 	Goblin->cy = Goblin->dy + Goblin->imagem_personagem.altura / 2;
@@ -148,8 +150,14 @@ void inicia_goblin(struct Inimigo* Goblin, int dx,int dy) {
 	Goblin->ac[5].finalX = 40;
 	Goblin->ac[5].finalY = 0;
 	Goblin->ac[5].num_frames = 10;
+	Goblin->ac[6].inicioX = 40;
+	Goblin->ac[6].inicioY = 0;
+	Goblin->ac[6].finalX = 48;
+	Goblin->ac[6].finalY = 0;
+	Goblin->ac[6].num_frames = 5;
 }
-void inicia_armadura(struct Inimigo* Armadura, int dx, int dy) {
+void inicia_armadura(struct Inimigo* Armadura, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+	Armadura->tipo = ARMADURA;
 	Armadura->dano = 1;
 	Armadura->vida_total = 7;
 	Armadura->vida_atual = Armadura->vida_total;
@@ -157,15 +165,15 @@ void inicia_armadura(struct Inimigo* Armadura, int dx, int dy) {
 	Armadura->dy = dy;
 	Armadura->queda = 0;
 	Armadura->direita = ALLEGRO_FLIP_HORIZONTAL;
-	Armadura->veloc = 2;
+	Armadura->veloc = 4;
 	Armadura->espera = 60;
 	Armadura->block = false;
-	Armadura->morto = false;
+	Armadura->morto = true;
 	Armadura->imagem_personagem.png = al_load_bitmap("Armadura.png");
 	Armadura->imagem_personagem.altura_folha = 80;
 	Armadura->imagem_personagem.largura_folha = 90;
-	Armadura->imagem_personagem.altura = 80;
-	Armadura->imagem_personagem.largura = 90;
+	Armadura->imagem_personagem.altura = 160;
+	Armadura->imagem_personagem.largura = 180;
 	Armadura->imagem_personagem.num_col = 5;
 	Armadura->imagem_personagem.num_lin = 4;
 	Armadura->cx = Armadura->dx + Armadura->imagem_personagem.largura / 2;
@@ -210,18 +218,65 @@ void inicia_armadura(struct Inimigo* Armadura, int dx, int dy) {
 	Armadura->ac[6].finalY = 3;
 	Armadura->ac[6].num_frames = 15;
 }
+void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+	Olho->tipo = OLHO;
+	Olho->dano = 1;
+	Olho->vida_total = 2;
+	Olho->vida_atual = Olho->vida_total;
+	Olho->dx = dx;
+	Olho->dy = dy;
+	Olho->queda = 0;
+	Olho->direita = ALLEGRO_FLIP_HORIZONTAL;
+	Olho->veloc = 4;
+	Olho->espera = 60;
+	Olho->block = false;
+	Olho->morto = true;
+	Olho->imagem_personagem.png = al_load_bitmap("Olho.png");
+	Olho->imagem_personagem.altura_folha = 150;
+	Olho->imagem_personagem.largura_folha = 150;
+	Olho->imagem_personagem.altura = 300;
+	Olho->imagem_personagem.largura = 300;
+	Olho->imagem_personagem.num_col = 50;
+	Olho->imagem_personagem.num_lin = 1;
+	Olho->cx = Olho->dx + Olho->imagem_personagem.largura / 2;
+	Olho->cy = Olho->dy + Olho->imagem_personagem.altura / 2;
+	Olho->caixa.x0 = Olho->cx + 20;
+	Olho->caixa.x1 = Olho->cx - 20;
+	Olho->caixa.y0 = Olho->cy - 10;
+	Olho->caixa.y1 = Olho->cy + 15;
+	Olho->ac[0].inicioX = 0;
+	Olho->ac[0].inicioY = 0;
+	Olho->ac[0].finalX = 7;
+	Olho->ac[0].finalY = 0;
+	Olho->ac[0].num_frames = 10;
+	Olho->ac[1].inicioX = 8;
+	Olho->ac[1].inicioY = 0;
+	Olho->ac[1].finalX = 15;
+	Olho->ac[1].finalY = 0;
+	Olho->ac[1].num_frames = 10;
+	Olho->ac[4].inicioX = 16;
+	Olho->ac[4].inicioY = 0;
+	Olho->ac[4].finalX = 19;
+	Olho->ac[4].finalY = 0;
+	Olho->ac[4].num_frames = 5;
+	Olho->ac[5].inicioX = 19;
+	Olho->ac[5].inicioY = 0;
+	Olho->ac[5].finalX = 22;
+	Olho->ac[5].finalY = 0;
+	Olho->ac[5].num_frames = 5;
+}
 void carrega_projetil_goblin(struct Projetil*Bomba,struct Inimigo*Goblin) {
 	Bomba->dx = Goblin->cx;
 	Bomba->dy = Goblin->cy;
 	Bomba->img.png = al_load_bitmap("Bomb_sprite.png");
 	Bomba->img.altura_folha = 100;
 	Bomba->img.largura_folha = 100;
-	Bomba->img.altura = 130;
-	Bomba->img.largura = 130;
+	Bomba->img.altura = 260;
+	Bomba->img.largura = 260;
 	Bomba->img.num_col=19;
 	Bomba->img.num_lin=1;
 	Bomba->existe = false;
-	Bomba->veloc = 5;
+	Bomba->veloc = 10;
 	Bomba->dano = 1;
 	Bomba->ac[0].inicioX = 0;
 	Bomba->ac[0].inicioY = 0;

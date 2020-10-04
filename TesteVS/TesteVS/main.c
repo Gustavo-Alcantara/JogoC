@@ -13,6 +13,9 @@ ALLEGRO_KEYBOARD_STATE* teclado = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* coracoes = NULL;
 
+int LARGURA_TELA = 640;
+int ALTURA_TELA = 480;
+char mapa[20][20];
 
 bool inicializar();
 void desenha_grid(int lin, int col);
@@ -27,18 +30,20 @@ int main(void) {
 	for (int k = 0; k < 5; k++)
 		Ativos[k].morto = true;
 
-	inicia_goblin(&Ativos[0],7 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
-	inicia_armadura(&Ativos[1],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40));
-	inicializa_cara(&Principal);
-	carrega_projetil_goblin(&Bomba[0], &Ativos[0]);
-	carrega_projetil_goblin(&Bomba[1], &Ativos[1]);
+	carrega_mapa(mapa,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
+	inicializa_cara(&Principal, (LARGURA_TELA / 40), (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
+	inicia_goblin(&Ativos[0],7 * LARGURA_TELA / 10,(10 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
+	inicia_armadura(&Ativos[1],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
+	inicia_olho(&Ativos[2],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
+	carrega_projetil_goblin(&Bomba[0], &Ativos[0], ALTURA_TELA, LARGURA_TELA);
 
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
 	reseta_acoes_inimigo(&Ativos[0], 10, 30,Ativos[0].direita);
 	reseta_acoes_inimigo(&Ativos[1], 10, 30,Ativos[1].direita);
+	reseta_acoes_inimigo(&Ativos[2], 10, 30,Ativos[2].direita);
 
 	Vetor_Chao[0].x0 = 0;
-	Vetor_Chao[0].y0 = (32 * ALTURA_TELA / 40) + Principal.imagem_personagem.altura;
+	Vetor_Chao[0].y0 = (38 * ALTURA_TELA / 40) ;
 	Vetor_Chao[0].x1 = LARGURA_TELA;
 	Vetor_Chao[0].y1 = ALTURA_TELA;
 
@@ -72,29 +77,65 @@ int main(void) {
 			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && Principal.acao_atual != APANHA_PRINCIPAL) {
 				if (Principal.conta_ataque > 2)
 					Principal.conta_ataque = 0;
-				le_teclado_baixo(&Principal, Vetor_Chao, evento.keyboard.keycode);
+				le_teclado_baixo(&Principal, &Vetor_Chao, evento.keyboard.keycode);
 			}
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP)
 				le_teclado_alto(&Principal, evento.keyboard.keycode);
 
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
 				
-				personagem_principal(&Principal, &Vetor_Chao, &Ativos[0]);
-				comportamento_goblin(&Ativos[0], &Principal, &Bomba);
-				comportamento_armadura(&Ativos[1], &Principal);
+				personagem_principal(&Principal, &Vetor_Chao,(Ativos),desloc);
+				if (Principal.acao_atual == CORRENDO_PRINCIPAL || Principal.acao_atual == DESLIZA_PRINCIPAL) {
+					if (Principal.direita == 0) {
+						desloc -= Principal.veloc;
+						for (int i = 0; i < 5; i++)
+							Ativos[i].dx -= Principal.veloc;
+						for (int i = 0; i < 10; i++) {
+							if (i != 0) {
+								Vetor_Chao[i].x0 -= Principal.veloc;
+								Vetor_Chao[i].x1 -= Principal.veloc;
+							}
+						}
+					}
+					else {
+						desloc += Principal.veloc;
+						for (int i = 0; i < 5; i++)
+							Ativos[i].dx += Principal.veloc;
+						for (int i = 0; i < 10; i++) {
+							Vetor_Chao[i].x0 += Principal.veloc;
+							Vetor_Chao[i].x1 += Principal.veloc;
+						}
+					}
+				}
+				for (int i = 0; i < 5; i++) {
+					switch (Ativos[i].tipo) {
+					case 1:
+						comportamento_goblin(&Ativos[i], &Principal, &Bomba);
+						break;
+					case 2:
+						comportamento_armadura(&Ativos[i], &Principal);
+						break;
+					case 3:
+						comportamento_olho(&Ativos[i], &Principal);
+						break;
+					}
+				}
+
 				fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
 				
 				for (int i = 0; i < 5; i++) {
-					if (!colisao(&Ativos[i].caixa, &Vetor_Chao[0]) && !Ativos[i].morto) {
+					if (!colisao_chao(&Ativos[i].caixa, Vetor_Chao) && !Ativos[i].morto && i != 2) {
 						Ativos[i].dy += Ativos[i].queda;
 						Ativos[i].queda += 0.2;
 					}
 					else
 						Ativos[i].queda = 0;
 				}
-
 				for (int i = 10; i > 0; i--)
-					al_draw_scaled_bitmap(layers[i], 0, 230 , LARGURA_TELA, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+					al_draw_scaled_bitmap(layers[i], -desloc, 230 , 928, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+
+				for (int i = 0; i < 10; i++)
+					desenha_bloco(&Vetor_Chao[i],layers[1],LARGURA_TELA,ALTURA_TELA);
 
 				for (int j = 0; j < Principal.vida_atual; j++)
 					al_draw_scaled_bitmap(coracoes, 0, 0, 256, 256, j * 25 + 10, 10, 25, 25, 0);
@@ -108,22 +149,21 @@ int main(void) {
 				
 				if(Bomba[0].existe)
 					anima_projetil(&Bomba[0]);
-				if (Bomba[1].existe)
-					anima_projetil(&Bomba[1]);
 
 				#ifdef DESENHA //Hitboxes
-				desenha_hitbox(&Vetor_Chao[0]);
+				
+				
 				desenha_hitbox(&Bomba->caixa);
 				desenha_hitbox(&Principal.caixa);
 				for (int i = 0; i < 5; i++) {
 					if(!Ativos[i].morto)
 						desenha_hitbox(&Ativos[i].caixa);
 				}
-				al_draw_circle(Principal.cx, Principal.cy, 50,al_map_rgb(255,255,255),1);
-				al_draw_circle(Ativos[0].cx, Ativos[0].cy, 50,al_map_rgb(255,255,255),1);
+				al_draw_circle(Principal.cx, Principal.cy, 100,al_map_rgb(255,255,255),1);
+				al_draw_circle(Ativos[0].cx, Ativos[0].cy, 100,al_map_rgb(255,255,255),1);
 				#endif // Desenha Hitboxes
 				#ifdef GRID
-				desenha_grid(20,10);
+				desenha_grid(20,20);
 				#endif
 
 				al_flip_display();
@@ -164,7 +204,16 @@ bool inicializar() {
 	}
 	if (!al_init_ttf_addon())
 		return false;
+
+	ALLEGRO_MONITOR_INFO inf;
+	al_get_monitor_info(0, &inf);
+
+	LARGURA_TELA = inf.x2 - inf.x1;
+	ALTURA_TELA = inf.y2 - inf.y1;
+
+	al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW);
 	janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+
 	if (!janela)
 		return false;
 	al_set_window_title(janela, "Aventura Lo-Fi");

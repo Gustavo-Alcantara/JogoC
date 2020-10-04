@@ -7,14 +7,13 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
+#include "tipos.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
 
 
-#define LARGURA_TELA 640
-#define ALTURA_TELA 480
 #define FPS 60.0
 
 struct Hitbox{
@@ -88,6 +87,7 @@ struct Inimigo {
 	struct Sprite imagem_personagem;
 	struct acao ac[10];
 	struct Hitbox caixa;
+	int tipo;
 	int acao_atual;
 	int vida_total;
 	int vida_atual;
@@ -112,19 +112,24 @@ void anima_Inimigo(struct Inimigo* boneco, int indice);
 void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice,int direita);
 void reseta_acoes_inimigo(struct Inimigo*boneco,int num_acoes ,int indice,int direita);
 
-void inicializa_cara(struct Carinha* Principal);
-void inicia_goblin(struct Inimigo* Goblin, int dx, int dy);
+void inicializa_cara(struct Carinha* Principal, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
+void inicia_goblin(struct Inimigo* Goblin, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
 void carrega_projetil_goblin(struct Projetil* Bomba, struct Inimigo* Goblin);
 void reseta_acao(struct acao*ac);
 void anima_projetil(struct Projetil* Bomba);
 void desenha_hitbox(struct Hitbox* caixa);
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2);
+bool colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetor_Chao[10]);
 void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, struct Projetil* Bomba);
 double dist(float cx0, float cy0, float cx1, float cy1);
 void le_teclado_baixo(struct Carinha* Principal, struct Hitbox* Chao[10], int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);
-void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo* Goblin[5]);
+void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo* Goblin[5],int desloc_tela);
 void fisica_bomba(struct Projetil* Bomba, struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox* Vetor_Chao[10]);
 void atualiza_inimigos(struct Inimigo* Ativos, int tam);
-void inicia_armadura(struct Inimigo* Armadura, int dx, int dy);
+void inicia_armadura(struct Inimigo* Armadura, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
 void comportamento_armadura(struct Inimigo* Armadura, struct Carinha* Principal);
+void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
+void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal);
+void carrega_mapa(char mapa[20][20], struct Hitbox Vetor_Chao[10], int LARGURA_TELA, int ALTURA_TELA);
+void desenha_bloco(struct Hitbox* caixa, struct ALLEGRO_BITMAP* Bloco, int largura, int altura);
