@@ -21,6 +21,8 @@ bool inicializar();
 void desenha_grid(int lin, int col);
 
 int main(void) {
+	int x = 928;
+
 	bool inicio = inicializar();
 	struct Carinha Principal;
 	struct Inimigo Ativos[5];
@@ -31,7 +33,7 @@ int main(void) {
 		Ativos[k].morto = true;
 
 	carrega_mapa(mapa,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
-	inicializa_cara(&Principal, (LARGURA_TELA / 40), (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
+	inicializa_cara(&Principal, (LARGURA_TELA / 2), (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
 	inicia_goblin(&Ativos[0],7 * LARGURA_TELA / 10,(10 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
 	inicia_armadura(&Ativos[1],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
 	inicia_olho(&Ativos[2],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
@@ -87,7 +89,7 @@ int main(void) {
 				personagem_principal(&Principal, &Vetor_Chao,(Ativos),desloc);
 				if (Principal.acao_atual == CORRENDO_PRINCIPAL || Principal.acao_atual == DESLIZA_PRINCIPAL) {
 					if (Principal.direita == 0) {
-						desloc -= Principal.veloc;
+						desloc += Principal.veloc;
 						for (int i = 0; i < 5; i++)
 							Ativos[i].dx -= Principal.veloc;
 						for (int i = 0; i < 10; i++) {
@@ -98,12 +100,14 @@ int main(void) {
 						}
 					}
 					else {
-						desloc += Principal.veloc;
+						desloc -= Principal.veloc;
 						for (int i = 0; i < 5; i++)
 							Ativos[i].dx += Principal.veloc;
 						for (int i = 0; i < 10; i++) {
-							Vetor_Chao[i].x0 += Principal.veloc;
-							Vetor_Chao[i].x1 += Principal.veloc;
+							if (i != 0) {
+								Vetor_Chao[i].x0 += Principal.veloc;
+								Vetor_Chao[i].x1 += Principal.veloc;
+							}
 						}
 					}
 				}
@@ -131,11 +135,9 @@ int main(void) {
 					else
 						Ativos[i].queda = 0;
 				}
-				for (int i = 10; i > 0; i--)
-					al_draw_scaled_bitmap(layers[i], -desloc, 230 , 928, 533, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
 
-				for (int i = 0; i < 10; i++)
-					desenha_bloco(&Vetor_Chao[i],layers[1],LARGURA_TELA,ALTURA_TELA);
+				for (int i = 10; i > 0; i--)
+					atualiza_fundo(layers[i], LARGURA_TELA, ALTURA_TELA, desloc*1/i);
 
 				for (int j = 0; j < Principal.vida_atual; j++)
 					al_draw_scaled_bitmap(coracoes, 0, 0, 256, 256, j * 25 + 10, 10, 25, 25, 0);

@@ -133,3 +133,4 @@ void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARG
 void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal);
 void carrega_mapa(char mapa[20][20], struct Hitbox Vetor_Chao[10], int LARGURA_TELA, int ALTURA_TELA);
 void desenha_bloco(struct Hitbox* caixa, struct ALLEGRO_BITMAP* Bloco, int largura, int altura);
+void atualiza_fundo(struct ALLEGRO_BITMAP* fundo, int LARGURA_TELA, int ALTURA_TELA, int desloc);

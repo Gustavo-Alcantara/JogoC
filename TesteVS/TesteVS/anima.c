@@ -117,6 +117,15 @@ void anima_projetil(struct Projetil* Bomba) {
 		Bomba->img.largura, Bomba->img.altura,0);
 	
 }
+void atualiza_fundo(struct ALLEGRO_BITMAP* fundo,int LARGURA_TELA, int ALTURA_TELA, int desloc){
+	if (-desloc + LARGURA_TELA <= 0)
+		desloc = 0;
+	al_draw_scaled_bitmap(fundo, 0, 230, 928, 533, -desloc, 0, LARGURA_TELA, ALTURA_TELA, 0);
+	if (-desloc + LARGURA_TELA < LARGURA_TELA) {
+		for (int i = 10; i > 0; i--)
+			al_draw_scaled_bitmap(fundo, 0, 230, 928, 533, -desloc + LARGURA_TELA, 0, LARGURA_TELA, ALTURA_TELA, 0);
+	}
+}
 void desenha_hitbox(struct Hitbox* caixa, struct ALLEGRO_BITMAP* Bloco){
 	al_draw_rectangle(caixa->x0, caixa->y0, caixa->x1, caixa->y1, al_map_rgb(255, 255, 255), 1);
 }
