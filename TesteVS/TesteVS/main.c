@@ -89,9 +89,10 @@ int main(void) {
 
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
 				desloc = 0;
+				int aleatorio = rand() % NUM_INIMIGOS + 1;
 				if (mortos(Ativos)) {
-					for (int i = 0; i < 5; i++)
-						inicia_inimigo(&Ativos[i], Principal.dx + LARGURA_TELA , ALTURA_TELA / 4, LARGURA_TELA, ALTURA_TELA, rand() % NUM_INIMIGOS);
+					inicia_inimigo(&Ativos[0], Principal.dx + LARGURA_TELA , ALTURA_TELA / 3, LARGURA_TELA, ALTURA_TELA, aleatorio);
+					reseta_acoes_inimigo(&Ativos[0], 10, 30, Ativos[0].direita);
 				}
 				personagem_principal(&Principal, &Vetor_Chao,Ativos,desloc);
 				for (int i = 0; i < 5; i++) 
@@ -100,16 +101,17 @@ int main(void) {
 				desloc = Principal.dx - ((LARGURA_TELA / 2) - 150);
 				Principal.dx = (LARGURA_TELA / 2) - 150;
 
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 3; i++) {
 					comportamento(&Ativos[i], &Principal, &Bomba[0]);
-					if (!colisao_chao(&Ativos[i].caixa, Vetor_Chao) && !Ativos[i].morto && i != 2) {
+					if (!colisao_chao(&Ativos[i].caixa, Vetor_Chao) && !Ativos[i].morto) {
 						Ativos[i].dy += Ativos[i].queda;
 						Ativos[i].queda += 0.2;
 					}
 					else
 						Ativos[i].queda = 0;
+					if (Ativos[i].dy > ALTURA_TELA)
+						Ativos[i].morto = true;
 				}
-
 				fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
 
 				for (int i = 10; i > 0; i--) {

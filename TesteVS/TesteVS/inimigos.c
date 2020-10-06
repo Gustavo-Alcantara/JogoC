@@ -32,6 +32,9 @@ void inicia_inimigo(struct Inimigo*Ativos, int dx, int dy, int LARGURA_TELA, int
 	case OLHO:
 		inicia_olho(Ativos, dx, dy, LARGURA_TELA, ALTURA_TELA);
 		break;
+	default:
+		inicia_olho(Ativos, dx, dy, LARGURA_TELA, ALTURA_TELA);
+		break;
 	}
 }
 bool mortos(struct Inimigo Ativos[5]) {

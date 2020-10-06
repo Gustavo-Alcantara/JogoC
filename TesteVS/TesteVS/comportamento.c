@@ -212,7 +212,7 @@ void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal) {
 				Olho->acao_atual = 1;
 				Olho->block = true;
 			}
-			else if (dist(Olho->cx, Olho->cy, Principal->cx, Principal->cy)<200) {
+			else if (dist(Olho->cx, Olho->cy, Principal->cx, Principal->cy)<600) {
 				if (Olho->cx < Principal->cx || Olho->cx > Principal->cx)
 					Olho->dx -= a * Olho->veloc;
 				if (Olho->cy < Principal->cy || Olho->cy > Principal->cy)

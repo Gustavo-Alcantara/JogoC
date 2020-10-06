@@ -105,13 +105,9 @@ void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], st
 	if (Principal->acao_atual == CORRENDO_PRINCIPAL || Principal->acao_atual == DESLIZA_PRINCIPAL) {
 		if (Principal->direita == 0) {
 			Principal->dx += Principal->veloc;
-			for (int i = 0; i < 5; i++)
-				Goblin[i].dx -= Principal->veloc;
 		}
 		else {
 			Principal->dx -= Principal->veloc;
-			for (int i = 0; i < 5; i++)
-				Goblin[i].dx += Principal->veloc;
 		}
 	}
 	else if (Principal->acao_atual == ATAQUE1_PRINCIPAL || Principal->acao_atual == ATAQUE2_PRINCIPAL || Principal->acao_atual == ATAQUE3_PRINCIPAL) {
