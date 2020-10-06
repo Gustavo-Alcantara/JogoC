@@ -104,7 +104,7 @@ void inicia_goblin(struct Inimigo* Goblin, int dx,int dy, int ALTURA_TELA, int L
 	Goblin->direita = ALLEGRO_FLIP_HORIZONTAL;
 	Goblin->veloc = 6;
 	Goblin->block = false;
-	Goblin->morto = true;
+	Goblin->morto = false;
 	Goblin->queda = 0;
 	Goblin->espera = 180;
 	Goblin->imagem_personagem.png = al_load_bitmap("Goblin.png");
@@ -168,7 +168,7 @@ void inicia_armadura(struct Inimigo* Armadura, int dx, int dy, int ALTURA_TELA, 
 	Armadura->veloc = 4;
 	Armadura->espera = 60;
 	Armadura->block = false;
-	Armadura->morto = true;
+	Armadura->morto = false;
 	Armadura->imagem_personagem.png = al_load_bitmap("Armadura.png");
 	Armadura->imagem_personagem.altura_folha = 80;
 	Armadura->imagem_personagem.largura_folha = 90;
@@ -230,7 +230,7 @@ void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARG
 	Olho->veloc = 4;
 	Olho->espera = 60;
 	Olho->block = false;
-	Olho->morto = true;
+	Olho->morto = false;
 	Olho->imagem_personagem.png = al_load_bitmap("Olho.png");
 	Olho->imagem_personagem.altura_folha = 150;
 	Olho->imagem_personagem.largura_folha = 150;

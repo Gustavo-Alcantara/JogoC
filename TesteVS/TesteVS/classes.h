@@ -105,7 +105,15 @@ struct Inimigo {
 	bool apanha;
 	bool block;
 };
-
+struct Fundo {
+	ALLEGRO_BITMAP* imagem;
+	int dx;
+	int dy;
+	int largura;
+	int largura_folha;
+	int altura;
+	int altura_folha;
+};
 
 void anima_personagem(struct Carinha* boneco, int indice);
 void anima_Inimigo(struct Inimigo* boneco, int indice);
@@ -124,7 +132,7 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 double dist(float cx0, float cy0, float cx1, float cy1);
 void le_teclado_baixo(struct Carinha* Principal, struct Hitbox* Chao[10], int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);
-void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo* Goblin[5],int desloc_tela);
+void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], struct Inimigo Goblin[5], int desloc_tela);
 void fisica_bomba(struct Projetil* Bomba, struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox* Vetor_Chao[10]);
 void atualiza_inimigos(struct Inimigo* Ativos, int tam);
 void inicia_armadura(struct Inimigo* Armadura, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
@@ -133,4 +141,7 @@ void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARG
 void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal);
 void carrega_mapa(char mapa[20][20], struct Hitbox Vetor_Chao[10], int LARGURA_TELA, int ALTURA_TELA);
 void desenha_bloco(struct Hitbox* caixa, struct ALLEGRO_BITMAP* Bloco, int largura, int altura);
-void atualiza_fundo(struct ALLEGRO_BITMAP* fundo, int LARGURA_TELA, int ALTURA_TELA, int desloc);
+void atualiza_fundo(struct Fundo* fundo, int LARGURA_TELA, int ALTURA_TELA);
+void comportamento(struct Inimigo* Ativos, struct Carinha* Principal, struct Projetil* Bomba);
+void inicia_inimigo(struct Inimigo* Ativos, int dx, int dy, int LARGURA_TELA, int ALTURA_TELA, int tipo);
+bool mortos(struct Inimigo Ativos[5]);

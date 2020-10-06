@@ -41,13 +41,13 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 			else Goblin->direita = ALLEGRO_FLIP_HORIZONTAL;
 
 			if (Goblin->cx + 100 > Principal->cx && Principal->cx > Goblin->cx - 100) {
-				Goblin->acao_atual = GOBLIN_BATENDO;
+				Goblin->acao_atual = ATAQUE2;
 				Goblin->block = true;
 			}
 			else if (Goblin->cx + 400 > Principal->cx && Principal->cx > Goblin->cx - 400)
-				Goblin->acao_atual = CORRENDO_GOBLIN;
+				Goblin->acao_atual = CORRENDO;
 			else if (Goblin->cx + 800 > Principal->cx && Principal->cx > Goblin->cx - 800 && !Bomba->existe) {
-				Goblin->acao_atual = TACA_BOMBAGOBLIN;
+				Goblin->acao_atual = ATAQUE1;
 				if (Goblin->direita == 0)
 					a = -1;
 				Goblin->block = true;
@@ -57,15 +57,15 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 			}
 
 			else
-				Goblin->acao_atual = PARADO_GOBLIN;
-			if (Goblin->acao_atual == CORRENDO_GOBLIN) {
+				Goblin->acao_atual = PARADO;
+			if (Goblin->acao_atual == CORRENDO) {
 				if (Goblin->direita == 0)
 					Goblin->dx += Goblin->veloc;
 				else Goblin->dx -= Goblin->veloc;
 			}
 			
 			if (Goblin->vida_atual <= 0) {
-				Goblin->acao_atual = MORRE_GOBLIN;
+				Goblin->acao_atual = MORRE;
 				Goblin->block = true;
 				Goblin->apanha = false;
 			}
@@ -77,10 +77,10 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 
 		}
 		else {
-			if (Goblin->ac[MORRE_GOBLIN].col_atual == 39)
+			if (Goblin->ac[MORRE].col_atual == 39)
 				Goblin->morto = true;
 		}
-		if (dist(Principal->cx, Principal->cy, Goblin->cx, Goblin->cy) < 100 && Principal->apanha && Goblin->ac[GOBLIN_BATENDO].col_atual == Goblin->ac[GOBLIN_BATENDO].finalX - 2) {
+		if (dist(Principal->cx, Principal->cy, Goblin->cx, Goblin->cy) < 100 && Principal->apanha && Goblin->ac[ATAQUE2].col_atual == Goblin->ac[ATAQUE2].finalX - 2) {
 			if (Principal->acao_atual != APANHA_PRINCIPAL)
 				Principal->vida_atual -= Goblin->dano;
 			Principal->acao_atual = APANHA_PRINCIPAL;
@@ -97,7 +97,7 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 				Goblin->dx -= 0.3*Goblin->veloc;
 			else Goblin->dx += 0.3 * Goblin->veloc;
 		}
-	if (Goblin->acao_atual == TACA_BOMBAGOBLIN && Goblin->ac[TACA_BOMBAGOBLIN].col_atual == Goblin->ac[TACA_BOMBAGOBLIN].finalX - 1)
+	if (Goblin->acao_atual == ATAQUE1 && Goblin->ac[ATAQUE1].col_atual == Goblin->ac[ATAQUE1].finalX - 1)
 		Bomba->existe = true;
 	}
 }
@@ -219,12 +219,12 @@ void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal) {
 					Olho->dy -= b * Olho->veloc;
 			}
 			if (Olho->vida_atual <= 0) {
-				Olho->acao_atual = MORRE_GOBLIN;
+				Olho->acao_atual = MORRE;
 				Olho->block = true;
 				Olho->apanha = false;
 			}
 		}
-		else if(Olho->ac[MORRE_GOBLIN].col_atual == Olho->ac[MORRE_GOBLIN].finalX-1)
+		else if(Olho->ac[MORRE].col_atual == Olho->ac[MORRE].finalX-1)
 			Olho->morto = true;
 	}
 }

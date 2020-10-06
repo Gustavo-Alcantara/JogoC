@@ -13,9 +13,9 @@
 #define DESLIZA_PRINCIPAL 9
 #define APANHA_PRINCIPAL 12
 
-#define PARADO_GOBLIN 0
-#define TACA_BOMBAGOBLIN 1
-#define CORRENDO_GOBLIN 2
-#define GOBLIN_BATENDO 3
-#define APANHA_GOBLIN 4
-#define MORRE_GOBLIN 5
+#define PARADO 0
+#define ATAQUE1 1
+#define CORRENDO 2
+#define ATAQUE2 3
+#define APANHA 4
+#define MORRE 5

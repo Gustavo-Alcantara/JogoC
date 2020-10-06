@@ -5,7 +5,6 @@
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
-ALLEGRO_BITMAP* layers[11];
 ALLEGRO_BITMAP* folha = NULL;
 ALLEGRO_FONT* fonte = NULL;
 ALLEGRO_TIMER* timer = NULL;
@@ -22,21 +21,25 @@ void desenha_grid(int lin, int col);
 
 int main(void) {
 	int x = 928;
-
+	srand(time(NULL));
 	bool inicio = inicializar();
 	struct Carinha Principal;
 	struct Inimigo Ativos[5];
 	struct Projetil Bomba[2];
 	struct Hitbox Vetor_Chao[10];
-
+	struct Fundo fundo[11];
+	
 	for (int k = 0; k < 5; k++)
 		Ativos[k].morto = true;
-
-	carrega_mapa(mapa,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
-	inicializa_cara(&Principal, (LARGURA_TELA / 2), (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
-	inicia_goblin(&Ativos[0],7 * LARGURA_TELA / 10,(10 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
-	inicia_armadura(&Ativos[1],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
-	inicia_olho(&Ativos[2],5 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
+	for (int i = 0; i < 11; i++) {
+		fundo[i].dx = 0;
+		fundo[i].dy = 0;
+	}
+	//carrega_mapa(mapa,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
+	inicializa_cara(&Principal, (LARGURA_TELA / 2)-150, (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
+	inicia_inimigo(&Ativos[0],17 * LARGURA_TELA / 10,(10 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA,GOBLIN);
+	inicia_armadura(&Ativos[1],15 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
+	inicia_olho(&Ativos[2],15 * LARGURA_TELA / 10,(28 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA);
 	carrega_projetil_goblin(&Bomba[0], &Ativos[0], ALTURA_TELA, LARGURA_TELA);
 
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
@@ -44,9 +47,9 @@ int main(void) {
 	reseta_acoes_inimigo(&Ativos[1], 10, 30,Ativos[1].direita);
 	reseta_acoes_inimigo(&Ativos[2], 10, 30,Ativos[2].direita);
 
-	Vetor_Chao[0].x0 = 0;
+	Vetor_Chao[0].x0 = -LARGURA_TELA;
 	Vetor_Chao[0].y0 = (38 * ALTURA_TELA / 40) ;
-	Vetor_Chao[0].x1 = LARGURA_TELA;
+	Vetor_Chao[0].x1 = 3*LARGURA_TELA;
 	Vetor_Chao[0].y1 = ALTURA_TELA;
 
 	bool sair = false;
@@ -57,17 +60,17 @@ int main(void) {
 		return -1;
 	fonte = al_load_font("Toothy.ttf", 24, 0);
 	coracoes = al_load_bitmap("vida.png");
-	layers[0] = al_load_bitmap("Layer_0000_9.png");
-	layers[1] = al_load_bitmap("Layer_0001_8.png");
-	layers[2] = al_load_bitmap("Layer_0002_7.png");
-	layers[3] = al_load_bitmap("Layer_0003_6.png");
-	layers[4] = al_load_bitmap("Layer_0004_Lights.png");
-	layers[5] = al_load_bitmap("Layer_0005_5.png");
-	layers[6] = al_load_bitmap("Layer_0006_4.png");
-	layers[7] = al_load_bitmap("Layer_0007_Lights.png");
-	layers[8] = al_load_bitmap("Layer_0008_3.png");
-	layers[9] = al_load_bitmap("Layer_0009_2.png");
-	layers[10] = al_load_bitmap("Layer_0010_1.png");
+	fundo[0].imagem = al_load_bitmap("Layer_0000_9.png");
+	fundo[1].imagem = al_load_bitmap("Layer_0001_8.png");
+	fundo[2].imagem = al_load_bitmap("Layer_0002_7.png");
+	fundo[3].imagem = al_load_bitmap("Layer_0003_6.png");
+	fundo[4].imagem = al_load_bitmap("Layer_0004_Lights.png");
+	fundo[5].imagem = al_load_bitmap("Layer_0005_5.png");
+	fundo[6].imagem = al_load_bitmap("Layer_0006_4.png");
+	fundo[7].imagem = al_load_bitmap("Layer_0007_Lights.png");
+	fundo[8].imagem = al_load_bitmap("Layer_0008_3.png");
+	fundo[9].imagem = al_load_bitmap("Layer_0009_2.png");
+	fundo[10].imagem = al_load_bitmap("Layer_0010_1.png");
 
 	Principal.acao_atual = RESPIRA_PRINCIPAL;
 	
@@ -85,49 +88,20 @@ int main(void) {
 				le_teclado_alto(&Principal, evento.keyboard.keycode);
 
 			else if (evento.type == ALLEGRO_EVENT_TIMER){
+				desloc = 0;
+				if (mortos(Ativos)) {
+					for (int i = 0; i < 5; i++)
+						inicia_inimigo(&Ativos[i], Principal.dx + LARGURA_TELA , ALTURA_TELA / 4, LARGURA_TELA, ALTURA_TELA, rand() % NUM_INIMIGOS);
+				}
+				personagem_principal(&Principal, &Vetor_Chao,Ativos,desloc);
+				for (int i = 0; i < 5; i++) 
+					Ativos[i].dx -= Principal.dx - ((LARGURA_TELA / 2) - 150);
 				
-				personagem_principal(&Principal, &Vetor_Chao,(Ativos),desloc);
-				if (Principal.acao_atual == CORRENDO_PRINCIPAL || Principal.acao_atual == DESLIZA_PRINCIPAL) {
-					if (Principal.direita == 0) {
-						desloc += Principal.veloc;
-						for (int i = 0; i < 5; i++)
-							Ativos[i].dx -= Principal.veloc;
-						for (int i = 0; i < 10; i++) {
-							if (i != 0) {
-								Vetor_Chao[i].x0 -= Principal.veloc;
-								Vetor_Chao[i].x1 -= Principal.veloc;
-							}
-						}
-					}
-					else {
-						desloc -= Principal.veloc;
-						for (int i = 0; i < 5; i++)
-							Ativos[i].dx += Principal.veloc;
-						for (int i = 0; i < 10; i++) {
-							if (i != 0) {
-								Vetor_Chao[i].x0 += Principal.veloc;
-								Vetor_Chao[i].x1 += Principal.veloc;
-							}
-						}
-					}
-				}
-				for (int i = 0; i < 5; i++) {
-					switch (Ativos[i].tipo) {
-					case 1:
-						comportamento_goblin(&Ativos[i], &Principal, &Bomba);
-						break;
-					case 2:
-						comportamento_armadura(&Ativos[i], &Principal);
-						break;
-					case 3:
-						comportamento_olho(&Ativos[i], &Principal);
-						break;
-					}
-				}
+				desloc = Principal.dx - ((LARGURA_TELA / 2) - 150);
+				Principal.dx = (LARGURA_TELA / 2) - 150;
 
-				fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
-				
 				for (int i = 0; i < 5; i++) {
+					comportamento(&Ativos[i], &Principal, &Bomba[0]);
 					if (!colisao_chao(&Ativos[i].caixa, Vetor_Chao) && !Ativos[i].morto && i != 2) {
 						Ativos[i].dy += Ativos[i].queda;
 						Ativos[i].queda += 0.2;
@@ -136,17 +110,22 @@ int main(void) {
 						Ativos[i].queda = 0;
 				}
 
-				for (int i = 10; i > 0; i--)
-					atualiza_fundo(layers[i], LARGURA_TELA, ALTURA_TELA, desloc*1/i);
+				fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
+
+				for (int i = 10; i > 0; i--) {
+					fundo[i].dx += desloc/i;
+					atualiza_fundo(&fundo[i], LARGURA_TELA, ALTURA_TELA);
+				}
 
 				for (int j = 0; j < Principal.vida_atual; j++)
 					al_draw_scaled_bitmap(coracoes, 0, 0, 256, 256, j * 25 + 10, 10, 25, 25, 0);
 
 				al_draw_text(fonte, al_map_rgb(255,255, 255), 10, 40, ALLEGRO_ALIGN_LEFT, "Marcos");
 
+				for (int i = 0; i < 10; i++)
+					desenha_bloco(&Vetor_Chao[i],fundo[1].imagem ,LARGURA_TELA, ALTURA_TELA);
 				for (int i = 0; i < 5; i++)
 					atualiza_inimigos(&Ativos[i], 5);
-
 				anima_personagem(&Principal, Principal.acao_atual);
 				
 				if(Bomba[0].existe)

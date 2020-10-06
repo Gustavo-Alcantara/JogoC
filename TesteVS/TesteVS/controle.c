@@ -104,12 +104,12 @@ void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], st
 	}
 	if (Principal->acao_atual == CORRENDO_PRINCIPAL || Principal->acao_atual == DESLIZA_PRINCIPAL) {
 		if (Principal->direita == 0) {
-			desloc_tela -= Principal->veloc;
-			for(int i=0;i<5;i++)
+			Principal->dx += Principal->veloc;
+			for (int i = 0; i < 5; i++)
 				Goblin[i].dx -= Principal->veloc;
 		}
 		else {
-			desloc_tela += Principal->veloc;
+			Principal->dx -= Principal->veloc;
 			for (int i = 0; i < 5; i++)
 				Goblin[i].dx += Principal->veloc;
 		}
@@ -120,7 +120,7 @@ void personagem_principal(struct Carinha* Principal, struct Hitbox* Chao[10], st
 				if (dist(Principal->cx, Principal->cy, Goblin[i].cx, Goblin[i].cy) < 100 && Goblin[i].apanha) {
 					if (Principal->ac[Principal->acao_atual].col_atual == Principal->ac[Principal->acao_atual].inicioX + 1)
 						Goblin[i].vida_atual -= Principal->dano;
-					Goblin[i].acao_atual = APANHA_GOBLIN;
+					Goblin[i].acao_atual = APANHA;
 					Goblin[i].block = true;
 				}
 			}
