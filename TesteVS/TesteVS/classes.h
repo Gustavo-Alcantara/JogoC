@@ -140,7 +140,7 @@ void comportamento_armadura(struct Inimigo* Armadura, struct Carinha* Principal)
 void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
 void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal);
 void carrega_mapa(char mapa[20][20], int dx, struct Hitbox Vetor_Chao[10], int LARGURA_TELA, int ALTURA_TELA);
-void desenha_bloco(struct ALLEGRO_BITMAP* Bloco, int dx, int dy);
+void desenha_bloco(struct ALLEGRO_BITMAP* Bloco[6], int dx0, int dy0, int dx1, int dy1);
 void atualiza_fundo(struct Fundo* fundo, int LARGURA_TELA, int ALTURA_TELA);
 void comportamento(struct Inimigo* Ativos, struct Carinha* Principal, struct Projetil* Bomba);
 void inicia_inimigo(struct Inimigo* Ativos, int dx, int dy, int LARGURA_TELA, int ALTURA_TELA, int tipo);

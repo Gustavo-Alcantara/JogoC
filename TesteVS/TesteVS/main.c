@@ -1,6 +1,6 @@
 #include "classes.h"
 #include "macros.h"
-//#define DESENHA
+#define DESENHA
 //#define GRID
 
 ALLEGRO_DISPLAY* janela = NULL;
@@ -11,7 +11,7 @@ ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_KEYBOARD_STATE* teclado = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* coracoes = NULL;
-ALLEGRO_BITMAP* Bloco = NULL;
+ALLEGRO_BITMAP* Bloco[6];
 
 int LARGURA_TELA = 640;
 int ALTURA_TELA = 480;
@@ -59,8 +59,15 @@ int main(void) {
 	float queda = 0;
 	if (!inicio)
 		return -1;
-	Bloco = al_load_bitmap("Blocos/Bloco.png");
-	if (!Bloco)
+
+	Bloco[0] = al_load_bitmap("Blocos/Bloco.png");
+	Bloco[1] = al_load_bitmap("Blocos/Bloco_1.png");
+	Bloco[2] = al_load_bitmap("Blocos/Bloco_2.png");
+	Bloco[3] = al_load_bitmap("Blocos/Bloco_3.png");
+	Bloco[4] = al_load_bitmap("Blocos/Bloco_4.png");
+	Bloco[5] = al_load_bitmap("Blocos/Bloco_5.png");
+	
+	if (!Bloco[5])
 		return 0;
 	fonte = al_load_font("Fontes/Toothy.ttf", 24, 0);
 	coracoes = al_load_bitmap("Principal/vida.png");
@@ -95,6 +102,11 @@ int main(void) {
 				desloc = 0;
 				
 				if (mortos(Ativos)) {
+					carrega_mapa(mapa, Principal.dx, Vetor_Chao, LARGURA_TELA, ALTURA_TELA);
+					Vetor_Chao[9].x0 = -LARGURA_TELA;
+					Vetor_Chao[9].y0 = (38 * ALTURA_TELA / 40);
+					Vetor_Chao[9].x1 = 3 * LARGURA_TELA;
+					Vetor_Chao[9].y1 = ALTURA_TELA;
 					for (int i = 0; i < 3; i++) {
 						int aleatorio = rand() % NUM_INIMIGOS + 1;
 						inicia_inimigo(&Ativos[i], Principal.dx + LARGURA_TELA + 50*i, ALTURA_TELA / 3, LARGURA_TELA, ALTURA_TELA, aleatorio);
@@ -138,7 +150,7 @@ int main(void) {
 				al_draw_text(fonte, al_map_rgb(255,255, 255), 10, 40, ALLEGRO_ALIGN_LEFT, "Marcos");
 
 				for (int i = 0; i < 10; i++)
-					desenha_bloco(Bloco,Vetor_Chao[i].x0, Vetor_Chao[i].y0);
+					desenha_bloco(Bloco,Vetor_Chao[i].x0, Vetor_Chao[i].y0, Vetor_Chao[i].x1, Vetor_Chao[i].y1);
 				for (int i = 0; i < 5; i++)
 					atualiza_inimigos(&Ativos[i], 5);
 				anima_personagem(&Principal, Principal.acao_atual);
@@ -155,8 +167,8 @@ int main(void) {
 					if(!Ativos[i].morto)
 						desenha_hitbox(&Ativos[i].caixa);
 				}
-				al_draw_circle(Principal.cx, Principal.cy, 100,al_map_rgb(255,255,255),1);
-				al_draw_circle(Ativos[0].cx, Ativos[0].cy, 100,al_map_rgb(255,255,255),1);
+				//al_draw_circle(Principal.cx, Principal.cy, 100,al_map_rgb(255,255,255),1);
+				//al_draw_circle(Ativos[0].cx, Ativos[0].cy, 100,al_map_rgb(255,255,255),1);
 				#endif // Desenha Hitboxes
 				#ifdef GRID
 				desenha_grid(20,20);

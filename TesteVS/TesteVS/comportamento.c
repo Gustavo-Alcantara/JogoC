@@ -69,9 +69,9 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 				Goblin->block = true;
 				Goblin->apanha = false;
 			}
-			Goblin->caixa.x0 = Goblin->cx - 60;
-			Goblin->caixa.x1 = Goblin->cx + 60;
-			Goblin->caixa.y0 = Goblin->cy - 60;
+			Goblin->caixa.x0 = Goblin->cx - 30;
+			Goblin->caixa.x1 = Goblin->cx + 30;
+			Goblin->caixa.y0 = Goblin->cy - 30;
 			Goblin->caixa.y1 = Goblin->cy + 70;
 			
 
@@ -134,9 +134,9 @@ void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha*
 void comportamento_armadura(struct Inimigo* Armadura, struct Carinha* Principal) {
 	Armadura->cx = Armadura->dx + Armadura->imagem_personagem.largura / 2;
 	Armadura->cy = Armadura->dy + Armadura->imagem_personagem.altura / 2;
-	Armadura->caixa.x0 = Armadura->cx + 60;
-	Armadura->caixa.x1 = Armadura->cx - 60;
-	Armadura->caixa.y0 = Armadura->cy - 60;
+	Armadura->caixa.x0 = Armadura->cx + 40;
+	Armadura->caixa.x1 = Armadura->cx - 20;
+	Armadura->caixa.y0 = Armadura->cy - 10;
 	Armadura->caixa.y1 = Armadura->cy + 74;
 	Armadura->espera++;
 
@@ -190,8 +190,8 @@ void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal) {
 	int a = 1;
 	int b = 1;
 
-	Olho->caixa.x0 = Olho->cx + 40;
-	Olho->caixa.x1 = Olho->cx - 40;
+	Olho->caixa.x0 = Olho->cx + 20;
+	Olho->caixa.x1 = Olho->cx - 30;
 	Olho->caixa.y0 = Olho->cy - 20;
 	Olho->caixa.y1 = Olho->cy + 30;
 	Olho->cx = Olho->dx + Olho->imagem_personagem.largura / 2;
