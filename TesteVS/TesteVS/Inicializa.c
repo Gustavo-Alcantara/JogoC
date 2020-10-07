@@ -19,7 +19,7 @@ void inicializa_cara(struct Carinha* Principal, int dx, int dy,int ALTURA_TELA,i
 	Principal->espera = 0;
 	Principal->movendo = false;
 	Principal->queda = 0;
-	Principal->imagem_personagem.png = al_load_bitmap("cara2.png");
+	Principal->imagem_personagem.png = al_load_bitmap("Principal/cara2.png");
 	Principal->imagem_personagem.altura_folha = 37;
 	Principal->imagem_personagem.largura_folha = 50;
 	Principal->imagem_personagem.altura = 140;
@@ -107,7 +107,7 @@ void inicia_goblin(struct Inimigo* Goblin, int dx,int dy, int ALTURA_TELA, int L
 	Goblin->morto = false;
 	Goblin->queda = 0;
 	Goblin->espera = 180;
-	Goblin->imagem_personagem.png = al_load_bitmap("Goblin.png");
+	Goblin->imagem_personagem.png = al_load_bitmap("Inimigos/Goblin.png");
 	Goblin->imagem_personagem.altura_folha = 150;
 	Goblin->imagem_personagem.largura_folha = 150;
 	Goblin->imagem_personagem.altura = 350;
@@ -169,7 +169,7 @@ void inicia_armadura(struct Inimigo* Armadura, int dx, int dy, int ALTURA_TELA, 
 	Armadura->espera = 60;
 	Armadura->block = false;
 	Armadura->morto = false;
-	Armadura->imagem_personagem.png = al_load_bitmap("Armadura.png");
+	Armadura->imagem_personagem.png = al_load_bitmap("Inimigos/Armadura.png");
 	Armadura->imagem_personagem.altura_folha = 80;
 	Armadura->imagem_personagem.largura_folha = 90;
 	Armadura->imagem_personagem.altura = 160;
@@ -231,7 +231,7 @@ void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARG
 	Olho->espera = 60;
 	Olho->block = false;
 	Olho->morto = false;
-	Olho->imagem_personagem.png = al_load_bitmap("Olho.png");
+	Olho->imagem_personagem.png = al_load_bitmap("Inimigos/Olho.png");
 	Olho->imagem_personagem.altura_folha = 150;
 	Olho->imagem_personagem.largura_folha = 150;
 	Olho->imagem_personagem.altura = 300;
@@ -244,11 +244,11 @@ void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARG
 	Olho->caixa.x1 = Olho->cx - 20;
 	Olho->caixa.y0 = Olho->cy - 10;
 	Olho->caixa.y1 = Olho->cy + 15;
-	Olho->ac[0].inicioX = 0;
-	Olho->ac[0].inicioY = 0;
-	Olho->ac[0].finalX = 7;
-	Olho->ac[0].finalY = 0;
-	Olho->ac[0].num_frames = 10;
+	Olho->ac[6].inicioX = 0;
+	Olho->ac[6].inicioY = 0;
+	Olho->ac[6].finalX = 7;
+	Olho->ac[6].finalY = 0;
+	Olho->ac[6].num_frames = 10;
 	Olho->ac[1].inicioX = 8;
 	Olho->ac[1].inicioY = 0;
 	Olho->ac[1].finalX = 15;
@@ -268,7 +268,7 @@ void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARG
 void carrega_projetil_goblin(struct Projetil*Bomba,struct Inimigo*Goblin) {
 	Bomba->dx = Goblin->cx;
 	Bomba->dy = Goblin->cy;
-	Bomba->img.png = al_load_bitmap("Bomb_sprite.png");
+	Bomba->img.png = al_load_bitmap("Inimigos/Bomb_sprite.png");
 	Bomba->img.altura_folha = 100;
 	Bomba->img.largura_folha = 100;
 	Bomba->img.altura = 260;

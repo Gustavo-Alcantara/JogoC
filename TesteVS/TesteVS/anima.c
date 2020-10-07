@@ -129,6 +129,6 @@ void atualiza_fundo(struct Fundo* fundo, int LARGURA_TELA, int ALTURA_TELA) {
 void desenha_hitbox(struct Hitbox* caixa, struct ALLEGRO_BITMAP* Bloco){
 	al_draw_rectangle(caixa->x0, caixa->y0, caixa->x1, caixa->y1, al_map_rgb(255, 255, 255), 1);
 }
-void desenha_bloco(struct Hitbox* caixa, struct ALLEGRO_BITMAP* Bloco, int largura, int altura) {
-	al_draw_scaled_bitmap(Bloco, 0, 793 - altura/20, largura / 20, altura / 20, caixa->x0, caixa->y0, largura / 20, altura / 20, 0);
+void desenha_bloco(struct ALLEGRO_BITMAP* Bloco, int dx, int dy) {
+	al_draw_scaled_bitmap(Bloco, 0, 0, 54, 24, dx, dy, 108, 48, 0);
 }

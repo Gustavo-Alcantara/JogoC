@@ -207,7 +207,7 @@ void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal) {
 				a = -1;
 			if (Olho->cy < Principal->cy)
 				b = -1;
-			Olho->acao_atual = 0;
+			Olho->acao_atual = VOA;
 			if (dist(Olho->cx, Olho->cy, Principal->cx, Principal->cy) < 50) {
 				Olho->acao_atual = 1;
 				Olho->block = true;

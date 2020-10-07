@@ -18,6 +18,12 @@ void comportamento(struct Inimigo* Ativos,struct Carinha* Principal, struct Proj
 		case OLHO:
 			comportamento_olho(Ativos, Principal);
 			break;
+		case MAGOCAVEIRA:
+			comportamento_magocaveira(Ativos, Principal);
+			break;
+		case MAGO:
+			comportamento_mago(Ativos, Principal);
+			break;
 		}
 	}
 }
@@ -31,6 +37,12 @@ void inicia_inimigo(struct Inimigo*Ativos, int dx, int dy, int LARGURA_TELA, int
 		break;
 	case OLHO:
 		inicia_olho(Ativos, dx, dy, LARGURA_TELA, ALTURA_TELA);
+		break;
+	case MAGOCAVEIRA:
+		inicia_magocaveira(Ativos, dx, dy, LARGURA_TELA, ALTURA_TELA);
+		break;
+	case MAGO:
+		inicia_mago(Ativos, dx, dy, LARGURA_TELA, ALTURA_TELA);
 		break;
 	default:
 		inicia_olho(Ativos, dx, dy, LARGURA_TELA, ALTURA_TELA);

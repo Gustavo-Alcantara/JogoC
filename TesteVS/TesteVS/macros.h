@@ -19,3 +19,4 @@
 #define ATAQUE2 3
 #define APANHA 4
 #define MORRE 5
+#define VOA 6
