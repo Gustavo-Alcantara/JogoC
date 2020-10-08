@@ -1,7 +1,7 @@
 #include "classes.h"
 
 
-void inicia_magocaveira(struct Inimigo* MagoCaveira, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_magocaveira(struct Inimigo* MagoCaveira, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
 	MagoCaveira->tipo = MAGOCAVEIRA;
 	MagoCaveira->dano = 1;
 	MagoCaveira->vida_total = 7;
@@ -14,7 +14,7 @@ void inicia_magocaveira(struct Inimigo* MagoCaveira, int dx, int dy, int ALTURA_
 	MagoCaveira->espera = 60;
 	MagoCaveira->block = false;
 	MagoCaveira->morto = false;
-	MagoCaveira->imagem_personagem.png = al_load_bitmap("Inimigos/MagoCaveira.png");
+	MagoCaveira->imagem_personagem.png = img;
 	MagoCaveira->imagem_personagem.altura_folha = 150;
 	MagoCaveira->imagem_personagem.largura_folha = 150;
 	MagoCaveira->imagem_personagem.altura = 450;

@@ -1,6 +1,6 @@
 #include "classes.h"
 
-void inicializa_cara(struct Carinha* Principal, int dx, int dy,int ALTURA_TELA,int LARGURA_TELA) {
+void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img, int dx, int dy,int ALTURA_TELA,int LARGURA_TELA) {
 	strcpy(Principal->nome, "Marcos");
 	Principal->morto = false;
 	Principal->dx = dx;
@@ -94,7 +94,7 @@ void inicializa_cara(struct Carinha* Principal, int dx, int dy,int ALTURA_TELA,i
 	Principal->caixa.y1 = Principal->cy + 40;
 
 }
-void inicia_goblin(struct Inimigo* Goblin, int dx,int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_goblin(struct Inimigo* Goblin, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
 	Goblin->tipo = GOBLIN;
 	Goblin->dano = 1;
 	Goblin->vida_total = 3;
@@ -107,7 +107,7 @@ void inicia_goblin(struct Inimigo* Goblin, int dx,int dy, int ALTURA_TELA, int L
 	Goblin->morto = false;
 	Goblin->queda = 0;
 	Goblin->espera = 180;
-	Goblin->imagem_personagem.png = al_load_bitmap("Inimigos/Goblin.png");
+	Goblin->imagem_personagem.png = img;
 	Goblin->imagem_personagem.altura_folha = 150;
 	Goblin->imagem_personagem.largura_folha = 150;
 	Goblin->imagem_personagem.altura = 350;
@@ -156,7 +156,7 @@ void inicia_goblin(struct Inimigo* Goblin, int dx,int dy, int ALTURA_TELA, int L
 	Goblin->ac[6].finalY = 0;
 	Goblin->ac[6].num_frames = 5;
 }
-void inicia_armadura(struct Inimigo* Armadura, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_armadura(struct Inimigo* Armadura, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
 	Armadura->tipo = ARMADURA;
 	Armadura->dano = 1;
 	Armadura->vida_total = 7;
@@ -169,7 +169,7 @@ void inicia_armadura(struct Inimigo* Armadura, int dx, int dy, int ALTURA_TELA, 
 	Armadura->espera = 60;
 	Armadura->block = false;
 	Armadura->morto = false;
-	Armadura->imagem_personagem.png = al_load_bitmap("Inimigos/Armadura.png");
+	Armadura->imagem_personagem.png = img;
 	Armadura->imagem_personagem.altura_folha = 80;
 	Armadura->imagem_personagem.largura_folha = 90;
 	Armadura->imagem_personagem.altura = 160;
@@ -218,7 +218,7 @@ void inicia_armadura(struct Inimigo* Armadura, int dx, int dy, int ALTURA_TELA, 
 	Armadura->ac[6].finalY = 3;
 	Armadura->ac[6].num_frames = 15;
 }
-void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_olho(struct Inimigo* Olho, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
 	Olho->tipo = OLHO;
 	Olho->dano = 1;
 	Olho->vida_total = 2;
@@ -231,7 +231,7 @@ void inicia_olho(struct Inimigo* Olho, int dx, int dy, int ALTURA_TELA, int LARG
 	Olho->espera = 60;
 	Olho->block = false;
 	Olho->morto = false;
-	Olho->imagem_personagem.png = al_load_bitmap("Inimigos/Olho.png");
+	Olho->imagem_personagem.png = img;
 	Olho->imagem_personagem.altura_folha = 150;
 	Olho->imagem_personagem.largura_folha = 150;
 	Olho->imagem_personagem.altura = 300;

@@ -12,6 +12,8 @@ ALLEGRO_KEYBOARD_STATE* teclado = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* coracoes = NULL;
 ALLEGRO_BITMAP* Bloco[6];
+ALLEGRO_BITMAP* img_fundo[11];
+ALLEGRO_BITMAP* img_inimigos[NUM_INIMIGOS];
 
 int LARGURA_TELA = 640;
 int ALTURA_TELA = 480;
@@ -32,6 +34,20 @@ int main(void) {
 	struct Hitbox Vetor_Chao[10];
 	struct Fundo fundo[11];
 	
+
+	fundo[0].imagem = img_fundo[0];
+	fundo[1].imagem = img_fundo[1];
+	fundo[2].imagem = img_fundo[2];
+	fundo[3].imagem = img_fundo[3];
+	fundo[4].imagem = img_fundo[4];
+	fundo[5].imagem = img_fundo[5];
+	fundo[6].imagem = img_fundo[6];
+	fundo[7].imagem = img_fundo[7];
+	fundo[8].imagem = img_fundo[8];
+	fundo[9].imagem = img_fundo[9];
+	fundo[10].imagem = img_fundo[10];
+
+
 	for (int k = 0; k < 5; k++)
 		Ativos[k].morto = true;
 	for (int i = 0; i < 11; i++) {
@@ -39,21 +55,21 @@ int main(void) {
 		fundo[i].dy = 0;
 	}
 	inicializa_cara(&Principal, (LARGURA_TELA / 2)-150, (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
-	carrega_mapa(mapa,Principal.dx,Vetor_Chao,Ativos,LARGURA_TELA,ALTURA_TELA);
+	carrega_mapa(mapa,Principal.dx,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
 
 	aleatorio = rand() % NUM_INIMIGOS + 1;
-	inicia_inimigo(&Ativos[0], Principal.dx + LARGURA_TELA + 50 * 1, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
-	reseta_acoes_inimigo(&Ativos[0], 10, 30, Ativos[0].direita);
+	inicia_inimigo(&Ativos[0], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 1, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	reseta_acoes_inimigo(&Ativos[0], 10, 30);
 
 	aleatorio = rand() % NUM_INIMIGOS + 1;
-	inicia_inimigo(&Ativos[1], Principal.dx + LARGURA_TELA + 50 * 2, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
-	reseta_acoes_inimigo(&Ativos[1], 10, 30, Ativos[0].direita);
+	inicia_inimigo(&Ativos[1], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 2, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	reseta_acoes_inimigo(&Ativos[1], 10, 30);
 
 	aleatorio = rand() % NUM_INIMIGOS + 1;
-	inicia_inimigo(&Ativos[2], Principal.dx + LARGURA_TELA + 50 * 3, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
-	reseta_acoes_inimigo(&Ativos[2], 10, 30, Ativos[0].direita);
+	inicia_inimigo(&Ativos[2], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 3, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	reseta_acoes_inimigo(&Ativos[2], 10, 30);
 
-	carrega_projetil_goblin(&Bomba[0], &Ativos[0], ALTURA_TELA, LARGURA_TELA);
+	carrega_projetil_goblin(&Bomba[0], &Ativos[0]);
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
 	
 
@@ -64,31 +80,10 @@ int main(void) {
 
 	bool sair = false;
 	int desloc = 0;
-	float x1;
-	float queda = 0;
+
 	if (!inicio)
 		return -1;
 
-	Bloco[0] = al_load_bitmap("Blocos/Bloco.png");
-	Bloco[1] = al_load_bitmap("Blocos/Bloco_1.png");
-	Bloco[2] = al_load_bitmap("Blocos/Bloco_2.png");
-	Bloco[3] = al_load_bitmap("Blocos/Bloco_3.png");
-	Bloco[4] = al_load_bitmap("Blocos/Bloco_4.png");
-	Bloco[5] = al_load_bitmap("Blocos/Bloco_5.png");
-	
-	fonte = al_load_font("Fontes/Toothy.ttf", 24, 0);
-	coracoes = al_load_bitmap("Principal/vida.png");
-	fundo[0].imagem = al_load_bitmap("Fundo/Layer_0000_9.png");
-	fundo[1].imagem = al_load_bitmap("Fundo/Layer_0001_8.png");
-	fundo[2].imagem = al_load_bitmap("Fundo/Layer_0002_7.png");
-	fundo[3].imagem = al_load_bitmap("Fundo/Layer_0003_6.png");
-	fundo[4].imagem = al_load_bitmap("Fundo/Layer_0004_Lights.png");
-	fundo[5].imagem = al_load_bitmap("Fundo/Layer_0005_5.png");
-	fundo[6].imagem = al_load_bitmap("Fundo/Layer_0006_4.png");
-	fundo[7].imagem = al_load_bitmap("Fundo/Layer_0007_Lights.png");
-	fundo[8].imagem = al_load_bitmap("Fundo/Layer_0008_3.png");
-	fundo[9].imagem = al_load_bitmap("Fundo/Layer_0009_2.png");
-	fundo[10].imagem = al_load_bitmap("Fundo/Layer_0010_1.png");
 
 	Principal.acao_atual = RESPIRA_PRINCIPAL;
 	
@@ -109,25 +104,26 @@ int main(void) {
 				desloc = 0;
 				
 				if (mortos(Ativos)) {
-					carrega_mapa(mapa, Principal.dx, Vetor_Chao, Ativos, LARGURA_TELA, ALTURA_TELA);
+					carrega_mapa(mapa, Principal.dx, Vetor_Chao, LARGURA_TELA, ALTURA_TELA);
 					e = 0;
 					for (int i = 0; i < 20; i++) {
 						for (int j = 0; j < 20; j++) {
 							aleatorio = rand() % NUM_INIMIGOS + 1;
 							if (mapa[i][j] == 'E') {
-								inicia_inimigo(&Ativos[e], LARGURA_TELA / 20 * j + Principal.dx + LARGURA_TELA, ALTURA_TELA / 20 * i, LARGURA_TELA, ALTURA_TELA, aleatorio);
-								reseta_acoes_inimigo(&Ativos[e], 10, 30, Ativos[e].direita);
+								inicia_inimigo(&Ativos[e], img_inimigos, LARGURA_TELA / 20 * j + Principal.dx + LARGURA_TELA, ALTURA_TELA / 20 * i, LARGURA_TELA, ALTURA_TELA, aleatorio);
+								reseta_acoes_inimigo(&Ativos[e], 10, 30);
 								Ativos[e].acao_atual = 0;
 								e++;
 							}
 
 						}
 					}
-					Vetor_Chao[9].x0 = -LARGURA_TELA;
-					Vetor_Chao[9].y0 = (38 * ALTURA_TELA / 40);
-					Vetor_Chao[9].x1 = 3 * LARGURA_TELA;
-					Vetor_Chao[9].y1 = ALTURA_TELA;
 				}
+				Vetor_Chao[9].x0 = -LARGURA_TELA;
+				Vetor_Chao[9].y0 = (38 * ALTURA_TELA / 40);
+				Vetor_Chao[9].x1 = 3 * LARGURA_TELA;
+				Vetor_Chao[9].y1 = ALTURA_TELA;
+
 				personagem_principal(&Principal, &Vetor_Chao,Ativos,desloc);
 				for (int i = 0; i < 5; i++)
 					Ativos[i].dx -= Principal.dx - ((LARGURA_TELA / 2) - 150);
@@ -139,12 +135,12 @@ int main(void) {
 						Ativos[i].dy += Ativos[i].queda;
 						Ativos[i].queda += 0.2;
 					}
-					else if (Ativos[i].caixa.y1)
+					else
 						Ativos[i].queda = 0;
 					if (Ativos[i].dy > ALTURA_TELA)
 						Ativos[i].morto = true;
 				}
-				fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
+				//fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
 
 				for (int i = 10; i >= 0; i--) {
 					if (i < 9 && i>0) {
@@ -237,20 +233,50 @@ bool inicializar() {
 
 	if (!janela)
 		return false;
+
 	al_set_window_title(janela, "Aventura Lo-Fi");
+
 	fila_eventos = al_create_event_queue();
 	if (!fila_eventos) {
 		al_destroy_display(janela);
 		return false;
 	}
 	folha = al_load_bitmap("Principal/cara2.png");
+
 	if (!folha) {
 		al_destroy_event_queue(fila_eventos);
 		al_destroy_display(janela);
 		return false;
 	}
 
+	Bloco[0] = al_load_bitmap("Blocos/Bloco.png");
+	Bloco[1] = al_load_bitmap("Blocos/Bloco_1.png");
+	Bloco[2] = al_load_bitmap("Blocos/Bloco_2.png");
+	Bloco[3] = al_load_bitmap("Blocos/Bloco_3.png");
+	Bloco[4] = al_load_bitmap("Blocos/Bloco_4.png");
+	Bloco[5] = al_load_bitmap("Blocos/Bloco_5.png");
+
+	img_inimigos[0] = al_load_bitmap("Inimigos/Goblin.png");
+	img_inimigos[1] = al_load_bitmap("Inimigos/Armadura.png");
+	img_inimigos[2] = al_load_bitmap("Inimigos/Olho.png");
+	img_inimigos[3] = al_load_bitmap("Inimigos/MagoCaveira.png");
+
+	img_fundo[0] = al_load_bitmap("Fundo/Layer_0000_9.png");
+	img_fundo[1] = al_load_bitmap("Fundo/Layer_0001_8.png");
+	img_fundo[2] = al_load_bitmap("Fundo/Layer_0002_7.png");
+	img_fundo[3] = al_load_bitmap("Fundo/Layer_0003_6.png");
+	img_fundo[4] = al_load_bitmap("Fundo/Layer_0004_Lights.png");
+	img_fundo[5] = al_load_bitmap("Fundo/Layer_0005_5.png");
+	img_fundo[6] = al_load_bitmap("Fundo/Layer_0006_4.png");
+	img_fundo[7] = al_load_bitmap("Fundo/Layer_0007_Lights.png");
+	img_fundo[8] = al_load_bitmap("Fundo/Layer_0008_3.png");
+	img_fundo[9] = al_load_bitmap("Fundo/Layer_0009_2.png");
+	img_fundo[10] = al_load_bitmap("Fundo/Layer_0010_1.png");
+
+	fonte = al_load_font("Fontes/Toothy.ttf", 24, 0);
+	coracoes = al_load_bitmap("Principal/vida.png");
 	musica = al_load_audio_stream("soundtrack.ogg", 4, 1024);
+
 	//liga o stream no mixer
 	al_attach_audio_stream_to_mixer(musica, al_get_default_mixer());
 	//define que o stream vai tocar no modo repeat

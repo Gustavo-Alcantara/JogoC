@@ -1,6 +1,6 @@
 #include "classes.h"
 
-void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],struct Inimigos* Ativos[5] ,int LARGURA_TELA, int ALTURA_TELA) {
+void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],int LARGURA_TELA, int ALTURA_TELA) {
 	char matriz[20][22];
 	int i = 0;
 	int n = 0;

@@ -2,7 +2,7 @@
 #include "macros.h"
 
 double dist(float cx0, float cy0, float cx1, float cy1) {
-	return sqrt((cx1 - cx0) * (cx1 - cx0) + (cy1 - cy0) * (cy1 - cy0));
+	return sqrt(((double)cx1 - cx0) * ((double)cx1 - cx0) + ((double)cy1 - cy0) * ((double)cy1 - cy0));
 }
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2) {
 	if (caixa1->x1 > caixa2->x0 && caixa1->x1 < caixa2->x1 && caixa1->y1 > caixa2->y0 && caixa1->y1 < caixa2->y1) 
@@ -19,8 +19,10 @@ bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2) {
 	return false;
 }
 int colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetor_Chao[10]) {
+	struct Hitbox* p;
 	for (int i = 0; i < 10; i++) {
-		if (colisao(Bicho, &Vetor_Chao[i]))
+		p = &Vetor_Chao[i];
+		if (colisao(Bicho, p))
 			return i + 1;
 	}
 	return 0;
@@ -101,7 +103,7 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 		Bomba->existe = true;
 	}
 }
-void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox Vetor_Chao[10]) {
+void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox (*Vetor_Chao)[10]) {
 	if (Bomba->existe) {
 		int a = 1;
 
@@ -110,14 +112,14 @@ void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha*
 
 		if (Bomba->estado == 0) {
 			Bomba->dx -= a * Bomba->veloc;
-			Bomba->dy = Bomba->yi + 0.0025 * (Bomba->dx - Bomba->xi) * (Bomba->dx - Bomba->raiz);
+			Bomba->dy = Bomba->yi + 0.0025 * ((double)Bomba->dx - Bomba->xi) * ((double)Bomba->dx - Bomba->raiz);
 		}
 		Bomba->caixa.x0 = Bomba->dx + Bomba->img.largura / 2 - 20;
 		Bomba->caixa.x1 = Bomba->dx + Bomba->img.largura / 2 + 20;
 		Bomba->caixa.y0 = Bomba->dy + Bomba->img.altura / 2 - 20;
 		Bomba->caixa.y1 = Bomba->dy + Bomba->img.altura / 2 + 20;
 
-		if (colisao(&Bomba->caixa, &Vetor_Chao[0]))
+		if (colisao(&Bomba->caixa, Vetor_Chao[0]))
 			Bomba->estado = 1;
 		else if (colisao(&Bomba->caixa, &Principal->caixa) && Principal->apanha) {
 			if (Bomba->estado == 0)
