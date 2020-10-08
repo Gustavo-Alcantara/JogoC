@@ -18,12 +18,12 @@ bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2) {
 	}
 	return false;
 }
-bool colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetor_Chao[10]) {
+int colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetor_Chao[10]) {
 	for (int i = 0; i < 10; i++) {
 		if (colisao(Bicho, &Vetor_Chao[i]))
-			return true;
+			return i + 1;
 	}
-	return false;
+	return 0;
 }
 void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, struct Projetil* Bomba) {
 	int a = 1;

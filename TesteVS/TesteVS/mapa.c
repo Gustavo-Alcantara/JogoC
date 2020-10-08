@@ -1,11 +1,28 @@
 #include "classes.h"
 
-void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],int LARGURA_TELA, int ALTURA_TELA) {
+void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],struct Inimigos* Ativos[5] ,int LARGURA_TELA, int ALTURA_TELA) {
 	char matriz[20][22];
 	int i = 0;
 	int n = 0;
+	int e = 0;
+	int aleatorio;
+	srand(time(NULL));
 	ALLEGRO_FILE* arquivo;
-	arquivo = al_fopen("Mapas/mapa1.txt", "r");
+	aleatorio = rand() % 3 - 1;
+	switch (aleatorio){
+	case 0:
+		arquivo = al_fopen("Mapas/mapa.txt", "r");
+		break;
+	case 1:
+		arquivo = al_fopen("Mapas/mapa1.txt", "r");
+		break;
+	case 2:
+		arquivo = al_fopen("Mapas/mapa2.txt", "r");
+		break;
+	default:
+		arquivo = al_fopen("Mapas/mapa.txt", "r");
+		break;
+	}
 	while (!al_feof(arquivo)) {
 		al_fgets(arquivo, (char*)&matriz[i], 22);
 		i++;
@@ -21,18 +38,22 @@ void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],int LARG
 					Vetor_Chao[n].y0 = ALTURA_TELA / 20 * i;
 					Vetor_Chao[n].y1 = ALTURA_TELA / 20 * i + 48;
 					n++;
+					break;
 				case '2':
 					Vetor_Chao[n].x0 = LARGURA_TELA / 20 * j + dx + LARGURA_TELA;
 					Vetor_Chao[n].x1 = LARGURA_TELA / 20 * j + 108+ dx + LARGURA_TELA;
 					Vetor_Chao[n].y0 = ALTURA_TELA / 20 * i;
 					Vetor_Chao[n].y1 = ALTURA_TELA / 20 * i + 108;
 					n++;
+					break;
 				case '5':
 					Vetor_Chao[n].x0 = LARGURA_TELA / 20 * j + dx + LARGURA_TELA;
 					Vetor_Chao[n].x1 = LARGURA_TELA / 20 * j + 160 + dx + LARGURA_TELA;
 					Vetor_Chao[n].y0 = ALTURA_TELA / 20 * i;
 					Vetor_Chao[n].y1 = ALTURA_TELA / 20 * i + 110;
 					n++;
+					break;
+				
 				}
 				
 			}

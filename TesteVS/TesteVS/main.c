@@ -1,6 +1,6 @@
 #include "classes.h"
 #include "macros.h"
-#define DESENHA
+//#define DESENHA
 //#define GRID
 
 ALLEGRO_DISPLAY* janela = NULL;
@@ -16,6 +16,8 @@ ALLEGRO_BITMAP* Bloco[6];
 int LARGURA_TELA = 640;
 int ALTURA_TELA = 480;
 char mapa[20][20];
+int aleatorio;
+int e = 0;
 
 bool inicializar();
 void desenha_grid(int lin, int col);
@@ -37,16 +39,23 @@ int main(void) {
 		fundo[i].dy = 0;
 	}
 	inicializa_cara(&Principal, (LARGURA_TELA / 2)-150, (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
-	carrega_mapa(mapa,Principal.dx,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
-	inicia_inimigo(&Ativos[0],17 * LARGURA_TELA / 10,(10 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA,MAGOCAVEIRA);
-	inicia_inimigo(&Ativos[1],18 * LARGURA_TELA / 10,(10 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA,ARMADURA);
-	inicia_inimigo(&Ativos[2],17 * LARGURA_TELA / 10,(10 * ALTURA_TELA / 40), ALTURA_TELA, LARGURA_TELA,OLHO);
-	carrega_projetil_goblin(&Bomba[0], &Ativos[0], ALTURA_TELA, LARGURA_TELA);
+	carrega_mapa(mapa,Principal.dx,Vetor_Chao,Ativos,LARGURA_TELA,ALTURA_TELA);
 
+	aleatorio = rand() % NUM_INIMIGOS + 1;
+	inicia_inimigo(&Ativos[0], Principal.dx + LARGURA_TELA + 50 * 1, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	reseta_acoes_inimigo(&Ativos[0], 10, 30, Ativos[0].direita);
+
+	aleatorio = rand() % NUM_INIMIGOS + 1;
+	inicia_inimigo(&Ativos[1], Principal.dx + LARGURA_TELA + 50 * 2, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	reseta_acoes_inimigo(&Ativos[1], 10, 30, Ativos[0].direita);
+
+	aleatorio = rand() % NUM_INIMIGOS + 1;
+	inicia_inimigo(&Ativos[2], Principal.dx + LARGURA_TELA + 50 * 3, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	reseta_acoes_inimigo(&Ativos[2], 10, 30, Ativos[0].direita);
+
+	carrega_projetil_goblin(&Bomba[0], &Ativos[0], ALTURA_TELA, LARGURA_TELA);
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
-	reseta_acoes_inimigo(&Ativos[0], 10, 30,Ativos[0].direita);
-	reseta_acoes_inimigo(&Ativos[1], 10, 30,Ativos[1].direita);
-	reseta_acoes_inimigo(&Ativos[2], 10, 30,Ativos[2].direita);
+	
 
 	Vetor_Chao[9].x0 = -LARGURA_TELA;
 	Vetor_Chao[9].y0 = (38 * ALTURA_TELA / 40) ;
@@ -67,8 +76,6 @@ int main(void) {
 	Bloco[4] = al_load_bitmap("Blocos/Bloco_4.png");
 	Bloco[5] = al_load_bitmap("Blocos/Bloco_5.png");
 	
-	if (!Bloco[5])
-		return 0;
 	fonte = al_load_font("Fontes/Toothy.ttf", 24, 0);
 	coracoes = al_load_bitmap("Principal/vida.png");
 	fundo[0].imagem = al_load_bitmap("Fundo/Layer_0000_9.png");
@@ -102,31 +109,37 @@ int main(void) {
 				desloc = 0;
 				
 				if (mortos(Ativos)) {
-					carrega_mapa(mapa, Principal.dx, Vetor_Chao, LARGURA_TELA, ALTURA_TELA);
+					carrega_mapa(mapa, Principal.dx, Vetor_Chao, Ativos, LARGURA_TELA, ALTURA_TELA);
+					e = 0;
+					for (int i = 0; i < 20; i++) {
+						for (int j = 0; j < 20; j++) {
+							aleatorio = rand() % NUM_INIMIGOS + 1;
+							if (mapa[i][j] == 'E') {
+								inicia_inimigo(&Ativos[e], LARGURA_TELA / 20 * j + Principal.dx + LARGURA_TELA, ALTURA_TELA / 20 * i, LARGURA_TELA, ALTURA_TELA, aleatorio);
+								reseta_acoes_inimigo(&Ativos[e], 10, 30, Ativos[e].direita);
+								Ativos[e].acao_atual = 0;
+								e++;
+							}
+
+						}
+					}
 					Vetor_Chao[9].x0 = -LARGURA_TELA;
 					Vetor_Chao[9].y0 = (38 * ALTURA_TELA / 40);
 					Vetor_Chao[9].x1 = 3 * LARGURA_TELA;
 					Vetor_Chao[9].y1 = ALTURA_TELA;
-					for (int i = 0; i < 3; i++) {
-						int aleatorio = rand() % NUM_INIMIGOS + 1;
-						inicia_inimigo(&Ativos[i], Principal.dx + LARGURA_TELA + 50*i, ALTURA_TELA / 3, LARGURA_TELA, ALTURA_TELA, aleatorio);
-						reseta_acoes_inimigo(&Ativos[i], 10, 30, Ativos[i].direita);
-					}
 				}
 				personagem_principal(&Principal, &Vetor_Chao,Ativos,desloc);
-
-				for (int i = 0; i < 5; i++) 
+				for (int i = 0; i < 5; i++)
 					Ativos[i].dx -= Principal.dx - ((LARGURA_TELA / 2) - 150);
 				desloc = Principal.dx - ((LARGURA_TELA / 2) - 150);
 				Principal.dx = (LARGURA_TELA / 2) - 150;
-
-				for (int i = 0; i < 3; i++) {
+				for (int i = 0; i < 5; i++) {
 					comportamento(&Ativos[i], &Principal, &Bomba[0]);
 					if (!colisao_chao(&Ativos[i].caixa, Vetor_Chao) && !Ativos[i].morto && Ativos[i].acao_atual != VOA) {
 						Ativos[i].dy += Ativos[i].queda;
 						Ativos[i].queda += 0.2;
 					}
-					else
+					else if (Ativos[i].caixa.y1)
 						Ativos[i].queda = 0;
 					if (Ativos[i].dy > ALTURA_TELA)
 						Ativos[i].morto = true;

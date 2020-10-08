@@ -78,7 +78,7 @@ void reseta_acoes(struct Carinha*boneco, int num_acoes, int indice,int direita) 
 	}
 	boneco->direita = direita;
 }
-void reseta_acoes_inimigo(struct Inimigo* boneco, int num_acoes, int indice, int direita) {
+void reseta_acoes_inimigo(struct Inimigo* boneco, int num_acoes, int indice) {
 	for (int i = 0; i < num_acoes; i++) {
 		if (i != indice) {
 			boneco->ac[i].frame_atual = 0;
@@ -86,7 +86,6 @@ void reseta_acoes_inimigo(struct Inimigo* boneco, int num_acoes, int indice, int
 			boneco->ac[i].lin_atual = boneco->ac[i].inicioY;
 		}
 	}
-	boneco->direita = direita;
 }
 void reseta_acao(struct acao*ac) {
 	ac->frame_atual = 0;
