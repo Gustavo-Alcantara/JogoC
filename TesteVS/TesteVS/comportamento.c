@@ -5,15 +5,17 @@ double dist(float cx0, float cy0, float cx1, float cy1) {
 	return sqrt(((double)cx1 - cx0) * ((double)cx1 - cx0) + ((double)cy1 - cy0) * ((double)cy1 - cy0));
 }
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2) {
-	if (caixa1->x1 > caixa2->x0 && caixa1->x1 < caixa2->x1 && caixa1->y1 > caixa2->y0 && caixa1->y1 < caixa2->y1) 
+	if (caixa1->x0 < caixa2->x1 &&	caixa1->x1 > caixa2->x0 && caixa1->y0 < caixa1->y1 && caixa1->y1 > caixa2->y1)
 		return true;
-	else if(caixa1->x0 > caixa2->x0 && caixa1->x0 < caixa2->x1 && caixa1->y0 > caixa2->y0 && caixa1->y0 < caixa2->y1){
+	if (caixa1->x1 >= caixa2->x0 && caixa1->x1 < caixa2->x1 && caixa1->y1 >= caixa2->y0 && caixa1->y1 <= caixa2->y1) 
+		return true;
+	else if(caixa1->x0 >= caixa2->x0 && caixa1->x0 <= caixa2->x1 && caixa1->y0 >= caixa2->y0 && caixa1->y0 <= caixa2->y1){
 		return true;
 	}
-	else if (caixa2->x0 > caixa1->x0 && caixa2->x0 < caixa1->x1 && caixa2->y0 > caixa1->y0 && caixa2->y0 < caixa1->y1) {
+	else if (caixa2->x0 >= caixa1->x0 && caixa2->x0 <= caixa1->x1 && caixa2->y0 >= caixa1->y0 && caixa2->y0 < caixa1->y1) {
 		return true;
 	}
-	else if (caixa2->x1 > caixa1->x0 && caixa2->x1 < caixa1->x1 && caixa2->y1 > caixa1->y0 && caixa2->y1 < caixa1->y1) {
+	else if (caixa2->x1 >= caixa1->x0 && caixa2->x1 <= caixa1->x1 && caixa2->y1 >= caixa1->y0 && caixa2->y1 <= caixa1->y1) {
 		return true;
 	}
 	return false;

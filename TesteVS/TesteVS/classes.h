@@ -76,6 +76,7 @@ struct Carinha{
 	float cx;
 	float cy;
 	float queda;
+	bool nochao;
 	bool ataca;
 	bool movendo;
 	bool pula;
@@ -101,6 +102,7 @@ struct Inimigo {
 	float dy;
 	float cx;
 	float cy;
+	bool nochao;
 	bool morto;
 	bool apanha;
 	bool block;
@@ -128,7 +130,7 @@ void carrega_projetil_goblin(struct Projetil* Bomba, struct Inimigo* Goblin);
 void anima_personagem(struct Carinha* boneco, int indice);
 void anima_Inimigo(struct Inimigo* boneco, int indice);
 void anima_projetil(struct Projetil* Bomba);
-void desenha_hitbox(struct Hitbox* caixa, struct ALLEGRO_BITMAP* Bloco);
+void desenha_hitbox(struct Hitbox* caixa);
 void desenha_bloco(struct ALLEGRO_BITMAP* Bloco[6], int dx0, int dy0, int dx1, int dy1);
 void atualiza_fundo(struct Fundo* fundo, int LARGURA_TELA, int ALTURA_TELA);
 
@@ -143,10 +145,10 @@ int colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetro_Chao[10] );
 double dist(float cx0, float cy0, float cx1, float cy1);
 
 //Funções relativas ao personagem principal
-void inicializa_cara(struct Carinha* Principal, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
-void le_teclado_baixo(struct Carinha* Principal, struct Hitbox (*)[10], int codigo);
+void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img,int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
+void le_teclado_baixo(struct Carinha* Principal, struct Hitbox Chao[10], int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);
-void personagem_principal(struct Carinha* Principal, struct Hitbox(*)[10], struct Inimigo Goblin[5], int desloc_tela);
+void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], struct Inimigo Goblin[5], int desloc_tela);
 
 //Funções de gerenciamento do comportamento dos personagens, presentes nos arquivos comportamento, e comportamento_2.c
 void comportamento(struct Inimigo* Ativos, struct Carinha* Principal, struct Projetil* Bomba);

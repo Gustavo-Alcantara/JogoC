@@ -31,7 +31,7 @@ void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],int LARG
 		for (int j = 0; j < 20; j++) {
 			mapa[i][j] = matriz[i][j];
 			if (n <= 9) {
-				switch (mapa[i][j]){
+				switch (mapa[i][j]) {
 				case '1':
 					Vetor_Chao[n].x0 = LARGURA_TELA / 20 * j + dx + LARGURA_TELA;
 					Vetor_Chao[n].x1 = LARGURA_TELA / 20 * j + 108 + dx + LARGURA_TELA;
@@ -41,24 +41,21 @@ void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],int LARG
 					break;
 				case '2':
 					Vetor_Chao[n].x0 = LARGURA_TELA / 20 * j + dx + LARGURA_TELA;
-					Vetor_Chao[n].x1 = LARGURA_TELA / 20 * j + 108+ dx + LARGURA_TELA;
+					Vetor_Chao[n].x1 = LARGURA_TELA / 20 * j + 108 + dx + LARGURA_TELA;
 					Vetor_Chao[n].y0 = ALTURA_TELA / 20 * i;
 					Vetor_Chao[n].y1 = ALTURA_TELA / 20 * i + 108;
 					n++;
 					break;
 				case '5':
 					Vetor_Chao[n].x0 = LARGURA_TELA / 20 * j + dx + LARGURA_TELA;
-					Vetor_Chao[n].x1 = LARGURA_TELA / 20 * j + 160 + dx + LARGURA_TELA;
+					Vetor_Chao[n].x1 = LARGURA_TELA / 20 * j + 320 + dx + LARGURA_TELA;
 					Vetor_Chao[n].y0 = ALTURA_TELA / 20 * i;
-					Vetor_Chao[n].y1 = ALTURA_TELA / 20 * i + 110;
+					Vetor_Chao[n].y1 = ALTURA_TELA / 20 * i + 20;
 					n++;
 					break;
-				
-				}
-				
-			}
 
+				}
+			}
 		}
 	}
-
 }

@@ -19,7 +19,7 @@ void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img, int 
 	Principal->espera = 0;
 	Principal->movendo = false;
 	Principal->queda = 0;
-	Principal->imagem_personagem.png = al_load_bitmap("Principal/cara2.png");
+	Principal->imagem_personagem.png = img;
 	Principal->imagem_personagem.altura_folha = 37;
 	Principal->imagem_personagem.largura_folha = 50;
 	Principal->imagem_personagem.altura = 140;
