@@ -145,3 +145,9 @@ void desenha_bloco(struct ALLEGRO_BITMAP* Bloco[6],int dx0, int dy0,int dx1,int 
 	}
 	
 }
+void desenha_grid(int lin, int col,int LARGURA_TELA,int ALTURA_TELA) {
+	for (int i = 0; i < lin; i++)
+		al_draw_line(0, ALTURA_TELA / lin * i, LARGURA_TELA, ALTURA_TELA / lin * i, al_map_rgb(255, 255, 255), 1);
+	for (int i = 0; i < lin; i++)
+		al_draw_line(LARGURA_TELA / col * i, 0, LARGURA_TELA / col * i, ALTURA_TELA, al_map_rgb(255, 255, 255), 1);
+}

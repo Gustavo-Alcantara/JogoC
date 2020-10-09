@@ -27,7 +27,7 @@ int colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetor_Chao[10]) {
 	}
 	return 0;
 }
-void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, struct Projetil* Bomba) {
+void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal) {
 	int a = 1;
 	Goblin->espera++;
 	if (!Goblin->morto){
@@ -48,14 +48,14 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 			}
 			else if (Goblin->cx + 400 > Principal->cx && Principal->cx > Goblin->cx - 400)
 				Goblin->acao_atual = CORRENDO;
-			else if (Goblin->cx + 800 > Principal->cx && Principal->cx > Goblin->cx - 800 && !Bomba->existe) {
+			else if (Goblin->cx + 800 > Principal->cx && Principal->cx > Goblin->cx - 800 /*&& !Bomba->existe*/) {
 				Goblin->acao_atual = ATAQUE1;
 				if (Goblin->direita == 0)
 					a = -1;
 				Goblin->block = true;
-				Bomba->xi = Goblin->cx - Bomba->img.largura / 2 - a * 40;
+				/*Bomba->xi = Goblin->cx - Bomba->img.largura / 2 - a * 40;
 				Bomba->yi = Goblin->cy - Bomba->img.largura / 2 - 10;
-				Bomba->dx = Bomba->xi;
+				Bomba->dx = Bomba->xi;*/
 			}
 
 			else
@@ -99,15 +99,15 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 				Goblin->dx -= 0.3*Goblin->veloc;
 			else Goblin->dx += 0.3 * Goblin->veloc;
 		}
-	if (Goblin->acao_atual == ATAQUE1 && Goblin->ac[ATAQUE1].col_atual == Goblin->ac[ATAQUE1].finalX - 1)
-		Bomba->existe = true;
+	/*if (Goblin->acao_atual == ATAQUE1 && Goblin->ac[ATAQUE1].col_atual == Goblin->ac[ATAQUE1].finalX - 1)
+		Bomba->existe = true;*/
 	}
 	Goblin->caixa.x0 = Goblin->cx - 20;
 	Goblin->caixa.x1 = Goblin->cx + 20;
 	Goblin->caixa.y0 = Goblin->cy + 50;
 	Goblin->caixa.y1 = Goblin->cy + 70;
 }
-void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox (*Vetor_Chao)[10]) {
+void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox (*Vetor_Chao)[10]){
 	if (Bomba->existe) {
 		int a = 1;
 

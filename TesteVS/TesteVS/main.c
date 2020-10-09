@@ -3,6 +3,7 @@
 //#define DESENHA
 //#define GRID
 
+//Estrutras do Allegro
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
 ALLEGRO_BITMAP* folha = NULL;
@@ -15,87 +16,98 @@ ALLEGRO_BITMAP* Bloco[6];
 ALLEGRO_BITMAP* img_fundo[11];
 ALLEGRO_BITMAP* img_inimigos[NUM_INIMIGOS];
 
+//Váriaveis da main
 int LARGURA_TELA = 640;
 int ALTURA_TELA = 480;
 char mapa[20][20];
 int aleatorio;
 int e = 0;
 
+//Função inicialização da biblioteca e carregamento dos arquivos
 bool inicializar();
-void desenha_grid(int lin, int col);
 
 int main(void) {
+	//Variaveis que armazenam as colisões
 	int coli1;
 	int coli2;
+
+	//Inicializa o timer para geração de números aleatórios
 	srand(time(NULL));
+	
+	//Armazena o resultado de inicializar
 	bool inicio = inicializar();
+
+	if (!inicio)
+		return -1;
+
+	//Instanciamento do personagem principal
 	struct Carinha Principal;
+
+	//Instanciamento do vetor dos inimigos
 	struct Inimigo Ativos[5];
-	struct Projetil Bomba[2];
+
+	//Instanciamento dos Vetores de chão, são dois pois precisamos carregar um e depois o outro para não sumirem do nada
 	struct Hitbox Vetor_Chao[10];
 	struct Hitbox Vetor_Chao2[10];
+
+	//Instanciamento do vetor de backgrounds;
 	struct Fundo fundo[11];
-	
 
-	fundo[0].imagem = img_fundo[0];
-	fundo[1].imagem = img_fundo[1];
-	fundo[2].imagem = img_fundo[2];
-	fundo[3].imagem = img_fundo[3];
-	fundo[4].imagem = img_fundo[4];
-	fundo[5].imagem = img_fundo[5];
-	fundo[6].imagem = img_fundo[6];
-	fundo[7].imagem = img_fundo[7];
-	fundo[8].imagem = img_fundo[8];
-	fundo[9].imagem = img_fundo[9];
-	fundo[10].imagem = img_fundo[10];
-
-
+	//Colocando todos os inimigos como mortos para eliminar o lixo que pode vir da memória
 	for (int k = 0; k < 5; k++)
 		Ativos[k].morto = true;
+
+	//Passagem das imagens do fundo através de ponteiros
 	for (int i = 0; i < 11; i++) {
+		fundo[i].imagem = img_fundo[i];
 		fundo[i].dx = 0;
 		fundo[i].dy = 0;
 	}
+
+	//Colocando os atributos do personagem principal
 	inicializa_cara(&Principal, folha,(LARGURA_TELA / 2)-150, (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
+
+	//Carregamento inicial dos dois vetores
 	carrega_mapa(mapa,Principal.dx,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
 	carrega_mapa(mapa,Principal.dx + LARGURA_TELA,Vetor_Chao2,LARGURA_TELA,ALTURA_TELA);
 
+	//Carregamento de inimigo aleatório
 	aleatorio = rand() % NUM_INIMIGOS + 1;
 	inicia_inimigo(&Ativos[0], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 1, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
 	reseta_acoes_inimigo(&Ativos[0], 10, 30);
-
+	//Carregamento de inimigo aleatório
 	aleatorio = rand() % NUM_INIMIGOS + 1;
 	inicia_inimigo(&Ativos[1], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 2, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
 	reseta_acoes_inimigo(&Ativos[1], 10, 30);
-
+	//Carregamento de inimigo aleatório
 	aleatorio = rand() % NUM_INIMIGOS + 1;
 	inicia_inimigo(&Ativos[2], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 3, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
 	reseta_acoes_inimigo(&Ativos[2], 10, 30);
 
-	carrega_projetil_goblin(&Bomba[0], &Ativos[0]);
+	//reset das ações do personagem principal
 	reseta_acoes(&Principal, 20, 30,Principal.direita);
 	
-
+	//Chao principal
 	Vetor_Chao[9].x0 = -LARGURA_TELA;
 	Vetor_Chao[9].y0 = (38 * ALTURA_TELA / 40) ;
 	Vetor_Chao[9].x1 = 3*LARGURA_TELA;
 	Vetor_Chao[9].y1 = ALTURA_TELA;
 
-	bool sair = false;
-	bool vet = false;
-	int desloc = 0;
+	bool sair = false; // Variavel de saída do jogo
+	bool vet = false;  // Variável para alternância entre os vetores de fundo
 
-	if (!inicio)
-		return -1;
+	int desloc = 0;//Deslocamento relativo entre o personagem principal e os outros objetos
 
 
-	Principal.acao_atual = RESPIRA_PRINCIPAL;
+
+	Principal.acao_atual = RESPIRA_PRINCIPAL;//Setando a ação atual do persongem principal
+	strcpy(Principal.nome, "Marcos");//Carregando o nome do personagem principal
 	
+	//Main loop do jogo
 	while (!sair) {
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
-			strcpy(Principal.nome, "Marcos");
 			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && Principal.acao_atual != APANHA_PRINCIPAL) {
 				if (Principal.conta_ataque > 2)
 					Principal.conta_ataque = 0;
@@ -144,7 +156,7 @@ int main(void) {
 				Principal.dx = (LARGURA_TELA / 2) - 150;
 				
 				for (int i = 0; i < 5; i++) {
-					comportamento(&Ativos[i], &Principal, &Bomba[0]);
+					comportamento(&Ativos[i], &Principal);
 					if (!Ativos[i].nochao && Ativos[i].acao_atual != VOA) {
 						Ativos[i].dy += Ativos[i].queda;
 						Ativos[i].queda += 0.2;
@@ -166,6 +178,9 @@ int main(void) {
 						fundo[i].dx += desloc/i;
 						atualiza_fundo(&fundo[i], LARGURA_TELA, ALTURA_TELA);
 					}
+					else {
+						fundo[0].dx += desloc / 1;
+					}
 				}
 
 				for (int j = 0; j < Principal.vida_atual; j++)
@@ -182,7 +197,7 @@ int main(void) {
 					atualiza_inimigos(&Ativos[i], 5);
 
 				anima_personagem(&Principal, Principal.acao_atual);
-
+				atualiza_fundo(&fundo[0], LARGURA_TELA, ALTURA_TELA);
 				#ifdef DESENHA //Hitboxes
 				desenha_hitbox(&Principal.caixa);
 				for (int i = 0; i < 10; i++) {
@@ -197,7 +212,7 @@ int main(void) {
 				}
 				#endif // Desenha Hitboxes
 				#ifdef GRID
-				desenha_grid(20,20);
+				desenha_grid(20,20,LARGURA_TELA,ALTURA_TELA);
 				#endif
 
 				al_flip_display();
@@ -313,6 +328,7 @@ bool inicializar() {
 	img_inimigos[1] = al_load_bitmap("Inimigos/Armadura.png");
 	img_inimigos[2] = al_load_bitmap("Inimigos/Olho.png");
 	img_inimigos[3] = al_load_bitmap("Inimigos/MagoCaveira.png");
+	img_inimigos[4] = al_load_bitmap("Inimigos/Slime.png");
 
 	if (!img_inimigos) {
 		al_destroy_event_queue(fila_eventos);
@@ -413,7 +429,7 @@ bool inicializar() {
 	//define que o stream vai tocar no modo repeat
 	al_set_audio_stream_playmode(musica, ALLEGRO_PLAYMODE_LOOP);
 
-
+	//Colocando as fontes de eventos na fila de eventos
 	al_register_event_source(fila_eventos, al_get_keyboard_event_source());
 	al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
 	al_register_event_source(fila_eventos, al_get_display_event_source(janela));
@@ -421,10 +437,4 @@ bool inicializar() {
 	al_start_timer(timer);
 
 	return true;
-}
-void desenha_grid(int lin, int col) {
-	for (int i = 0; i < lin; i++)
-		al_draw_line(0, ALTURA_TELA / lin * i, LARGURA_TELA, ALTURA_TELA / lin * i, al_map_rgb(255, 255, 255), 1);
-	for (int i = 0; i < lin; i++)
-		al_draw_line(LARGURA_TELA/ col * i,0, LARGURA_TELA / col * i,ALTURA_TELA, al_map_rgb(255, 255, 255), 1);
 }

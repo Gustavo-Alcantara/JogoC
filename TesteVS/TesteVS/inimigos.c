@@ -1,16 +1,14 @@
 #include "classes.h"
 
 void atualiza_inimigos(struct Inimigo* Ativos, int tam) {
-	if (Ativos->vida_atual > 0 && !Ativos->morto)
-		al_draw_line(Ativos->caixa.x0, Ativos->caixa.y0 - 20, Ativos->caixa.x0 + (Ativos->caixa.x1 - Ativos->caixa.x0) * Ativos->vida_atual / Ativos->vida_total, Ativos->caixa.y0 - 20, al_map_rgb(255, 0, 0), 2);
 	if (!Ativos->morto)
 		anima_Inimigo(Ativos, Ativos->acao_atual);
 }
-void comportamento(struct Inimigo* Ativos,struct Carinha* Principal, struct Projetil* Bomba) {
+void comportamento(struct Inimigo* Ativos,struct Carinha* Principal) {
 	if (!Ativos->morto) {
 		switch (Ativos->tipo) {
 		case GOBLIN:
-			comportamento_goblin(Ativos, Principal, Bomba);
+			comportamento_goblin(Ativos, Principal);
 			break;
 		case ARMADURA:
 			comportamento_armadura(Ativos, Principal);
@@ -21,8 +19,8 @@ void comportamento(struct Inimigo* Ativos,struct Carinha* Principal, struct Proj
 		case MAGOCAVEIRA:
 			comportamento_magocaveira(Ativos, Principal);
 			break;
-		case MAGO:
-			comportamento_mago(Ativos, Principal);
+		case SLIME:
+			comportamento_slime(Ativos, Principal);
 			break;
 		}
 	}
@@ -41,8 +39,8 @@ void inicia_inimigo(struct Inimigo* Ativos, struct ALLEGRO_BITMAP* img[NUM_INIMI
 	case MAGOCAVEIRA:
 		inicia_magocaveira(Ativos, img[MAGOCAVEIRA - 1], dx, dy, LARGURA_TELA, ALTURA_TELA);
 		break;
-	case MAGO:
-		inicia_mago(Ativos, dx, dy, LARGURA_TELA, ALTURA_TELA);
+	case SLIME:
+		inicia_slime(Ativos, img[SLIME - 1],dx, dy, LARGURA_TELA, ALTURA_TELA);
 		break;
 	default:
 		inicia_olho(Ativos, img[OLHO - 1], dx, dy, LARGURA_TELA, ALTURA_TELA);
