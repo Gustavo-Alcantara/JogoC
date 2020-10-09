@@ -2,7 +2,7 @@
 #include "macros.h"
 
 
-void le_teclado_baixo(struct Carinha* Principal,struct Hitbox Chao[10],int codigo) {
+void le_teclado_baixo(struct Carinha* Principal,int codigo) {
 		switch (codigo) {
 		case ALLEGRO_KEY_D:
 			reseta_acoes(Principal, 20, CORRENDO_PRINCIPAL, Principal->direita);
@@ -31,14 +31,13 @@ void le_teclado_baixo(struct Carinha* Principal,struct Hitbox Chao[10],int codig
 			break;
 		case ALLEGRO_KEY_W:
 			reseta_acoes(Principal, 20, PULO1_PRINCIPAL, Principal->direita);
-			if (Principal->conta_pulo == 0) {
-				if (colisao_chao(&Principal->caixa, Chao)) {
-					Principal->acao_atual = PULO1_PRINCIPAL;
-				}
-				else {
-					Principal->acao_atual = PULO2_PRINCIPAL;
-					Principal->conta_pulo++;
-				}
+			if (Principal->nochao) {
+				Principal->acao_atual = PULO1_PRINCIPAL;
+				Principal->conta_pulo = 1;
+			}
+			else{
+				Principal->acao_atual = PULO2_PRINCIPAL;
+				Principal->conta_pulo = 0;
 			}
 			break;
 		case ALLEGRO_KEY_J:
@@ -92,7 +91,7 @@ void le_teclado_alto(struct Carinha* Principal, int codigo){
 		break;
 	}
 }
-void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], struct Inimigo Goblin[5],int desloc_tela) {
+void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], struct Inimigo Goblin[5], int desloc_tela) {
 	Principal->caixa.x0 = Principal->cx - 50;
 	Principal->caixa.x1 = Principal->cx + 40;
 	Principal->caixa.y0 = Principal->cy - 60;
@@ -144,7 +143,7 @@ void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], str
 		Principal->conta_pulo = 0;
 		Principal->acao_espera = RESPIRA_PRINCIPAL;
 	}
-	else if ((Principal->acao_atual != PULO1_PRINCIPAL && Principal->acao_atual != PULO2_PRINCIPAL)) {
+	else if (!Principal->nochao && (Principal->acao_atual != PULO1_PRINCIPAL && Principal->acao_atual != PULO2_PRINCIPAL)) {
 		Principal->dy += Principal->queda;
 		Principal->queda += 0.2;
 		Principal->acao_atual = CAIR_PRINCIPAL;
@@ -158,8 +157,8 @@ void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], str
 	}
 	Principal->cx = Principal->dx + Principal->imagem_personagem.largura / 2;
 	Principal->cy = Principal->dy + Principal->imagem_personagem.altura / 2;
-	Principal->caixa.x0 = Principal->cx - 50;
-	Principal->caixa.x1 = Principal->cx + 40;
-	Principal->caixa.y0 = Principal->cy - 60;
+	Principal->caixa.x0 = Principal->cx - 20;
+	Principal->caixa.x1 = Principal->cx + 20;
+	Principal->caixa.y0 = Principal->cy + 50;
 	Principal->caixa.y1 = Principal->cy + 70;
 }

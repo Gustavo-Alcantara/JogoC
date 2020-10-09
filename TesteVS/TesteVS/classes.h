@@ -141,12 +141,12 @@ void reseta_acao(struct acao*ac);
 
 //Funções relativas ao gerenciamento de colisão, todas presentes no arquivo comportamento.c
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2);
-int colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetro_Chao[10] );
+int colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetor_Chao[10] );
 double dist(float cx0, float cy0, float cx1, float cy1);
 
 //Funções relativas ao personagem principal
 void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img,int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
-void le_teclado_baixo(struct Carinha* Principal, struct Hitbox Chao[10], int codigo);
+void le_teclado_baixo(struct Carinha* Principal, int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);
 void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], struct Inimigo Goblin[5], int desloc_tela);
 

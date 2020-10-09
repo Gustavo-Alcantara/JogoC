@@ -28,6 +28,10 @@ void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img, int 
 	Principal->imagem_personagem.num_lin = 11;
 	Principal->cx = Principal->dx + Principal->imagem_personagem.largura / 2;
 	Principal->cy = Principal->dy + Principal->imagem_personagem.altura / 2;
+	Principal->caixa.x0 = Principal->cx - 50;
+	Principal->caixa.x1 = Principal->cx + 40;
+	Principal->caixa.y0 = Principal->cy - 60;
+	Principal->caixa.y1 = Principal->cy + 70;
 	Principal->ac[0].inicioX = 0;
 	Principal->ac[0].inicioY = 0;
 	Principal->ac[0].finalX = 3;
@@ -43,7 +47,7 @@ void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img, int 
 	Principal->ac[2].finalX = 6;
 	Principal->ac[2].finalY = 1;
 	Principal->ac[2].num_frames = 7;
-	Principal->ac[3].inicioX = 0;
+	Principal->ac[3].inicioX = 2;
 	Principal->ac[3].inicioY = 2;
 	Principal->ac[3].finalX = 3;
 	Principal->ac[3].finalY = 2;

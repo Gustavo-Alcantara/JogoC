@@ -4,9 +4,9 @@
 void comportamento_magocaveira(struct Inimigo* MagoCaveira, struct Carinha* Principal) {
 	int a = 1;
 
-	MagoCaveira->caixa.x0 = MagoCaveira->cx + 60;
-	MagoCaveira->caixa.x1 = MagoCaveira->cx - 50;
-	MagoCaveira->caixa.y0 = MagoCaveira->cy - 60;
+	MagoCaveira->caixa.x0 = MagoCaveira->cx + 30;
+	MagoCaveira->caixa.x1 = MagoCaveira->cx - 25;
+	MagoCaveira->caixa.y0 = MagoCaveira->cy + 70;
 	MagoCaveira->caixa.y1 = MagoCaveira->cy + 90;
 	
 
@@ -36,7 +36,16 @@ void comportamento_magocaveira(struct Inimigo* MagoCaveira, struct Carinha* Prin
 		}
 		else if (MagoCaveira->ac[MORRE].col_atual == MagoCaveira->ac[MORRE].finalX - 1)
 			MagoCaveira->morto = true;
+		if (MagoCaveira->acao_atual == ATAQUE1 && Principal->apanha && dist(MagoCaveira->cx, MagoCaveira->cy, Principal->cx, Principal->cy) < 150 && MagoCaveira->ac[ATAQUE1].col_atual == MagoCaveira->ac[ATAQUE1].inicioX + 1) {
+			if (Principal->acao_atual != APANHA_PRINCIPAL)
+				Principal->vida_atual -= MagoCaveira->dano;
+			Principal->acao_atual = APANHA_PRINCIPAL;
+		}
 	}
+	MagoCaveira->caixa.x0 = MagoCaveira->cx + 30;
+	MagoCaveira->caixa.x1 = MagoCaveira->cx - 25;
+	MagoCaveira->caixa.y0 = MagoCaveira->cy + 70;
+	MagoCaveira->caixa.y1 = MagoCaveira->cy + 90;
 }
 void comportamento_mago(struct Inimigo* Mago, struct Carinha* Principal) {
 	int a = 1;

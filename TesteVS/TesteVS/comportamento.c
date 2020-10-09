@@ -5,8 +5,6 @@ double dist(float cx0, float cy0, float cx1, float cy1) {
 	return sqrt(((double)cx1 - cx0) * ((double)cx1 - cx0) + ((double)cy1 - cy0) * ((double)cy1 - cy0));
 }
 bool colisao(struct Hitbox* caixa1, struct Hitbox* caixa2) {
-	if (caixa1->x0 < caixa2->x1 &&	caixa1->x1 > caixa2->x0 && caixa1->y0 < caixa1->y1 && caixa1->y1 > caixa2->y1)
-		return true;
 	if (caixa1->x1 >= caixa2->x0 && caixa1->x1 < caixa2->x1 && caixa1->y1 >= caixa2->y0 && caixa1->y1 <= caixa2->y1) 
 		return true;
 	else if(caixa1->x0 >= caixa2->x0 && caixa1->x0 <= caixa2->x1 && caixa1->y0 >= caixa2->y0 && caixa1->y0 <= caixa2->y1){
@@ -104,6 +102,10 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, str
 	if (Goblin->acao_atual == ATAQUE1 && Goblin->ac[ATAQUE1].col_atual == Goblin->ac[ATAQUE1].finalX - 1)
 		Bomba->existe = true;
 	}
+	Goblin->caixa.x0 = Goblin->cx - 20;
+	Goblin->caixa.x1 = Goblin->cx + 20;
+	Goblin->caixa.y0 = Goblin->cy + 50;
+	Goblin->caixa.y1 = Goblin->cy + 70;
 }
 void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox (*Vetor_Chao)[10]) {
 	if (Bomba->existe) {
@@ -138,10 +140,10 @@ void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha*
 void comportamento_armadura(struct Inimigo* Armadura, struct Carinha* Principal) {
 	Armadura->cx = Armadura->dx + Armadura->imagem_personagem.largura / 2;
 	Armadura->cy = Armadura->dy + Armadura->imagem_personagem.altura / 2;
-	Armadura->caixa.x0 = Armadura->cx + 40;
+	Armadura->caixa.x0 = Armadura->cx + 20;
 	Armadura->caixa.x1 = Armadura->cx - 20;
-	Armadura->caixa.y0 = Armadura->cy - 10;
-	Armadura->caixa.y1 = Armadura->cy + 74;
+	Armadura->caixa.y0 = Armadura->cy - 50;
+	Armadura->caixa.y1 = Armadura->cy + 70;
 	Armadura->espera++;
 
 	int a = 1;
@@ -189,15 +191,17 @@ void comportamento_armadura(struct Inimigo* Armadura, struct Carinha* Principal)
 		if(Armadura->acao_atual == 6)
 			Armadura->dx += a * Armadura->veloc;
 	}
+	Armadura->cx = Armadura->dx + Armadura->imagem_personagem.largura / 2;
+	Armadura->cy = Armadura->dy + Armadura->imagem_personagem.altura / 2;
+	Armadura->caixa.x0 = Armadura->cx + 20;
+	Armadura->caixa.x1 = Armadura->cx - 20;
+	Armadura->caixa.y0 = Armadura->cy + 50;
+	Armadura->caixa.y1 = Armadura->cy + 70;
 }
 void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal) {
 	int a = 1;
 	int b = 1;
 
-	Olho->caixa.x0 = Olho->cx + 20;
-	Olho->caixa.x1 = Olho->cx - 30;
-	Olho->caixa.y0 = Olho->cy - 20;
-	Olho->caixa.y1 = Olho->cy + 30;
 	Olho->cx = Olho->dx + Olho->imagem_personagem.largura / 2;
 	Olho->cy = Olho->dy + Olho->imagem_personagem.altura / 2;
 

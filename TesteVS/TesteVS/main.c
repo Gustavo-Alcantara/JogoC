@@ -25,13 +25,15 @@ bool inicializar();
 void desenha_grid(int lin, int col);
 
 int main(void) {
-	int x = 928;
+	int coli1;
+	int coli2;
 	srand(time(NULL));
 	bool inicio = inicializar();
 	struct Carinha Principal;
 	struct Inimigo Ativos[5];
 	struct Projetil Bomba[2];
 	struct Hitbox Vetor_Chao[10];
+	struct Hitbox Vetor_Chao2[10];
 	struct Fundo fundo[11];
 	
 
@@ -56,6 +58,7 @@ int main(void) {
 	}
 	inicializa_cara(&Principal, folha,(LARGURA_TELA / 2)-150, (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
 	carrega_mapa(mapa,Principal.dx,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
+	carrega_mapa(mapa,Principal.dx + LARGURA_TELA,Vetor_Chao2,LARGURA_TELA,ALTURA_TELA);
 
 	aleatorio = rand() % NUM_INIMIGOS + 1;
 	inicia_inimigo(&Ativos[0], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 1, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
@@ -79,6 +82,7 @@ int main(void) {
 	Vetor_Chao[9].y1 = ALTURA_TELA;
 
 	bool sair = false;
+	bool vet = false;
 	int desloc = 0;
 
 	if (!inicio)
@@ -95,7 +99,7 @@ int main(void) {
 			if (evento.type == ALLEGRO_EVENT_KEY_DOWN && Principal.acao_atual != APANHA_PRINCIPAL) {
 				if (Principal.conta_ataque > 2)
 					Principal.conta_ataque = 0;
-				le_teclado_baixo(&Principal, Vetor_Chao, evento.keyboard.keycode);
+				le_teclado_baixo(&Principal, evento.keyboard.keycode);
 				if(evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
 					sair = true;
 			}
@@ -106,7 +110,14 @@ int main(void) {
 				desloc = 0;
 				
 				if (mortos(Ativos)) {
-					carrega_mapa(mapa, Principal.dx, Vetor_Chao, LARGURA_TELA, ALTURA_TELA);
+					if (vet) {
+						carrega_mapa(mapa, Principal.dx, Vetor_Chao2, LARGURA_TELA, ALTURA_TELA);
+						vet = false;
+					}
+					else {
+						carrega_mapa(mapa, Principal.dx, Vetor_Chao, LARGURA_TELA, ALTURA_TELA);
+						vet = true;
+					}
 					e = 0;
 					for (int i = 0; i < 20; i++) {
 						for (int j = 0; j < 20; j++) {
@@ -144,12 +155,12 @@ int main(void) {
 						Ativos[i].morto = true;
 				}
 
-				//fisica_bomba(&Bomba[0], &Ativos[0], &Principal, &Vetor_Chao);
-
 				for (int i = 10; i >= 0; i--) {
 					if (i < 9 && i>0) {
 						Vetor_Chao[i].x0 -= desloc;
 						Vetor_Chao[i].x1 -= desloc;
+						Vetor_Chao2[i].x0 -= desloc;
+						Vetor_Chao2[i].x1 -= desloc;
 					}
 					if (i > 0) {
 						fundo[i].dx += desloc/i;
@@ -162,25 +173,27 @@ int main(void) {
 
 				al_draw_text(fonte, al_map_rgb(255,255, 255), 10, 40, ALLEGRO_ALIGN_LEFT, "Marcos");
 
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 10; i++) {
 					desenha_bloco(Bloco,Vetor_Chao[i].x0, Vetor_Chao[i].y0, Vetor_Chao[i].x1, Vetor_Chao[i].y1);
-
+					desenha_bloco(Bloco, Vetor_Chao2[i].x0, Vetor_Chao2[i].y0, Vetor_Chao2[i].x1, Vetor_Chao2[i].y1);
+				}
+				
 				for (int i = 0; i < 5; i++)
 					atualiza_inimigos(&Ativos[i], 5);
 
 				anima_personagem(&Principal, Principal.acao_atual);
-				
-				/*if(Bomba[0].existe)
-					anima_projetil(&Bomba[0]);*/
 
 				#ifdef DESENHA //Hitboxes
 				desenha_hitbox(&Principal.caixa);
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 10; i++) {
 					desenha_hitbox(&Vetor_Chao[i]);
+					desenha_hitbox(&Vetor_Chao2[i]);
+				}
 
 				for (int i = 0; i < 5; i++) {
-					if(!Ativos[i].morto)
+					if (!Ativos[i].morto) {
 						desenha_hitbox(&Ativos[i].caixa);
+					}
 				}
 				#endif // Desenha Hitboxes
 				#ifdef GRID
@@ -189,15 +202,20 @@ int main(void) {
 
 				al_flip_display();
 			}
-			if (!colisao_chao(&Principal.caixa, Vetor_Chao) && !Principal.morto)
+			coli1 = colisao_chao(&Principal.caixa, Vetor_Chao);
+			coli2 = colisao_chao(&Principal.caixa, Vetor_Chao2);
+
+			if (!coli1 && !coli2 && !Principal.morto)
 				Principal.nochao = false;
-			else {
+			else{
 				Principal.nochao = true;
 				Principal.queda = 0;
 			}
 
 			for (int i = 0; i < 5; i++) {
-				if (!colisao_chao(&Ativos[i].caixa, Vetor_Chao) && !Ativos[i].morto)
+				coli1 = colisao_chao(&Ativos[i].caixa, Vetor_Chao);
+				coli2 = colisao_chao(&Ativos[i].caixa, Vetor_Chao2);
+				if (!coli1 && !coli2 && !Ativos[i].morto)
 					Ativos[i].nochao = false;
 				else {
 					Ativos[i].nochao = true;
