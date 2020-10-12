@@ -118,9 +118,23 @@ void anima_projetil(struct Projetil* Bomba) {
 }
 void atualiza_fundo(struct Fundo* fundo, int LARGURA_TELA, int ALTURA_TELA) {
 
+	/*
+		Funciona tanto para o sentido positivo quanto negativo;
+		Recebe um ponteiro para a estrutura fundo e a largura e altura da tela onde fundo será desenhado;
+		Essa função funcionará somente para fundos que ocupam a tela inteira;
+		Quando o fundo se desloca do inicio da tela, outro fundo é desenhado no ponto dx - Largura da tela, de forma a encaixar-se
+		Quando o fundo se desloca num valor igual à Largura da tela seu valor dx volta a ser 0;
+	*/
+
+
+	if (-fundo->dx >= LARGURA_TELA)
+		fundo->dx = 0;
 	if (-fundo->dx + LARGURA_TELA <= 0)
 		fundo->dx = 0;
 	al_draw_scaled_bitmap(fundo->imagem, 0, 230, 928, 533, -fundo->dx, 0, LARGURA_TELA, ALTURA_TELA, 0);
+	if (-fundo->dx > 0) {
+		al_draw_scaled_bitmap(fundo->imagem, 0, 230, 928, 533, -fundo->dx - LARGURA_TELA, 0, LARGURA_TELA, ALTURA_TELA, 0);
+	}
 	if (-fundo->dx + LARGURA_TELA < LARGURA_TELA) {
 		al_draw_scaled_bitmap(fundo->imagem, 0, 230, 928, 533, -fundo->dx + LARGURA_TELA, 0, LARGURA_TELA, ALTURA_TELA, 0);
 	}

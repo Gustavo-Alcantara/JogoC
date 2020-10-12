@@ -25,25 +25,22 @@ void comportamento(struct Inimigo* Ativos,struct Carinha* Principal) {
 		}
 	}
 }
-void inicia_inimigo(struct Inimigo* Ativos, struct ALLEGRO_BITMAP* img[NUM_INIMIGOS], int dx, int dy, int LARGURA_TELA, int ALTURA_TELA, int tipo) {
+void inicia_inimigo(struct Inimigo* Ativos, struct ALLEGRO_BITMAP* img[NUM_INIMIGOS], int dx, int dy, int tipo) {
 	switch (tipo) {
 	case GOBLIN:
-		inicia_goblin(Ativos,img[GOBLIN - 1],dx,dy,LARGURA_TELA,ALTURA_TELA);
+		inicia_goblin(Ativos,img[GOBLIN - 1],dx,dy);
 		break;
 	case ARMADURA:
-		inicia_armadura(Ativos, img[ARMADURA - 1], dx, dy, LARGURA_TELA, ALTURA_TELA);
+		inicia_armadura(Ativos, img[ARMADURA - 1], dx, dy);
 		break;
 	case OLHO:
-		inicia_olho(Ativos, img[OLHO - 1], dx, dy, LARGURA_TELA, ALTURA_TELA);
+		inicia_olho(Ativos, img[OLHO - 1], dx, dy);
 		break;
 	case MAGOCAVEIRA:
-		inicia_magocaveira(Ativos, img[MAGOCAVEIRA - 1], dx, dy, LARGURA_TELA, ALTURA_TELA);
+		inicia_magocaveira(Ativos, img[MAGOCAVEIRA - 1], dx, dy);
 		break;
 	case SLIME:
-		inicia_slime(Ativos, img[SLIME - 1],dx, dy, LARGURA_TELA, ALTURA_TELA);
-		break;
-	default:
-		inicia_olho(Ativos, img[OLHO - 1], dx, dy, LARGURA_TELA, ALTURA_TELA);
+		inicia_slime(Ativos, img[SLIME - 1],dx, dy);
 		break;
 	}
 }

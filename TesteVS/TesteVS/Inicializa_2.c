@@ -1,7 +1,7 @@
 #include "classes.h"
 
 
-void inicia_magocaveira(struct Inimigo* MagoCaveira, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_magocaveira(struct Inimigo* MagoCaveira, struct ALLEGRO_BITMAP* img, int dx, int dy) {
 	MagoCaveira->tipo = MAGOCAVEIRA;
 	MagoCaveira->dano = 1;
 	MagoCaveira->vida_total = 7;
@@ -53,7 +53,7 @@ void inicia_magocaveira(struct Inimigo* MagoCaveira, struct ALLEGRO_BITMAP* img,
 	MagoCaveira->ac[5].finalY = 0;
 	MagoCaveira->ac[5].num_frames = 10;
 }
-void inicia_slime(struct Inimigo* Slime, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_slime(struct Inimigo* Slime, struct ALLEGRO_BITMAP* img, int dx, int dy) {
 	Slime->tipo = SLIME;
 	Slime->dano = 1;
 	Slime->vida_total = 3;

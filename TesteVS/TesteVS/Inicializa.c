@@ -1,6 +1,6 @@
 #include "classes.h"
 
-void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img, int dx, int dy,int ALTURA_TELA,int LARGURA_TELA) {
+void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img, int dx, int dy) {
 	strcpy(Principal->nome, "Marcos");
 	Principal->morto = false;
 	Principal->dx = dx;
@@ -98,7 +98,7 @@ void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img, int 
 	Principal->caixa.y1 = Principal->cy + 40;
 
 }
-void inicia_goblin(struct Inimigo* Goblin, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_goblin(struct Inimigo* Goblin, struct ALLEGRO_BITMAP* img, int dx, int dy) {
 	Goblin->tipo = GOBLIN;
 	Goblin->dano = 1;
 	Goblin->vida_total = 3;
@@ -160,7 +160,7 @@ void inicia_goblin(struct Inimigo* Goblin, struct ALLEGRO_BITMAP* img, int dx, i
 	Goblin->ac[6].finalY = 0;
 	Goblin->ac[6].num_frames = 5;
 }
-void inicia_armadura(struct Inimigo* Armadura, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_armadura(struct Inimigo* Armadura, struct ALLEGRO_BITMAP* img, int dx, int dy) {
 	Armadura->tipo = ARMADURA;
 	Armadura->dano = 1;
 	Armadura->vida_total = 7;
@@ -222,7 +222,7 @@ void inicia_armadura(struct Inimigo* Armadura, struct ALLEGRO_BITMAP* img, int d
 	Armadura->ac[6].finalY = 3;
 	Armadura->ac[6].num_frames = 15;
 }
-void inicia_olho(struct Inimigo* Olho, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA) {
+void inicia_olho(struct Inimigo* Olho, struct ALLEGRO_BITMAP* img, int dx, int dy) {
 	Olho->tipo = OLHO;
 	Olho->dano = 1;
 	Olho->vida_total = 2;

@@ -42,9 +42,9 @@ void comportamento_magocaveira(struct Inimigo* MagoCaveira, struct Carinha* Prin
 			Principal->acao_atual = APANHA_PRINCIPAL;
 		}
 	}
-	MagoCaveira->caixa.x0 = MagoCaveira->cx + 30;
-	MagoCaveira->caixa.x1 = MagoCaveira->cx - 25;
-	MagoCaveira->caixa.y0 = MagoCaveira->cy + 70;
+	MagoCaveira->caixa.x0 = MagoCaveira->cx + 60;
+	MagoCaveira->caixa.x1 = MagoCaveira->cx - 50;
+	MagoCaveira->caixa.y0 = MagoCaveira->cy - 70;
 	MagoCaveira->caixa.y1 = MagoCaveira->cy + 90;
 }
 void comportamento_slime(struct Inimigo* Slime, struct Carinha* Principal) {

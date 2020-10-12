@@ -118,12 +118,12 @@ struct Fundo {
 };
 
 //Funções Relativas à inicialização de inimigos, estão nos arquivos Inicializa, Inicializa_2 e Inimigos.c 
-void inicia_inimigo(struct Inimigo* Ativos, struct ALLEGRO_BITMAP* img[NUM_INIMIGOS],int dx, int dy, int LARGURA_TELA, int ALTURA_TELA, int tipo);
-void inicia_goblin(struct Inimigo* Goblin, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
-void inicia_armadura(struct Inimigo* Armadura, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
-void inicia_olho(struct Inimigo* Olho, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
-void inicia_magocaveira(struct Inimigo* MagoCaveira, struct ALLEGRO_BITMAP* img,int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
-void inicia_slime(struct Inimigo* Slime, struct ALLEGRO_BITMAP* img, int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
+void inicia_inimigo(struct Inimigo* Ativos, struct ALLEGRO_BITMAP* img[NUM_INIMIGOS],int dx, int dy, int tipo);
+void inicia_goblin(struct Inimigo* Goblin, struct ALLEGRO_BITMAP* img, int dx, int dy);
+void inicia_armadura(struct Inimigo* Armadura, struct ALLEGRO_BITMAP* img, int dx, int dy);
+void inicia_olho(struct Inimigo* Olho, struct ALLEGRO_BITMAP* img, int dx, int dy);
+void inicia_magocaveira(struct Inimigo* MagoCaveira, struct ALLEGRO_BITMAP* img,int dx, int dy);
+void inicia_slime(struct Inimigo* Slime, struct ALLEGRO_BITMAP* img, int dx, int dy);
 void carrega_projetil_goblin(struct Projetil* Bomba, struct Inimigo* Goblin);
 
 //Funções reliativas à animação, estão todas no arquivo anima.c
@@ -135,7 +135,7 @@ void atualiza_fundo(struct Fundo* fundo, int LARGURA_TELA, int ALTURA_TELA);
 
 //Funções utilizadas no desenvolvimento do jogo, estão no arquivo anima.c
 void desenha_hitbox(struct Hitbox* caixa);
-void desenha_grid(int lin, int col);
+void desenha_grid(int lin, int col, int LARGURA_TELA, int ALTURA_TELA);
 
 //Funções de gerenciamento de ações dos personagens
 void reseta_acoes(struct Carinha*boneco,int num_acoes ,int indice,int direita);
@@ -148,7 +148,7 @@ int colisao_chao(struct Hitbox* Bicho, struct Hitbox Vetor_Chao[10] );
 double dist(float cx0, float cy0, float cx1, float cy1);
 
 //Funções relativas ao personagem principal
-void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img,int dx, int dy, int ALTURA_TELA, int LARGURA_TELA);
+void inicializa_cara(struct Carinha* Principal, struct ALLEGRO_BITMAP* img,int dx, int dy);
 void le_teclado_baixo(struct Carinha* Principal, int codigo);
 void le_teclado_alto(struct Carinha* Principal, int codigo);
 void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], struct Inimigo Goblin[5], int desloc_tela);
@@ -168,3 +168,6 @@ void carrega_mapa(char mapa[20][20], int dx, struct Hitbox Vetor_Chao[10], int L
 //Funções relativas a gerenciamento dos inimigos presentes no arquivo inimigos.c
 bool mortos(struct Inimigo Ativos[5]);
 void atualiza_inimigos(struct Inimigo* Ativos, int tam);
+
+//Funcões relativas a interface do usuario
+void pause(int largura, int altura);

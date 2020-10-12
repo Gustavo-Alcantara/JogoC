@@ -1,15 +1,16 @@
 #include "classes.h"
 
-void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],int LARGURA_TELA, int ALTURA_TELA) {
+void carrega_mapa(char mapa[20][20], int dx, struct Hitbox Vetor_Chao[10], int LARGURA_TELA, int ALTURA_TELA) {
 	char matriz[20][22];
 	int i = 0;
 	int n = 0;
 	int e = 0;
 	int aleatorio;
 	srand(time(NULL));
-	ALLEGRO_FILE* arquivo;
-	aleatorio = rand() % 3 - 1;
-	switch (aleatorio){
+	ALLEGRO_FILE* arquivo = NULL;
+	aleatorio = rand() % 3;
+	
+	switch (aleatorio) {
 	case 0:
 		arquivo = al_fopen("Mapas/mapa.txt", "r");
 		break;
@@ -19,13 +20,13 @@ void carrega_mapa(char mapa[20][20],int dx,struct Hitbox Vetor_Chao[10],int LARG
 	case 2:
 		arquivo = al_fopen("Mapas/mapa2.txt", "r");
 		break;
-	default:
-		arquivo = al_fopen("Mapas/mapa.txt", "r");
-		break;
 	}
-	while (!al_feof(arquivo)) {
-		al_fgets(arquivo, (char*)&matriz[i], 22);
-		i++;
+	if (arquivo){
+		while (!al_feof(arquivo)) {
+			al_fgets(arquivo, (char*)&matriz[i], 22);
+			i++;
+		}
+	al_fclose(arquivo);
 	}
 	for (i = 0; i < 20; i++) {
 		for (int j = 0; j < 20; j++) {

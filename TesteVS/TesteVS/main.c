@@ -1,6 +1,6 @@
 #include "classes.h"
 #include "macros.h"
-//#define DESENHA
+#define DESENHA
 //#define GRID
 
 //Estrutras do Allegro
@@ -65,7 +65,7 @@ int main(void) {
 	}
 
 	//Colocando os atributos do personagem principal
-	inicializa_cara(&Principal, folha,(LARGURA_TELA / 2)-150, (10 * ALTURA_TELA / 40),ALTURA_TELA,LARGURA_TELA);
+	inicializa_cara(&Principal, folha,(LARGURA_TELA / 2)-150, (10 * ALTURA_TELA / 40));
 
 	//Carregamento inicial dos dois vetores
 	carrega_mapa(mapa,Principal.dx,Vetor_Chao,LARGURA_TELA,ALTURA_TELA);
@@ -73,15 +73,15 @@ int main(void) {
 
 	//Carregamento de inimigo aleatório
 	aleatorio = rand() % NUM_INIMIGOS + 1;
-	inicia_inimigo(&Ativos[0], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 1, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	inicia_inimigo(&Ativos[0], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 1, ALTURA_TELA / 20, GOBLIN);
 	reseta_acoes_inimigo(&Ativos[0], 10, 30);
 	//Carregamento de inimigo aleatório
 	aleatorio = rand() % NUM_INIMIGOS + 1;
-	inicia_inimigo(&Ativos[1], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 2, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	inicia_inimigo(&Ativos[1], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 2, ALTURA_TELA / 20, aleatorio);
 	reseta_acoes_inimigo(&Ativos[1], 10, 30);
 	//Carregamento de inimigo aleatório
 	aleatorio = rand() % NUM_INIMIGOS + 1;
-	inicia_inimigo(&Ativos[2], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 3, ALTURA_TELA / 20, LARGURA_TELA, ALTURA_TELA, aleatorio);
+	inicia_inimigo(&Ativos[2], img_inimigos, Principal.dx + LARGURA_TELA + 50 * 3, ALTURA_TELA / 20, aleatorio);
 	reseta_acoes_inimigo(&Ativos[2], 10, 30);
 
 	//reset das ações do personagem principal
@@ -95,7 +95,7 @@ int main(void) {
 
 	bool sair = false; // Variavel de saída do jogo
 	bool vet = false;  // Variável para alternância entre os vetores de fundo
-
+	bool para = false;
 	int desloc = 0;//Deslocamento relativo entre o personagem principal e os outros objetos
 
 
@@ -112,13 +112,17 @@ int main(void) {
 				if (Principal.conta_ataque > 2)
 					Principal.conta_ataque = 0;
 				le_teclado_baixo(&Principal, evento.keyboard.keycode);
-				if(evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
-					sair = true;
+				if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+					if (para)
+						para = false;
+					else
+						para = true;
+				}
 			}
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP)
 				le_teclado_alto(&Principal, evento.keyboard.keycode);
 
-			else if (evento.type == ALLEGRO_EVENT_TIMER){
+			else if (evento.type == ALLEGRO_EVENT_TIMER && !para){
 				desloc = 0;
 				
 				if (mortos(Ativos)) {
@@ -135,7 +139,7 @@ int main(void) {
 						for (int j = 0; j < 20; j++) {
 							aleatorio = rand() % NUM_INIMIGOS + 1;
 							if (mapa[i][j] == 'E') {
-								inicia_inimigo(&Ativos[e], img_inimigos, LARGURA_TELA / 20 * j + Principal.dx + LARGURA_TELA, ALTURA_TELA / 20 * i, LARGURA_TELA, ALTURA_TELA, aleatorio);
+								inicia_inimigo(&Ativos[e], img_inimigos, LARGURA_TELA / 20 * j + Principal.dx + LARGURA_TELA, ALTURA_TELA / 20 * i, aleatorio);
 								reseta_acoes_inimigo(&Ativos[e], 10, 30);
 								Ativos[e].acao_atual = 0;
 								e++;
@@ -197,7 +201,6 @@ int main(void) {
 					atualiza_inimigos(&Ativos[i], 5);
 
 				anima_personagem(&Principal, Principal.acao_atual);
-				atualiza_fundo(&fundo[0], LARGURA_TELA, ALTURA_TELA);
 				#ifdef DESENHA //Hitboxes
 				desenha_hitbox(&Principal.caixa);
 				for (int i = 0; i < 10; i++) {
@@ -223,6 +226,10 @@ int main(void) {
 			if (!coli1 && !coli2 && !Principal.morto)
 				Principal.nochao = false;
 			else{
+				if (coli1 && Principal.caixa.y1 - Vetor_Chao[coli1--].y0 > 20)
+					Principal.dy =   Vetor_Chao[coli1--].y0 - Principal.imagem_personagem.altura + 5;
+				else if (coli2 && Principal.caixa.y1 - Vetor_Chao2[coli2--].y0 > 20)
+					Principal.dy = Vetor_Chao2[coli2--].y0 - Principal.imagem_personagem.altura + 5;
 				Principal.nochao = true;
 				Principal.queda = 0;
 			}
@@ -233,6 +240,10 @@ int main(void) {
 				if (!coli1 && !coli2 && !Ativos[i].morto)
 					Ativos[i].nochao = false;
 				else {
+					if (coli1 && Ativos[i].caixa.y1 - Vetor_Chao[coli1--].y0 > 20)
+						Ativos[i].dy = Vetor_Chao[coli1--].y0 -(Ativos[i].caixa.y1 - Ativos[i].caixa.y0) - Ativos[i].imagem_personagem.altura/2 + (Ativos[i].caixa.y1 - Ativos[i].caixa.y0)/2 + 5;
+					else if (coli2 && Ativos[i].caixa.y1 - Vetor_Chao2[coli2--].y0 > 20)
+						Ativos[i].dy = Vetor_Chao2[coli2--].y0 - (Ativos[i].caixa.y1 - Ativos[i].caixa.y0) - Ativos[i].imagem_personagem.altura / 2 + (Ativos[i].caixa.y1 - Ativos[i].caixa.y0) / 2 + 5;
 					Ativos[i].nochao = true;
 					Ativos[i].queda = 0;
 				}

@@ -102,9 +102,9 @@ void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal) {
 	/*if (Goblin->acao_atual == ATAQUE1 && Goblin->ac[ATAQUE1].col_atual == Goblin->ac[ATAQUE1].finalX - 1)
 		Bomba->existe = true;*/
 	}
-	Goblin->caixa.x0 = Goblin->cx - 20;
-	Goblin->caixa.x1 = Goblin->cx + 20;
-	Goblin->caixa.y0 = Goblin->cy + 50;
+	Goblin->caixa.x0 = Goblin->cx - 40;
+	Goblin->caixa.x1 = Goblin->cx + 40;
+	Goblin->caixa.y0 = Goblin->cy - 50;
 	Goblin->caixa.y1 = Goblin->cy + 70;
 }
 void fisica_bomba(struct Projetil* Bomba,struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox (*Vetor_Chao)[10]){
