@@ -157,8 +157,8 @@ void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], str
 	}
 	Principal->cx = Principal->dx + Principal->imagem_personagem.largura / 2;
 	Principal->cy = Principal->dy + Principal->imagem_personagem.altura / 2;
-	Principal->caixa.x0 = Principal->cx - 20;
-	Principal->caixa.x1 = Principal->cx + 20;
-	Principal->caixa.y0 = Principal->cy + 50;
+	Principal->caixa.x0 = Principal->cx - 40;
+	Principal->caixa.x1 = Principal->cx + 40;
+	Principal->caixa.y0 = Principal->cy - 50;
 	Principal->caixa.y1 = Principal->cy + 70;
 }

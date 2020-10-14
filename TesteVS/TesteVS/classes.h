@@ -45,6 +45,7 @@ struct Projetil {
 	struct Sprite img;
 	struct acao ac[2];
 	struct Hitbox caixa;
+	int tipo;
 	int estado;
 	int xi;
 	int yi;
@@ -59,6 +60,7 @@ struct Carinha{
 	struct Sprite imagem_personagem;
 	struct acao ac[20];
 	struct Hitbox caixa;
+	struct Projetil morte;
 	char nome[20];
 	int conta_ataque;
 	int conta_pulo;
@@ -88,6 +90,7 @@ struct Inimigo {
 	struct Sprite imagem_personagem;
 	struct acao ac[10];
 	struct Hitbox caixa;
+	struct Projetil prj;
 	int tipo;
 	int acao_atual;
 	int vida_total;
@@ -124,7 +127,7 @@ void inicia_armadura(struct Inimigo* Armadura, struct ALLEGRO_BITMAP* img, int d
 void inicia_olho(struct Inimigo* Olho, struct ALLEGRO_BITMAP* img, int dx, int dy);
 void inicia_magocaveira(struct Inimigo* MagoCaveira, struct ALLEGRO_BITMAP* img,int dx, int dy);
 void inicia_slime(struct Inimigo* Slime, struct ALLEGRO_BITMAP* img, int dx, int dy);
-void carrega_projetil_goblin(struct Projetil* Bomba, struct Inimigo* Goblin);
+void carrega_projetil_goblin(struct Inimigo* Goblin, struct ALLEGRO_BITMAP* img);
 
 //Funções reliativas à animação, estão todas no arquivo anima.c
 void anima_personagem(struct Carinha* boneco, int indice);
@@ -154,13 +157,13 @@ void le_teclado_alto(struct Carinha* Principal, int codigo);
 void personagem_principal(struct Carinha* Principal, struct Hitbox Chao[10], struct Inimigo Goblin[5], int desloc_tela);
 
 //Funções de gerenciamento do comportamento dos personagens, presentes nos arquivos comportamento, e comportamento_2.c
-void comportamento(struct Inimigo* Ativos, struct Carinha* Principal);
-void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal);
+void comportamento(struct Inimigo* Ativos, struct Carinha* Principal, struct ALLEGRO_BITMAP* img);
+void comportamento_goblin(struct Inimigo* Goblin, struct Carinha* Principal, struct ALLEGRO_BITMAP*img);
 void comportamento_armadura(struct Inimigo* Armadura, struct Carinha* Principal);
 void comportamento_olho(struct Inimigo* Olho, struct Carinha* Principal);
 void comportamento_magocaveira(struct Inimigo* MagoCaveira, struct Carinha* Principal);
 void comportamento_slime(struct Inimigo* Slime, struct Carinha* Principal);
-void fisica_bomba(struct Projetil* Bomba, struct Inimigo* Goblin, struct Carinha* Principal, struct Hitbox  (*)[10]);
+void fisica_bomba(struct Inimigo* Goblin, struct Carinha* Principal);
 
 //Funções relativas a carregamento do mapa, presente no arquivo mapa.c
 void carrega_mapa(char mapa[20][20], int dx, struct Hitbox Vetor_Chao[10], int LARGURA_TELA, int ALTURA_TELA);
@@ -168,6 +171,3 @@ void carrega_mapa(char mapa[20][20], int dx, struct Hitbox Vetor_Chao[10], int L
 //Funções relativas a gerenciamento dos inimigos presentes no arquivo inimigos.c
 bool mortos(struct Inimigo Ativos[5]);
 void atualiza_inimigos(struct Inimigo* Ativos, int tam);
-
-//Funcões relativas a interface do usuario
-void pause(int largura, int altura);

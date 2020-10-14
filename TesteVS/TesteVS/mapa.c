@@ -1,6 +1,9 @@
 #include "classes.h"
 
 void carrega_mapa(char mapa[20][20], int dx, struct Hitbox Vetor_Chao[10], int LARGURA_TELA, int ALTURA_TELA) {
+
+	// Carrega o mapa de um dos arquivos de texto da pasta mapas e o copia para uma matriz, além de carregar as hitboxes do vetor_chao
+
 	char matriz[20][22];
 	int i = 0;
 	int n = 0;

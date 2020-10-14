@@ -4,11 +4,11 @@ void atualiza_inimigos(struct Inimigo* Ativos, int tam) {
 	if (!Ativos->morto)
 		anima_Inimigo(Ativos, Ativos->acao_atual);
 }
-void comportamento(struct Inimigo* Ativos,struct Carinha* Principal) {
+void comportamento(struct Inimigo* Ativos, struct Carinha* Principal, struct ALLEGRO_BITMAP* img) {
 	if (!Ativos->morto) {
 		switch (Ativos->tipo) {
 		case GOBLIN:
-			comportamento_goblin(Ativos, Principal);
+			comportamento_goblin(Ativos, Principal, img);
 			break;
 		case ARMADURA:
 			comportamento_armadura(Ativos, Principal);

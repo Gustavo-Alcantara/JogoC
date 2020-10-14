@@ -1,6 +1,17 @@
+/*
+
+	Autor: Gustavo Vieira Alcântara
+	Nome do Jogo: Bate e anda
+
+
+*/
+
+
+
+
 #include "classes.h"
 #include "macros.h"
-#define DESENHA
+//#define DESENHA
 //#define GRID
 
 //Estrutras do Allegro
@@ -15,6 +26,8 @@ ALLEGRO_BITMAP* coracoes = NULL;
 ALLEGRO_BITMAP* Bloco[6];
 ALLEGRO_BITMAP* img_fundo[11];
 ALLEGRO_BITMAP* img_inimigos[NUM_INIMIGOS];
+ALLEGRO_BITMAP* img_projeteis = NULL;
+ALLEGRO_BITMAP* IU = NULL;
 
 //Váriaveis da main
 int LARGURA_TELA = 640;
@@ -22,6 +35,7 @@ int ALTURA_TELA = 480;
 char mapa[20][20];
 int aleatorio;
 int e = 0;
+int pontos = 0;
 
 //Função inicialização da biblioteca e carregamento dos arquivos
 bool inicializar();
@@ -30,12 +44,14 @@ int main(void) {
 	//Variaveis que armazenam as colisões
 	int coli1;
 	int coli2;
+	int espera = 0;
 
 	//Inicializa o timer para geração de números aleatórios
 	srand(time(NULL));
 	
 	//Armazena o resultado de inicializar
 	bool inicio = inicializar();
+	bool reinicia = false;
 
 	if (!inicio)
 		return -1;
@@ -53,9 +69,11 @@ int main(void) {
 	//Instanciamento do vetor de backgrounds;
 	struct Fundo fundo[11];
 
-	//Colocando todos os inimigos como mortos para eliminar o lixo que pode vir da memória
-	for (int k = 0; k < 5; k++)
+	//Colocando todos os inimigos como mortos e os projéties como inexistentes para eliminar o lixo que pode vir da memória
+	for (int k = 0; k < 5; k++) {
 		Ativos[k].morto = true;
+		Ativos[k].prj.existe = false;
+	}
 
 	//Passagem das imagens do fundo através de ponteiros
 	for (int i = 0; i < 11; i++) {
@@ -103,8 +121,9 @@ int main(void) {
 	Principal.acao_atual = RESPIRA_PRINCIPAL;//Setando a ação atual do persongem principal
 	strcpy(Principal.nome, "Marcos");//Carregando o nome do personagem principal
 	
-	//Main loop do jogo
+	//Loop principal do jogo
 	while (!sair) {
+
 		while (!al_event_queue_is_empty(fila_eventos)) {
 			ALLEGRO_EVENT evento;
 			al_wait_for_event(fila_eventos, &evento);
@@ -112,123 +131,156 @@ int main(void) {
 				if (Principal.conta_ataque > 2)
 					Principal.conta_ataque = 0;
 				le_teclado_baixo(&Principal, evento.keyboard.keycode);
-				if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
-					if (para)
-						para = false;
-					else
-						para = true;
-				}
+
 			}
 			else if (evento.type == ALLEGRO_EVENT_KEY_UP)
 				le_teclado_alto(&Principal, evento.keyboard.keycode);
 
-			else if (evento.type == ALLEGRO_EVENT_TIMER && !para){
-				desloc = 0;
-				
-				if (mortos(Ativos)) {
-					if (vet) {
-						carrega_mapa(mapa, Principal.dx, Vetor_Chao2, LARGURA_TELA, ALTURA_TELA);
-						vet = false;
-					}
-					else {
-						carrega_mapa(mapa, Principal.dx, Vetor_Chao, LARGURA_TELA, ALTURA_TELA);
-						vet = true;
-					}
-					e = 0;
-					for (int i = 0; i < 20; i++) {
-						for (int j = 0; j < 20; j++) {
-							aleatorio = rand() % NUM_INIMIGOS + 1;
-							if (mapa[i][j] == 'E') {
-								inicia_inimigo(&Ativos[e], img_inimigos, LARGURA_TELA / 20 * j + Principal.dx + LARGURA_TELA, ALTURA_TELA / 20 * i, aleatorio);
-								reseta_acoes_inimigo(&Ativos[e], 10, 30);
-								Ativos[e].acao_atual = 0;
-								e++;
-							}
+			else if (evento.type == ALLEGRO_EVENT_TIMER && !para) {
+				if (Principal.morto) {
+					for (int i = 10; i > 0; i--)
+						al_draw_scaled_bitmap(fundo[i].imagem, 0, 230, 928, 530, 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+					al_draw_filled_rectangle(0,0,LARGURA_TELA,ALTURA_TELA,al_map_rgba(0, 0, 0, 120));
+					al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA_TELA/2, ALTURA_TELA/2, ALLEGRO_ALIGN_CENTER, "MORREU");
+					al_flip_display();
+					espera++;
+					if (espera >= 180)
+						sair = true;
+				}
+				else {
 
+					desloc = 0;
+					if (Principal.vida_atual <= 0)
+						Principal.morto = true;
+					if (mortos(Ativos) || reinicia) {
+						pontos++;
+						if (vet) {
+							carrega_mapa(mapa, Principal.dx, Vetor_Chao, LARGURA_TELA, ALTURA_TELA);
+							vet = false;
+						}
+						else {
+							carrega_mapa(mapa, Principal.dx, Vetor_Chao2, LARGURA_TELA, ALTURA_TELA);
+							vet = true;
+						}
+						e = 0;
+						for (int i = 0; i < 20; i++) {
+							for (int j = 0; j < 20; j++) {
+								aleatorio = rand() % NUM_INIMIGOS + 1;
+								if (mapa[i][j] == 'E') {
+									inicia_inimigo(&Ativos[e], img_inimigos, LARGURA_TELA / 20 * j + Principal.dx + LARGURA_TELA, ALTURA_TELA / 20 * i, aleatorio);
+									reseta_acoes_inimigo(&Ativos[e], 10, 30);
+									Ativos[e].acao_atual = 0;
+									e++;
+								}
+
+							}
+						}
+						reinicia = false;
+						Vetor_Chao[9].x0 = -LARGURA_TELA;
+						Vetor_Chao[9].y0 = (38 * ALTURA_TELA / 40);
+						Vetor_Chao[9].x1 = 3 * LARGURA_TELA;
+						Vetor_Chao[9].y1 = ALTURA_TELA;
+					}
+
+					personagem_principal(&Principal, Vetor_Chao,Ativos,desloc);
+					for (int i = 0; i < 5; i++) {
+						Ativos[i].dx -= Principal.dx - ((LARGURA_TELA / 2) - 150);
+						Ativos[i].prj.raiz -= Principal.dx - ((LARGURA_TELA / 2) - 150);
+						Ativos[i].prj.dx -= Principal.dx - ((LARGURA_TELA / 2) - 150);
+						Ativos[i].prj.xi -= Principal.dx - ((LARGURA_TELA / 2) - 150);
+					}
+					desloc = Principal.dx - ((LARGURA_TELA / 2) - 150);
+					Principal.dx = (LARGURA_TELA / 2) - 150;
+				
+					for (int i = 0; i < 5; i++) {
+						comportamento(&Ativos[i], &Principal, img_projeteis);
+						if (Ativos[i].tipo == GOBLIN){
+							if (colisao_chao(&Ativos[i].prj.caixa, Vetor_Chao) || colisao_chao(&Ativos[i].prj.caixa, Vetor_Chao2))
+								Ativos[i].prj.estado = 1;
+							else if (colisao(&Ativos[i].prj.caixa, &Principal.caixa) && Principal.apanha) {
+								if (Ativos[i].prj.ac[1].col_atual == Ativos[i].prj.ac[1].inicioX + 1 && Ativos[i].prj.ac[1].frame_atual == 1 )
+									Principal.vida_atual -= Ativos[i].prj.dano;
+								Ativos[i].prj.estado = 1;
+								Principal.acao_atual = APANHA_PRINCIPAL;
+							}
+						}
+						if (!Ativos[i].nochao && Ativos[i].acao_atual != VOA) {
+							Ativos[i].dy += Ativos[i].queda;
+							Ativos[i].queda += 0.2;
+						}
+						else
+							Ativos[i].queda = 0;
+						if (Ativos[i].dy > ALTURA_TELA)
+							Ativos[i].morto = true;
+					}
+
+					for (int i = 10; i >= 0; i--) {
+						if (i < 9 && i>0) {
+							Vetor_Chao[i].x0 -= desloc;
+							Vetor_Chao[i].x1 -= desloc;
+							Vetor_Chao2[i].x0 -= desloc;
+							Vetor_Chao2[i].x1 -= desloc;
+						}
+						if (i > 0) {
+							fundo[i].dx += desloc/i;
+							atualiza_fundo(&fundo[i], LARGURA_TELA, ALTURA_TELA);
+						}
+						else {
+							fundo[0].dx += desloc / 1;
 						}
 					}
-					Vetor_Chao[9].x0 = -LARGURA_TELA;
-					Vetor_Chao[9].y0 = (38 * ALTURA_TELA / 40);
-					Vetor_Chao[9].x1 = 3 * LARGURA_TELA;
-					Vetor_Chao[9].y1 = ALTURA_TELA;
-				}
 
-				personagem_principal(&Principal, Vetor_Chao,Ativos,desloc);
-				for (int i = 0; i < 5; i++)
-					Ativos[i].dx -= Principal.dx - ((LARGURA_TELA / 2) - 150);
-				desloc = Principal.dx - ((LARGURA_TELA / 2) - 150);
-				Principal.dx = (LARGURA_TELA / 2) - 150;
+					for (int j = 0; j < Principal.vida_atual; j++)
+						al_draw_scaled_bitmap(coracoes, 0, 0, 256, 256, j * 25 + 10, 10, 25, 25, 0);
+
+					al_draw_text(fonte, al_map_rgb(255,255, 255), 10, 40, ALLEGRO_ALIGN_LEFT, "Marcos");
+					al_draw_textf(fonte, al_map_rgb(255,255, 255),LARGURA_TELA-20, 40, ALLEGRO_ALIGN_RIGHT,"%d", pontos);
+
+					for (int i = 0; i < 10; i++) {
+						desenha_bloco(Bloco,Vetor_Chao[i].x0, Vetor_Chao[i].y0, Vetor_Chao[i].x1, Vetor_Chao[i].y1);
+						desenha_bloco(Bloco, Vetor_Chao2[i].x0, Vetor_Chao2[i].y0, Vetor_Chao2[i].x1, Vetor_Chao2[i].y1);
+					}
 				
-				for (int i = 0; i < 5; i++) {
-					comportamento(&Ativos[i], &Principal);
-					if (!Ativos[i].nochao && Ativos[i].acao_atual != VOA) {
-						Ativos[i].dy += Ativos[i].queda;
-						Ativos[i].queda += 0.2;
+					for (int i = 0; i < 5; i++) {
+						atualiza_inimigos(&Ativos[i], 5);
+						if(Ativos[i].prj.existe)
+							anima_projetil(&(Ativos[i].prj));
 					}
-					else
-						Ativos[i].queda = 0;
-					if (Ativos[i].dy > ALTURA_TELA)
-						Ativos[i].morto = true;
-				}
 
-				for (int i = 10; i >= 0; i--) {
-					if (i < 9 && i>0) {
-						Vetor_Chao[i].x0 -= desloc;
-						Vetor_Chao[i].x1 -= desloc;
-						Vetor_Chao2[i].x0 -= desloc;
-						Vetor_Chao2[i].x1 -= desloc;
+					anima_personagem(&Principal, Principal.acao_atual);
+					#ifdef DESENHA //Hitboxes
+					desenha_hitbox(&Principal.caixa);
+					for (int i = 0; i < 10; i++) {
+						desenha_hitbox(&Vetor_Chao[i]);
+						desenha_hitbox(&Vetor_Chao2[i]);
 					}
-					if (i > 0) {
-						fundo[i].dx += desloc/i;
-						atualiza_fundo(&fundo[i], LARGURA_TELA, ALTURA_TELA);
+
+					for (int i = 0; i < 5; i++) {
+						if (!Ativos[i].morto) {
+							desenha_hitbox(&Ativos[i].caixa);
+						}
+						if (Ativos[i].prj.existe)
+							desenha_hitbox(&Ativos[i].prj.caixa);
 					}
-					else {
-						fundo[0].dx += desloc / 1;
-					}
+					#endif // Desenha Hitboxes
+					#ifdef GRID
+					desenha_grid(20,20,LARGURA_TELA,ALTURA_TELA);
+					#endif
+
+					al_flip_display();
 				}
-
-				for (int j = 0; j < Principal.vida_atual; j++)
-					al_draw_scaled_bitmap(coracoes, 0, 0, 256, 256, j * 25 + 10, 10, 25, 25, 0);
-
-				al_draw_text(fonte, al_map_rgb(255,255, 255), 10, 40, ALLEGRO_ALIGN_LEFT, "Marcos");
-
-				for (int i = 0; i < 10; i++) {
-					desenha_bloco(Bloco,Vetor_Chao[i].x0, Vetor_Chao[i].y0, Vetor_Chao[i].x1, Vetor_Chao[i].y1);
-					desenha_bloco(Bloco, Vetor_Chao2[i].x0, Vetor_Chao2[i].y0, Vetor_Chao2[i].x1, Vetor_Chao2[i].y1);
-				}
-				
-				for (int i = 0; i < 5; i++)
-					atualiza_inimigos(&Ativos[i], 5);
-
-				anima_personagem(&Principal, Principal.acao_atual);
-				#ifdef DESENHA //Hitboxes
-				desenha_hitbox(&Principal.caixa);
-				for (int i = 0; i < 10; i++) {
-					desenha_hitbox(&Vetor_Chao[i]);
-					desenha_hitbox(&Vetor_Chao2[i]);
-				}
-
-				for (int i = 0; i < 5; i++) {
-					if (!Ativos[i].morto) {
-						desenha_hitbox(&Ativos[i].caixa);
-					}
-				}
-				#endif // Desenha Hitboxes
-				#ifdef GRID
-				desenha_grid(20,20,LARGURA_TELA,ALTURA_TELA);
-				#endif
-
-				al_flip_display();
 			}
+
+			// Mecanica de colisão do jogo 
 			coli1 = colisao_chao(&Principal.caixa, Vetor_Chao);
 			coli2 = colisao_chao(&Principal.caixa, Vetor_Chao2);
 
 			if (!coli1 && !coli2 && !Principal.morto)
 				Principal.nochao = false;
 			else{
-				if (coli1 && Principal.caixa.y1 - Vetor_Chao[coli1--].y0 > 20)
+				if (coli1 && Principal.caixa.y1 - Vetor_Chao[coli1--].y0 < 50 )
 					Principal.dy =   Vetor_Chao[coli1--].y0 - Principal.imagem_personagem.altura + 5;
-				else if (coli2 && Principal.caixa.y1 - Vetor_Chao2[coli2--].y0 > 20)
+				else if (coli2 && Principal.caixa.y1 - Vetor_Chao2[coli2--].y0 < 50 )
 					Principal.dy = Vetor_Chao2[coli2--].y0 - Principal.imagem_personagem.altura + 5;
 				Principal.nochao = true;
 				Principal.queda = 0;
@@ -240,9 +292,9 @@ int main(void) {
 				if (!coli1 && !coli2 && !Ativos[i].morto)
 					Ativos[i].nochao = false;
 				else {
-					if (coli1 && Ativos[i].caixa.y1 - Vetor_Chao[coli1--].y0 > 20)
+					if (coli1 && Ativos[i].caixa.y1 - Vetor_Chao[coli1--].y0 < 50)
 						Ativos[i].dy = Vetor_Chao[coli1--].y0 -(Ativos[i].caixa.y1 - Ativos[i].caixa.y0) - Ativos[i].imagem_personagem.altura/2 + (Ativos[i].caixa.y1 - Ativos[i].caixa.y0)/2 + 5;
-					else if (coli2 && Ativos[i].caixa.y1 - Vetor_Chao2[coli2--].y0 > 20)
+					else if (coli2 && Ativos[i].caixa.y1 - Vetor_Chao2[coli2--].y0 < 50)
 						Ativos[i].dy = Vetor_Chao2[coli2--].y0 - (Ativos[i].caixa.y1 - Ativos[i].caixa.y0) - Ativos[i].imagem_personagem.altura / 2 + (Ativos[i].caixa.y1 - Ativos[i].caixa.y0) / 2 + 5;
 					Ativos[i].nochao = true;
 					Ativos[i].queda = 0;
@@ -264,6 +316,7 @@ int main(void) {
 		al_destroy_bitmap(img_fundo[i]);
 	al_destroy_font(fonte);
 	al_destroy_bitmap(coracoes);
+	al_destroy_bitmap(img_projeteis);
 	al_destroy_timer(timer);
 
 	return 0;
@@ -306,14 +359,14 @@ bool inicializar() {
 	if (!janela)
 		return false;
 
-	al_set_window_title(janela, "Aventura Lo-Fi");
+	al_set_window_title(janela, "Bate e anda");
 
 	fila_eventos = al_create_event_queue();
 	if (!fila_eventos) {
 		al_destroy_display(janela);
 		return false;
 	}
-	folha = al_load_bitmap("Principal/cara2.png");
+	folha = al_load_bitmap("Principal/cara2.0.png");
 
 	if (!folha) {
 		al_destroy_event_queue(fila_eventos);
@@ -402,7 +455,37 @@ bool inicializar() {
 		al_destroy_font(fonte);
 		return false;
 	}
-
+	img_projeteis = al_load_bitmap("Projeteis/Bomba.png");
+	if (!img_projeteis) {
+		al_destroy_event_queue(fila_eventos);
+		al_destroy_display(janela);
+		al_destroy_bitmap(folha);
+		for (int i = 0; i <= 5; i++)
+			al_destroy_bitmap(Bloco[i]);
+		for (int i = 0; i < NUM_INIMIGOS; i++)
+			al_destroy_bitmap(img_inimigos[i]);
+		for (int i = 0; i < 11; i++)
+			al_destroy_bitmap(img_fundo[i]);
+		al_destroy_font(fonte);
+		al_destroy_bitmap(coracoes);
+		return false;
+	}
+	IU = al_load_bitmap("Interface/Botoes.png");
+	if (!img_projeteis) {
+		al_destroy_event_queue(fila_eventos);
+		al_destroy_display(janela);
+		al_destroy_bitmap(folha);
+		for (int i = 0; i <= 5; i++)
+			al_destroy_bitmap(Bloco[i]);
+		for (int i = 0; i < NUM_INIMIGOS; i++)
+			al_destroy_bitmap(img_inimigos[i]);
+		for (int i = 0; i < 11; i++)
+			al_destroy_bitmap(img_fundo[i]);
+		al_destroy_font(fonte);
+		al_destroy_bitmap(coracoes);
+		al_destroy_bitmap(img_projeteis);
+		return false;
+	}
 	musica = al_load_audio_stream("soundtrack.ogg", 4, 1024);
 	if (!musica) {
 		al_destroy_event_queue(fila_eventos);
@@ -416,6 +499,8 @@ bool inicializar() {
 			al_destroy_bitmap(img_fundo[i]);
 		al_destroy_font(fonte);
 		al_destroy_bitmap(coracoes);
+		al_destroy_bitmap(img_projeteis);
+		al_destroy_bitmap(IU);
 		return false;
 	}
 	timer = al_create_timer(1.0 / FPS);
@@ -431,14 +516,14 @@ bool inicializar() {
 			al_destroy_bitmap(img_fundo[i]);
 		al_destroy_font(fonte);
 		al_destroy_bitmap(coracoes);
-		al_destroy_timer(timer);
+		al_destroy_bitmap(img_projeteis);
+		al_destroy_bitmap(IU);
 		return false;
 	}
 	
-	//liga o stream no mixer
+	//Ligando o mixer e colocando o modo de tocar a musica
 	al_attach_audio_stream_to_mixer(musica, al_get_default_mixer());
-	//define que o stream vai tocar no modo repeat
-	al_set_audio_stream_playmode(musica, ALLEGRO_PLAYMODE_LOOP);
+	al_set_audio_stream_playmode(musica, ALLEGRO_PLAYMODE_ONCE);
 
 	//Colocando as fontes de eventos na fila de eventos
 	al_register_event_source(fila_eventos, al_get_keyboard_event_source());

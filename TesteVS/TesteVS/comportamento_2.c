@@ -36,10 +36,12 @@ void comportamento_magocaveira(struct Inimigo* MagoCaveira, struct Carinha* Prin
 		}
 		else if (MagoCaveira->ac[MORRE].col_atual == MagoCaveira->ac[MORRE].finalX - 1)
 			MagoCaveira->morto = true;
-		if (MagoCaveira->acao_atual == ATAQUE1 && Principal->apanha && dist(MagoCaveira->cx, MagoCaveira->cy, Principal->cx, Principal->cy) < 200 && MagoCaveira->ac[ATAQUE1].col_atual >= MagoCaveira->ac[ATAQUE1].inicioX + 1) {
-			if (Principal->acao_atual != APANHA_PRINCIPAL)
-				Principal->vida_atual -= MagoCaveira->dano;
-			Principal->acao_atual = APANHA_PRINCIPAL;
+		if (MagoCaveira->acao_atual == ATAQUE1 && Principal->apanha && dist(MagoCaveira->cx, MagoCaveira->cy, Principal->cx, Principal->cy) < 400 && MagoCaveira->ac[ATAQUE1].col_atual >= MagoCaveira->ac[ATAQUE1].inicioX + 1) {
+			if ((MagoCaveira->direita == 0 && MagoCaveira->cx > Principal->cx) || (MagoCaveira->direita == ALLEGRO_FLIP_HORIZONTAL && MagoCaveira->cx < Principal->cx)) {
+				if (MagoCaveira->ac[ATAQUE1].frame_atual == 1)
+					Principal->vida_atual -= MagoCaveira->dano;
+				Principal->acao_atual = APANHA_PRINCIPAL;
+			}
 		}
 	}
 	MagoCaveira->caixa.x0 = MagoCaveira->cx + 60;

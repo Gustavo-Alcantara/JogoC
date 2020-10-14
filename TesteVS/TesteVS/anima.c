@@ -1,6 +1,16 @@
 #include "classes.h"
 
 void anima_personagem(struct Carinha* boneco, int indice) {
+	/*
+		Recebe a estrutura do personagem principal;
+		Confere se o frame atual é maior que o frame max da animaçao do personagem, se for aumenta o numero de colunas
+		Se a coluna atual for maior que o número de colunas zera a coluna atual e passa para a proxima linha
+		Confere se a linha atual é igual a linha final da ação e a coluna atual é maior que a coluna final,
+		se for coloca o personagem em ação 0 e reseta a acao
+		No final, desenha a parte da imagem condizente com a acao.
+
+	*/
+
 	int x_folha;
 	int y_folha;
 
@@ -37,6 +47,9 @@ void anima_personagem(struct Carinha* boneco, int indice) {
 		boneco->ac[indice].frame_atual++;
 }
 void anima_Inimigo(struct Inimigo* boneco, int indice) {
+
+	// Mesma função, porém recebe a estrutura do inimigo
+
 	int x_folha;
 	int y_folha;
 
@@ -69,6 +82,9 @@ void anima_Inimigo(struct Inimigo* boneco, int indice) {
 	boneco->ac[indice].frame_atual++;
 }
 void reseta_acoes(struct Carinha*boneco, int num_acoes, int indice,int direita) {
+
+	// Recebe um personagem faz o mesmo que a funcao reseta_acao para todas as acoes diferentes do indice
+
 	for (int i = 0; i <= num_acoes; i++) {
 		if (i != indice) {
 			boneco->ac[i].frame_atual = 0;
@@ -79,6 +95,9 @@ void reseta_acoes(struct Carinha*boneco, int num_acoes, int indice,int direita) 
 	boneco->direita = direita;
 }
 void reseta_acoes_inimigo(struct Inimigo* boneco, int num_acoes, int indice) {
+
+	//Função igual à função acima, porem recebe a estrutura inimigos
+
 	for (int i = 0; i < num_acoes; i++) {
 		if (i != indice) {
 			boneco->ac[i].frame_atual = 0;
@@ -88,11 +107,15 @@ void reseta_acoes_inimigo(struct Inimigo* boneco, int num_acoes, int indice) {
 	}
 }
 void reseta_acao(struct acao*ac) {
+	// Recebe uma estrutura acao e coloca o numero de frames como 0 coluna e lina atual como inicio da acao
 	ac->frame_atual = 0;
 	ac->col_atual = ac->inicioX;
 	ac->lin_atual = ac->inicioY;
 }
 void anima_projetil(struct Projetil* Bomba) {
+
+	// Função análoga à anima personagem, porém recebe a estrutura Projetil
+
 	int x_folha;
 	Bomba->ac[Bomba->estado].frame_atual++;
 	
@@ -140,9 +163,15 @@ void atualiza_fundo(struct Fundo* fundo, int LARGURA_TELA, int ALTURA_TELA) {
 	}
 }
 void desenha_hitbox(struct Hitbox* caixa){
+
+	//Recebe a estrutura Hitbox e desenha um retangulo correspondente aos seus pontos
+
 	al_draw_rectangle(caixa->x0, caixa->y0, caixa->x1, caixa->y1, al_map_rgb(255, 255, 255), 1);
 }
 void desenha_bloco(struct ALLEGRO_BITMAP* Bloco[6],int dx0, int dy0,int dx1,int dy1) {
+
+	//Define qual bloco será desenhado com base na altura da hitbox
+
 	switch ((int)(dy1 - dy0)){
 	case 48:
 		al_draw_scaled_bitmap(Bloco[0], 0, 0, 54, 24, dx0, dy0, 108, 48, 0);
@@ -162,6 +191,6 @@ void desenha_bloco(struct ALLEGRO_BITMAP* Bloco[6],int dx0, int dy0,int dx1,int 
 void desenha_grid(int lin, int col,int LARGURA_TELA,int ALTURA_TELA) {
 	for (int i = 0; i < lin; i++)
 		al_draw_line(0, ALTURA_TELA / lin * i, LARGURA_TELA, ALTURA_TELA / lin * i, al_map_rgb(255, 255, 255), 1);
-	for (int i = 0; i < lin; i++)
+	for (int i = 0; i < col; i++)
 		al_draw_line(LARGURA_TELA / col * i, 0, LARGURA_TELA / col * i, ALTURA_TELA, al_map_rgb(255, 255, 255), 1);
 }
